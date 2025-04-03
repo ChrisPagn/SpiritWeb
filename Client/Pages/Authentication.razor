@@ -1,0 +1,101 @@
+﻿@*  Client/Pages/Authentication.razor *@
+@page "/authentication"
+@using SpiritWeb.Shared.Models
+@using MudBlazor
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-10">
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">@(isRegistering ? "Créer un compte" : "Connexion")</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudTextField @bind-Value="email" Label="Email" Variant="Variant.Outlined" FullWidth="true" />
+            <MudTextField @bind-Value="password" Label="Mot de passe" Variant="Variant.Outlined" FullWidth="true" InputType="InputType.Password" Class="mt-3" />
+
+            @if (isRegistering)
+            {
+                <MudTextField @bind-Value="displayName" Label="Nom d'affichage" Variant="Variant.Outlined" FullWidth="true" Class="mt-3" />
+            }
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-3">@errorMessage</MudAlert>
+            }
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton OnClick="ToggleMode" Variant="Variant.Text" Color="Color.Secondary">
+                @(isRegistering ? "Déjà un compte ? Se connecter" : "Pas encore de compte ? S'inscrire")
+            </MudButton>
+            <MudSpacer />
+            @* <MudButton OnClick="HandleAuthentication" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">
+                @(isRegistering ? "S'inscrire" : "Se connecter")
+            </MudButton> *@
+        </MudCardActions>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private string email = "";
+    private string password = "";
+    private string displayName = "";
+    private string errorMessage = "";
+    private bool isRegistering = false;
+
+    private void ToggleMode()
+    {
+        isRegistering = !isRegistering;
+        errorMessage = "";
+    }
+
+    // private async Task HandleAuthentication()
+    // {
+    //     try
+    //     {
+    //         errorMessage = "";
+
+    //         if (isRegistering)
+    //         {
+    //             await AuthService.RegisterWithEmailAndPasswordAsync(email, password, displayName);
+
+    //             // Créer les données initiales
+    //             var saveData = new SpiritWeb.Shared.Models.SaveData
+    //                 {
+    //                     UserId = AuthService.UserId,
+    //                     DisplayName = displayName,
+    //                     CoinsCount = 0,
+    //                     LevelReached = 1,
+    //                     LastLevelPlayed = "level01",
+    //                     LastModified = DateTime.UtcNow
+    //                 };
+
+    //             await DatabaseService.SaveDataAsync(saveData);
+    //         }
+    //         else
+    //         {
+    //             await AuthService.SignInWithEmailAndPasswordAsync(email, password);
+    //         }
+
+    //         // Rediriger vers la page d'accueil
+    //         NavigationManager.NavigateTo("/");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         errorMessage = TranslateFirebaseError(ex.Message);
+    //     }
+    // }
+
+    // private string TranslateFirebaseError(string message)
+    // {
+    //     if (message.Contains("EMAIL_EXISTS"))
+    //         return "Cet email est déjà utilisé.";
+    //     if (message.Contains("INVALID_EMAIL"))
+    //         return "Email invalide.";
+    //     if (message.Contains("WEAK_PASSWORD"))
+    //         return "Le mot de passe doit contenir au moins 6 caractères.";
+    //     if (message.Contains("EMAIL_NOT_FOUND") || message.Contains("INVALID_PASSWORD"))
+    //         return "Email ou mot de passe incorrect.";
+
+    //     return $"Erreur: {message}";
+    // }
+}
