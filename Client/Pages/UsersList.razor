@@ -1,0 +1,71 @@
+﻿@page "/users"
+@using SpiritWeb.Shared.Models
+@using SpiritWeb.Client.Services
+@using MudBlazor
+@inject DatabaseService DatabaseService
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h4">Liste des Utilisateurs</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            @if (isLoading)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
+            else if (users == null || users.Count == 0)
+            {
+                <MudAlert Severity="Severity.Info">Aucun utilisateur trouvé.</MudAlert>
+            }
+            else
+            {
+                <MudTable Items="@users" Hover="true" Bordered="true" Striped="true">
+                    <HeaderContent>
+                        <MudTh>Nom d'affichage</MudTh>
+                        <MudTh>Niveau</MudTh>
+                        <MudTh>Pièces</MudTh>
+                        <MudTh>Dernier niveau joué</MudTh>
+                        <MudTh>Objets</MudTh>
+                        <MudTh>Dernière modification</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Nom d'affichage">@context.DisplayName</MudTd>
+                        <MudTd DataLabel="Niveau">@context.LevelReached</MudTd>
+                        <MudTd DataLabel="Pièces">@context.CoinsCount</MudTd>
+                        <MudTd DataLabel="Dernier niveau joué">@context.LastLevelPlayed</MudTd>
+                        <MudTd DataLabel="Objets">@context.InventoryItemsName.Count</MudTd>
+                        <MudTd DataLabel="Dernière modification">@context.LastModified.ToLocalTime().ToString("g")</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            }
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private List<SaveData> users;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/authentication");
+            return;
+        }
+
+        try
+        {
+            users = await DatabaseService.GetAllUsersAsync();
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur lors du chargement des utilisateurs: {ex.Message}");
+            isLoading = false;
+        }
+    }
+}

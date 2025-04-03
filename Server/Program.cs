@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using SpiritWeb.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+// Enregistrement des services Firebase
+builder.Services.AddScoped<FirebaseAuthService>();
+builder.Services.AddScoped<FirebaseDatabaseService>();
 
 var app = builder.Build();
 

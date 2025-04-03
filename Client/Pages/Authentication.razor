@@ -1,8 +1,10 @@
-﻿@*  Client/Pages/Authentication.razor *@
-@page "/authentication"
+﻿@page "/authentication"
 @using SpiritWeb.Shared.Models
 @using MudBlazor
+@using SpiritWeb.Client.Services
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
+@inject DatabaseService DatabaseService
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-10">
     <MudCard>
@@ -28,9 +30,17 @@
                 @(isRegistering ? "Déjà un compte ? Se connecter" : "Pas encore de compte ? S'inscrire")
             </MudButton>
             <MudSpacer />
-            @* <MudButton OnClick="HandleAuthentication" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">
-                @(isRegistering ? "S'inscrire" : "Se connecter")
-            </MudButton> *@
+            <MudButton OnClick="HandleAuthentication" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" Disabled="@isProcessing">
+                @if (isProcessing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Traitement...</MudText>
+                }
+                else
+                {
+                    @(isRegistering ? "S'inscrire" : "Se connecter")
+                }
+            </MudButton>
         </MudCardActions>
     </MudCard>
 </MudContainer>
@@ -41,6 +51,7 @@
     private string displayName = "";
     private string errorMessage = "";
     private bool isRegistering = false;
+    private bool isProcessing = false;
 
     private void ToggleMode()
     {
@@ -48,54 +59,51 @@
         errorMessage = "";
     }
 
-    // private async Task HandleAuthentication()
-    // {
-    //     try
-    //     {
-    //         errorMessage = "";
+    private async Task HandleAuthentication()
+    {
+        try
+        {
+            isProcessing = true;
+            errorMessage = "";
 
-    //         if (isRegistering)
-    //         {
-    //             await AuthService.RegisterWithEmailAndPasswordAsync(email, password, displayName);
+            if (isRegistering)
+            {
+                var success = await AuthService.RegisterWithEmailAndPasswordAsync(email, password, displayName);
+                if (success)
+                {
+                    // Créer les données initiales
+                    await DatabaseService.CreateInitialDataAsync(AuthService.UserId, displayName);
+                }
+            }
+            else
+            {
+                await AuthService.SignInWithEmailAndPasswordAsync(email, password);
+            }
 
-    //             // Créer les données initiales
-    //             var saveData = new SpiritWeb.Shared.Models.SaveData
-    //                 {
-    //                     UserId = AuthService.UserId,
-    //                     DisplayName = displayName,
-    //                     CoinsCount = 0,
-    //                     LevelReached = 1,
-    //                     LastLevelPlayed = "level01",
-    //                     LastModified = DateTime.UtcNow
-    //                 };
+            // Rediriger vers la page d'accueil
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = TranslateFirebaseError(ex.Message);
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
 
-    //             await DatabaseService.SaveDataAsync(saveData);
-    //         }
-    //         else
-    //         {
-    //             await AuthService.SignInWithEmailAndPasswordAsync(email, password);
-    //         }
+    private string TranslateFirebaseError(string message)
+    {
+        if (message.Contains("EMAIL_EXISTS"))
+            return "Cet email est déjà utilisé.";
+        if (message.Contains("INVALID_EMAIL"))
+            return "Email invalide.";
+        if (message.Contains("WEAK_PASSWORD"))
+            return "Le mot de passe doit contenir au moins 6 caractères.";
+        if (message.Contains("EMAIL_NOT_FOUND") || message.Contains("INVALID_PASSWORD"))
+            return "Email ou mot de passe incorrect.";
 
-    //         // Rediriger vers la page d'accueil
-    //         NavigationManager.NavigateTo("/");
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         errorMessage = TranslateFirebaseError(ex.Message);
-    //     }
-    // }
-
-    // private string TranslateFirebaseError(string message)
-    // {
-    //     if (message.Contains("EMAIL_EXISTS"))
-    //         return "Cet email est déjà utilisé.";
-    //     if (message.Contains("INVALID_EMAIL"))
-    //         return "Email invalide.";
-    //     if (message.Contains("WEAK_PASSWORD"))
-    //         return "Le mot de passe doit contenir au moins 6 caractères.";
-    //     if (message.Contains("EMAIL_NOT_FOUND") || message.Contains("INVALID_PASSWORD"))
-    //         return "Email ou mot de passe incorrect.";
-
-    //     return $"Erreur: {message}";
-    // }
+        return $"Erreur: {message}";
+    }
 }
