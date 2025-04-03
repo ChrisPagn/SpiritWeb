@@ -1,7 +1,6 @@
-﻿using Firebase.Database;
-using Firebase.Database.Query;
-using SpiritWeb.Shared.Models;
+﻿using Google.Cloud.Firestore;
 using Microsoft.Extensions.Configuration;
+using SpiritWeb.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,43 +10,49 @@ namespace SpiritWeb.Server.Services
 {
     public class FirebaseDatabaseService
     {
-        private readonly FirebaseClient _firebaseClient;
+        private readonly FirestoreDb _firestoreDb;
 
         public FirebaseDatabaseService(IConfiguration configuration)
         {
-            string dbUrl = configuration["Firebase:DatabaseUrl"];
-            _firebaseClient = new FirebaseClient(dbUrl);
+            string projectId = configuration["Firebase:ProjectId"];
+            if (string.IsNullOrEmpty(projectId))
+            {
+                throw new Exception("Firebase ProjectId is missing in appsettings.json");
+            }
+
+            _firestoreDb = FirestoreDb.Create(projectId);
+            Console.WriteLine($"Connected to Firestore project: {projectId}");
         }
 
         public async Task SaveDataAsync(string userId, SaveData saveData)
         {
-            await _firebaseClient
-                .Child("users")
-                .Child(userId)
-                .PutAsync(saveData);
+            DocumentReference docRef = _firestoreDb.Collection("users").Document(userId);
+            await docRef.SetAsync(saveData);
         }
 
         public async Task<SaveData> LoadDataAsync(string userId)
         {
-            var result = await _firebaseClient
-                .Child("users")
-                .Child(userId)
-                .OnceSingleAsync<SaveData>();
+            DocumentReference docRef = _firestoreDb.Collection("users").Document(userId);
+            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
 
-            return result;
+            if (snapshot.Exists)
+            {
+                return snapshot.ConvertTo<SaveData>();
+            }
+
+            return null;
         }
 
         public async Task<List<SaveData>> GetAllUsersAsync()
         {
-            var result = await _firebaseClient
-                .Child("users")
-                .OnceAsync<SaveData>();
+            CollectionReference usersRef = _firestoreDb.Collection("users");
+            QuerySnapshot snapshot = await usersRef.GetSnapshotAsync();
 
-            return result.Select(item =>
+            return snapshot.Documents.Select(doc =>
             {
-                var userData = item.Object;
-                userData.UserId = item.Key;
-                return userData;
+                var data = doc.ConvertTo<SaveData>();
+                data.UserId = doc.Id;
+                return data;
             }).ToList();
         }
     }
