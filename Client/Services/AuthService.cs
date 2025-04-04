@@ -22,6 +22,18 @@ namespace SpiritWeb.Client.Services
         public bool IsAuthenticated { get; private set; }
         public Task AuthInitialized { get; private set; }
 
+        public event Action? OnAuthStateChanged;
+
+        public void SetAuthenticationState(bool isAuthenticated)
+        {
+            IsAuthenticated = isAuthenticated;
+            NotifyAuthenticationStateChanged();
+        }
+
+        private void NotifyAuthenticationStateChanged()
+        {
+            OnAuthStateChanged?.Invoke();
+        }
         public AuthService(HttpClient httpClient, IJSRuntime jsRuntime)
         {
             _httpClient = httpClient;
