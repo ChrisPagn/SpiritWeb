@@ -7,6 +7,7 @@ using System;
 using SpiritWeb.Shared.Models;
 using System.Text.Json;
 using Microsoft.JSInterop;
+using FirebaseAdmin.Auth;
 
 namespace SpiritWeb.Client.Services
 {
@@ -19,16 +20,22 @@ namespace SpiritWeb.Client.Services
         public string UserEmail { get; private set; }
         public string DisplayName { get; private set; }
         public bool IsAuthenticated { get; private set; }
+        public Task AuthInitialized { get; private set; }
 
         public AuthService(HttpClient httpClient, IJSRuntime jsRuntime)
         {
             _httpClient = httpClient;
             _jsRuntime = jsRuntime;
-            LoadAuthState();
+            AuthInitialized = InitializeAsync();
+        }
+
+        private async Task InitializeAsync()
+        {
+            await LoadAuthState();
         }
 
         // Chargement de l'état d'authentification depuis le stockage local
-        private async void LoadAuthState()
+        private async Task LoadAuthState()
         {
             try
             {
@@ -140,5 +147,12 @@ namespace SpiritWeb.Client.Services
         public string Token { get; set; }
         public string UserId { get; set; }
         public string DisplayName { get; set; }
+        public UserInfo User { get; set; }
+    }
+
+    public class UserInfo
+    {
+        public string LocalId { get; set; }
+       
     }
 }

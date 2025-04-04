@@ -1,114 +1,52 @@
-﻿// Shared/Models/SaveData.cs
+﻿using Google.Cloud.Firestore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace SpiritWeb.Shared.Models
 {
+    [FirestoreData]
     public class SaveData
     {
-        ///required: permet de garantir que les propriétés marquées comme required ne seront 
-        ///pas laissées non initialisées après la construction de l'objet
-        /// 
-        /// <summary>
-        /// Identifiant unique de l'utilisateur.
-        /// </summary>
-        public required string UserId;
+        [FirestoreProperty]
+        public string UserId { get; set; }
 
-        /// <summary>
-        /// Nom d'affichage de l'utilisateur.
-        /// </summary>
-        public string DisplayName;
+        [FirestoreProperty]
+        public string DisplayName { get; set; }
 
-        /// <summary>
-        /// Nombre de pièces que possède le joueur.
-        /// </summary>
-        public required int CoinsCount;
+        [FirestoreProperty]
+        public int CoinsCount { get; set; }
 
-        /// <summary>
-        /// Niveau le plus élevé atteint par le joueur.
-        /// </summary>
-        public required int LevelReached;
+        [FirestoreProperty]
+        public int LevelReached { get; set; }
 
-        /// <summary>
-        /// Menu stocké en DB qui sera chargé.
-        /// </summary>
-        public required string LastLevelPlayed;
-        /// <summary>
-        /// Liste des identifiants des objets dans l'inventaire du joueur.
-        /// </summary>
-        public required List<int> InventoryItems;
+        [FirestoreProperty]
+        public string LastLevelPlayed { get; set; } 
 
-        /// <summary>
-        /// Liste des noms des objets dans l'inventaire du joueur.
-        /// </summary>
-        public required List<string> InventoryItemsName;
+        [FirestoreProperty]
+        public List<int> InventoryItems { get; set; } = new List<int>();
 
-        /// <summary>
-        /// Date et heure de la dernière modification des données de sauvegarde.
-        /// </summary>
-        public required DateTime LastModified;
+        [FirestoreProperty]
+        public List<string> InventoryItemsName { get; set; } = new List<string>();
 
-        // **Constructeur par défaut requis pour la désérialisation**
-        public SaveData()
+        [FirestoreProperty]
+        public DateTime LastModified { get; set; }
+
+        
+        public SaveData() { }
+
+        public SaveData(string userId, string displayName, int coinsCount,
+                      int levelReached, List<int> inventoryItems,
+                      List<string> inventoryItemsName, DateTime lastModified,
+                      string lastLevelPlayed)
         {
-            InventoryItems = new List<int>();
-            InventoryItemsName = new List<string>();
-        }
-
-        /// <summary>
-        /// Construction basique de la classe SaveData.
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="displayName"></param>
-        /// <param name="coinsCount"></param>
-        /// <param name="levelReached"></param>
-        /// <param name="inventoryItem"></param>
-        /// <param name="inventgoryItemsName"></param>
-        /// <param name="lastModified"></param>
-        public SaveData(string userId, string displayName, int coinsCount, int levelReached, List<int> inventoryItem, List<string> inventgoryItemsName, DateTime lastModified, string lastLevelPlayed)
-        {
-            try
-            {
-                UserId = userId;
-                DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName)); 
-                CoinsCount = coinsCount;
-                LevelReached = levelReached;
-                InventoryItems = inventoryItem;
-                InventoryItemsName = inventgoryItemsName;
-                LastModified = lastModified;
-                LastLevelPlayed = lastLevelPlayed ?? throw new ArgumentNullException(nameof(lastLevelPlayed));
-            }
-            catch (Exception ex)
-            {
-                //On tombe dans ce cas car notre classe à changer et que l'instanciation de l'objet SaveData n'est pas à jour.
-                Console.WriteLine($"Erreur lors de la création de l'objet SaveData : {ex.Message}");
-            }
-
-        }
-
-        /// <summary>
-        /// Constructeur de la classe SaveData réduit.
-        /// </summary>
-        /// <param name="displayName"></param>
-        /// <param name="coinsCount"></param>
-        /// <param name="levelReached"></param>
-        /// <param name="lastModified"></param>
-        public SaveData(string displayName, int coinsCount, int levelReached, DateTime lastModified)
-        {
-            try
-            {
-                DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
-                CoinsCount = coinsCount;
-                LevelReached = levelReached;
-                LastModified = lastModified;
-            }
-            catch (Exception ex)
-            {
-                //On tombe dans ce cas car notre classe à changer et que l'instanciation de l'objet SaveData n'est pas à jour.
-                Console.WriteLine($"Erreur lors de la création de l'objet SaveData : {ex.Message}");
-            }
-
+            UserId = userId;
+            DisplayName = displayName;
+            CoinsCount = coinsCount;
+            LevelReached = levelReached;
+            InventoryItems = inventoryItems ?? new List<int>();
+            InventoryItemsName = inventoryItemsName ?? new List<string>();
+            LastModified = lastModified;
+            LastLevelPlayed = lastLevelPlayed;
         }
     }
 }

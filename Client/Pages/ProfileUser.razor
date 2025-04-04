@@ -97,6 +97,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await AuthService.AuthInitialized; // Attendez que l'auth soit prête
+
         if (!AuthService.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/authentication");

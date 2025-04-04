@@ -22,12 +22,27 @@
             }
             else
             {
-                <MudTable Items="@users" Hover="true" Bordered="true" Striped="true">
+                <MudTextField @bind-Value="searchString" Placeholder="Rechercher..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" />
+
+                <MudTable Items="filteredUsers"
+                          Hover="true"
+                          Bordered="true"
+                          Striped="true"
+                          Dense="true"
+                          Breakpoint="Breakpoint.Sm"
+                          RowsPerPage="10"
+                          ServerData="LoadServerData"
+                          Filter="TableFilter"
+                          Elevation="1">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.subtitle1" Class="ml-2">Utilisateurs trouvés : @filteredUsers.Count</MudText>
+                    </ToolBarContent>
                     <HeaderContent>
                         <MudTh>Nom d'affichage</MudTh>
                         <MudTh>Niveau</MudTh>
                         <MudTh>Pièces</MudTh>
                         <MudTh>Dernier niveau joué</MudTh>
+                        <MudTh>Dernier niveau débloqué</MudTh>
                         <MudTh>Objets</MudTh>
                         <MudTh>Dernière modification</MudTh>
                     </HeaderContent>
@@ -36,8 +51,9 @@
                         <MudTd DataLabel="Niveau">@context.LevelReached</MudTd>
                         <MudTd DataLabel="Pièces">@context.CoinsCount</MudTd>
                         <MudTd DataLabel="Dernier niveau joué">@context.LastLevelPlayed</MudTd>
-                        <MudTd DataLabel="Objets">@context.InventoryItemsName.Count</MudTd>
-                        <MudTd DataLabel="Dernière modification">@context.LastModified.ToLocalTime().ToString("g")</MudTd>
+                        <MudTd DataLabel="Dernier niveau débloqué">@context.LevelReached</MudTd>
+                        <MudTd DataLabel="Objets">@context.InventoryItemsName?.Count</MudTd>
+                        <MudTd DataLabel="Dernière modification">@context.LastModified.ToLocalTime().ToString("f")</MudTd>
                     </RowTemplate>
                 </MudTable>
             }
@@ -46,11 +62,23 @@
 </MudContainer>
 
 @code {
-    private List<SaveData> users;
+    private List<SaveData> users = new();
+    private string searchString = string.Empty;
     private bool isLoading = true;
+
+    private List<SaveData> filteredUsers => string.IsNullOrWhiteSpace(searchString)
+        ? users
+        : users.Where(u =>
+            (u.DisplayName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+            || u.LevelReached.ToString().Contains(searchString)
+            || u.CoinsCount.ToString().Contains(searchString)
+            || u.LastLevelPlayed.ToString().Contains(searchString)
+        ).ToList();
 
     protected override async Task OnInitializedAsync()
     {
+        await AuthService.AuthInitialized;
+
         if (!AuthService.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/authentication");
@@ -60,12 +88,37 @@
         try
         {
             users = await DatabaseService.GetAllUsersAsync();
-            isLoading = false;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Erreur lors du chargement des utilisateurs: {ex.Message}");
-            isLoading = false;
         }
+        isLoading = false;
     }
+
+    private bool TableFilter(SaveData user)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+
+        return (user.DisplayName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+               || user.LevelReached.ToString().Contains(searchString)
+               || user.CoinsCount.ToString().Contains(searchString)
+               || user.LastLevelPlayed.ToString().Contains(searchString);
+    }
+
+    private Task<TableData<SaveData>> LoadServerData(TableState state, CancellationToken cancellationToken)
+    {
+        var data = filteredUsers
+            .Skip(state.Page * state.PageSize)
+            .Take(state.PageSize)
+            .ToList();
+
+        return Task.FromResult(new TableData<SaveData>()
+            {
+                TotalItems = filteredUsers.Count,
+                Items = data
+            });
+    }
+
 }
