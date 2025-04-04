@@ -32,12 +32,12 @@ namespace SpiritWeb.Client.Services
         }
 
         // Chargement des données utilisateur
-        public async Task<SaveData> LoadDataAsync(string userId)
+        public async Task<SaveData?> LoadDataAsync(string userId)
         {
             try
             {
                 var data = await _httpClient.GetFromJsonAsync<SaveData>($"api/Database/load/{userId}");
-                return data;
+                return data ?? throw new Exception("Les données chargées utilisateur sont nulles.");
             }
             catch (Exception ex)
             {
@@ -52,7 +52,7 @@ namespace SpiritWeb.Client.Services
             try
             {
                 var users = await _httpClient.GetFromJsonAsync<List<SaveData>>("api/Database/users");
-                return users;
+                return users ?? throw new Exception("Les données des utilisateurs sont nulles.");
             }
             catch (Exception ex)
             {

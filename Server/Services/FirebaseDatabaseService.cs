@@ -14,26 +14,47 @@ namespace SpiritWeb.Server.Services
     {
         private readonly FirestoreDb _firestoreDb;
 
-        // Dans FirebaseDatabaseService.cs - méthode constructeur modifiée
         public FirebaseDatabaseService(IConfiguration configuration)
         {
-            var projectId = configuration["Firebase:ProjectId"];
-            var credentialPath = Path.Combine(Directory.GetCurrentDirectory(),
-                                            configuration["Firebase:CredentialPath"]);
-
-            // Solution robuste avec vérifications
-            if (!File.Exists(credentialPath))
+            try
             {
-                throw new FileNotFoundException($"Fichier Firebase credentials introuvable: {credentialPath}");
+                // 1. Vérification des paramètres
+                string? projectId = configuration["Firebase:ProjectId"];
+                string? credentialPathConfig = configuration["Firebase:CredentialPath"];
+                if (string.IsNullOrEmpty(projectId))
+                    throw new ArgumentNullException("Firebase:ProjectId manquant dans appsettings.json");
+
+                if (string.IsNullOrEmpty(credentialPathConfig))
+                    throw new ArgumentNullException("Firebase:CredentialPath manquant dans appsettings.json");
+
+                string credentialPath = Path.Combine(Directory.GetCurrentDirectory(), credentialPathConfig);
+
+                if (!File.Exists(credentialPath))
+                    throw new FileNotFoundException($"Fichier credentials introuvable: {credentialPath}");
+
+                // 2. Initialisation Firebase
+                if (FirebaseApp.DefaultInstance == null)
+                {
+                    FirebaseApp.Create(new AppOptions()
+                    {
+                        Credential = GoogleCredential.FromFile(credentialPath),
+                        ProjectId = projectId
+                    });
+                }
+
+                // 3. Initialisation Firestore avec vérification
+                _firestoreDb = FirestoreDb.Create(projectId);
+
+                if (_firestoreDb == null)
+                    throw new Exception("Échec de la création de FirestoreDb");
+
+                Console.WriteLine($"Firestore initialisé pour le projet: {projectId}");
             }
-
-            FirebaseApp.Create(new AppOptions()
+            catch (Exception ex)
             {
-                Credential = GoogleCredential.FromFile(credentialPath),
-                ProjectId = projectId
-            });
-
-            _firestoreDb = FirestoreDb.Create(projectId);
+                Console.WriteLine($"ERREUR Firebase: {ex.ToString()}");
+                throw; // Relance pour arrêter l'application
+            }
         }
 
         public async Task SaveDataAsync(string userId, SaveData saveData)
@@ -42,7 +63,7 @@ namespace SpiritWeb.Server.Services
             await docRef.SetAsync(saveData);
         }
 
-        public async Task<SaveData> LoadDataAsync(string userId)
+        public async Task<SaveData?> LoadDataAsync(string userId)
         {
             DocumentReference docRef = _firestoreDb.Collection("users").Document(userId);
             DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();

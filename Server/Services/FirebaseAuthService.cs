@@ -11,7 +11,11 @@ namespace SpiritWeb.Server.Services
 
         public FirebaseAuthService(IConfiguration configuration)
         {
-            string apiKey = configuration["Firebase:ApiKey"];
+            string? apiKey = configuration["Firebase:ApiKey"];
+            if (apiKey == null)
+            {
+                throw new ArgumentNullException(nameof(apiKey), "Firebase API key is missing in configuration.");
+            }
             _authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
         }
 

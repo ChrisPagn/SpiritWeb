@@ -18,7 +18,7 @@ namespace SpiritWeb.Shared.Models
         /// <summary>
         /// Nom d'affichage de l'utilisateur.
         /// </summary>
-        public required string DisplayName;
+        public string DisplayName;
 
         /// <summary>
         /// Nombre de pièces que possède le joueur.

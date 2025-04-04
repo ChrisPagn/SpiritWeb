@@ -24,7 +24,7 @@ namespace SpiritWeb.Server.Controllers
             Console.WriteLine($"Utilisateur enregistré avec l'email : {email}");
             if (authResult != null)
             {
-                Console.WriteLine($"ID utilisateur : {authResult.User}");  // Supposons que authResult contient l'ID utilisateur
+                Console.WriteLine($"ID utilisateur : {authResult.User.LocalId}");  // Supposons que authResult contient l'ID utilisateur
             }
             else
             {
@@ -43,7 +43,14 @@ namespace SpiritWeb.Server.Controllers
             Console.WriteLine($"Tentative de connexion avec l'email : {email}");
             if (authResult != null)
             {
-                Console.WriteLine($"Connexion réussie ! ID utilisateur : {authResult.User}");  // Affiche l'ID utilisateur
+                // Définir la couleur du texte sur vert
+                Console.ForegroundColor = ConsoleColor.Green;
+
+                // Afficher le message avec la couleur définie
+                Console.WriteLine($"Connexion réussie ! ID utilisateur : {authResult.User.LocalId}");
+
+                // Réinitialiser la couleur du texte à sa valeur par défaut (blanc)
+                Console.ResetColor();
             }
             else
             {
