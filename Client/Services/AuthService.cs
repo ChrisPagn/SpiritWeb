@@ -8,6 +8,7 @@ using SpiritWeb.Shared.Models;
 using System.Text.Json;
 using Microsoft.JSInterop;
 using FirebaseAdmin.Auth;
+using System.Text.Json.Serialization;
 
 namespace SpiritWeb.Client.Services
 {
@@ -98,7 +99,33 @@ namespace SpiritWeb.Client.Services
         }
 
         // Connexion d'un utilisateur existant
-        public async Task<bool> SignInWithEmailAndPasswordAsync(string email, string password)
+        //public async Task<FirebaseAuthResult> SignInWithEmailAndPasswordAsync(string email, string password)
+        //{
+        //    try
+        //    {
+        //        var response = await _httpClient.PostAsync(
+        //            $"api/Auth/login?email={Uri.EscapeDataString(email)}&password={Uri.EscapeDataString(password)}",
+        //            null);
+
+        //        response.EnsureSuccessStatusCode();
+        //        var content = await response.Content.ReadAsStringAsync();
+        //        var authResult = JsonSerializer.Deserialize<FirebaseAuthResult>(content);
+
+        //        if (authResult != null)
+        //        {
+        //            await SetAuthData(authResult.Token, authResult.UserId ?? authResult.User?.LocalId, email, null);
+        //            return authResult;
+        //        }
+        //        return null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Erreur de connexion : {ex.Message}");
+        //        throw;
+        //    }
+        //}
+
+        public async Task<FirebaseAuthResult> SignInWithEmailAndPasswordAsync(string email, string password)
         {
             try
             {
@@ -108,14 +135,22 @@ namespace SpiritWeb.Client.Services
 
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                var authResult = JsonSerializer.Deserialize<FirebaseAuthResult>(content);
+
+                // Ajoutez des options de désérialisation
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
+                var authResult = JsonSerializer.Deserialize<FirebaseAuthResult>(content, options);
 
                 if (authResult != null)
                 {
-                    await SetAuthData(authResult.Token, authResult.UserId, email, authResult.DisplayName);
-                    return true;
+                    await SetAuthData(authResult.Token, authResult.UserId ?? authResult.User?.LocalId, email, null);
+                    return authResult;
                 }
-                return false;
+                return null;
             }
             catch (Exception ex)
             {
@@ -143,28 +178,31 @@ namespace SpiritWeb.Client.Services
         {
             UserId = userId;
             UserEmail = email;
-            DisplayName = displayName;
+            DisplayName = displayName ?? string.Empty;
             IsAuthenticated = true;
 
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", token);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userId", userId);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userEmail", email);
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", displayName);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", displayName ?? string.Empty);
         }
     }
 
     // Classe pour le résultat de l'authentification Firebase
     public class FirebaseAuthResult
     {
+        [JsonPropertyName("token")]
         public string Token { get; set; }
-        public string UserId { get; set; }
-        public string DisplayName { get; set; }
-        public UserInfo User { get; set; }
+        
+        [JsonPropertyName("localId")]
+        public string UserId { get; set; }  // Doit correspondre à LocalId dans la réponse Firebase
+
+        [JsonPropertyName("user")]
+        public FirebaseUser User { get; set; }  // Ajoutez cette propriété si nécessaire
     }
 
-    public class UserInfo
+    public class FirebaseUser
     {
         public string LocalId { get; set; }
-       
     }
 }
