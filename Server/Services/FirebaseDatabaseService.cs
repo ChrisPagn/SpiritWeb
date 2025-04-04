@@ -1,4 +1,6 @@
-﻿using Google.Cloud.Firestore;
+﻿using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Firestore;
 using Microsoft.Extensions.Configuration;
 using SpiritWeb.Shared.Models;
 using System;
@@ -12,16 +14,26 @@ namespace SpiritWeb.Server.Services
     {
         private readonly FirestoreDb _firestoreDb;
 
+        // Dans FirebaseDatabaseService.cs - méthode constructeur modifiée
         public FirebaseDatabaseService(IConfiguration configuration)
         {
-            string projectId = configuration["Firebase:ProjectId"];
-            if (string.IsNullOrEmpty(projectId))
+            var projectId = configuration["Firebase:ProjectId"];
+            var credentialPath = Path.Combine(Directory.GetCurrentDirectory(),
+                                            configuration["Firebase:CredentialPath"]);
+
+            // Solution robuste avec vérifications
+            if (!File.Exists(credentialPath))
             {
-                throw new Exception("Firebase ProjectId is missing in appsettings.json");
+                throw new FileNotFoundException($"Fichier Firebase credentials introuvable: {credentialPath}");
             }
 
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromFile(credentialPath),
+                ProjectId = projectId
+            });
+
             _firestoreDb = FirestoreDb.Create(projectId);
-            Console.WriteLine($"Connected to Firestore project: {projectId}");
         }
 
         public async Task SaveDataAsync(string userId, SaveData saveData)
