@@ -46,7 +46,6 @@
                     // Connecter l'utilisateur avec email et mot de passe
                     await AuthService.SignInWithEmailAndPasswordAsync(email, password);
                 }
-
                 // Rediriger vers la page d'accueil après une authentification réussie
                 NavigationManager.NavigateTo("/");
             }

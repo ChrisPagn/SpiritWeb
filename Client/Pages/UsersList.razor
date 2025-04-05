@@ -5,14 +5,14 @@
 @inject DatabaseService DatabaseService
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
-
-
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
+@using SpiritWeb.Client.Models
+ 
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6" >
     <MudCard>
-        <MudCardHeader>
-            <MudText Typo="Typo.h4">Liste des Utilisateurs</MudText>
+        <MudCardHeader Class="title">
+            <MudText Typo="Typo.h4" Class="title">Liste des Utilisateurs</MudText>
         </MudCardHeader>
-        <MudCardContent>
+        <MudCardContent Class="card-body">
             @if (isLoading)
             {
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -63,33 +63,50 @@
 </MudContainer>
 
 <style>
+    body{
+        background-color: @ColorConstant.colorBackgroundMallow80;
+    }
+
+    .card-body {
+        background-color: @ColorConstant.colorBackgroundMallow80; /* Même couleur que le body */
+    }
+
+    .title {
+        background-color: @ColorConstant.colorBackgroundMallow80;
+        font-family: "Cambria", Cambria, serif;
+        color: black;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
     .fun-table {
         font-family: 'Press Start 2P', cursive;
         font-size: 10px;
-        background-color: #eeecfd;
+        background-color: @ColorConstant.colorBackgroundMallow90;
         border-radius: 10px;
-        border: 3px solid #513fe8;
-        box-shadow: 0 0 15px #dcd9fa;
+        border: 3px solid @ColorConstant.colorBackgroundMallowBordure;
+        box-shadow: 0 10px 35px #dcd9fa;
     }
 
-        .fun-table thead {
-            background-color: #513fe8;
-            color: white;
-        }
-
-        .fun-table tr:nth-child(even) {
-            background-color: #dcd9fa;
-        }
-
-        .fun-table tr:nth-child(odd) {
-            background-color: #eeecfd;
-        }
-
-        .fun-table tr:hover {
+    .fun-table thead th {
             background-color: #c2b8ff !important;
-            color: #000;
-            transition: background-color 0.3s ease;
-        }
+        color: black !important;
+        font-weight: bold;
+    }
+
+    .fun-table tr:nth-child(even) {
+        background-color: #dcd9fa;
+    }
+
+    .fun-table tr:nth-child(odd) {
+        background-color: #eeecfd;
+    }
+
+    .fun-table tr:hover {
+        background-color: @ColorConstant.colorBackgroundMallowHover !important;
+        color: #000;
+        transition: background-color 0.3s ease;
+    }
 
 </style>
    

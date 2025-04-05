@@ -1,6 +1,7 @@
 ﻿@page "/footer"
 @using MudBlazor
 @inherits MudComponentBase
+@using SpiritWeb.Client.Models
 
 <footer class="footer">
     <MudContainer Class="footer-container">
@@ -48,7 +49,7 @@
 <style>
     .footer {
         width: 100%;
-        background-color: #4939d1; /* Couleur de fond */
+        background-color: @ColorConstant.colorBackgroundMallow00; /* Couleur de fond */
         color: #fff; /* Couleur du texte */
         text-align: center;
         font-size: 14px;

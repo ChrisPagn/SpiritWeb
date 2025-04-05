@@ -1,28 +1,56 @@
 ﻿@using SpiritWeb.Client.Services
 @inject AuthService AuthService
-
 @implements IDisposable
+@using SpiritWeb.Client.Models 
 
-<MudNavMenu>
-    <MudText Typo="Typo.h6" Class="px-4 py-2">SpiritWeb</MudText>
+<MudNavMenu Class="nav-menu">
+    <MudText Typo="Typo.h6" Class="px-4 py-2 title-nav">Navigation</MudText>
     <MudDivider Class="mb-2" />
 
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit">Home</MudNavLink>
     @* Menu par default a modifier ou a supprimer *@
-    <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
-    <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink>
+    <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add" IconColor="Color.Inherit">Counter</MudNavLink>
+    <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List" IconColor="Color.Inherit">Fetch data</MudNavLink>
 
     @* Verifier si user n'est pas authentifié *@
     @if (!AuthService.IsAuthenticated)
     {
-        <MudNavLink Href="authentication" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Login">Authentification</MudNavLink>
+        <MudNavLink Href="authentication" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Login" IconColor="Color.Inherit">Authentification</MudNavLink>
     }
     @* Verifier si user est authentifié *@
     else
     {
-        <MudNavLink Href="profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Profil</MudNavLink>
-        <MudNavLink Href="users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">Utilisateurs</MudNavLink>
+        <MudNavLink Href="profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person" IconColor="Color.Inherit">Profil</MudNavLink>
+        <MudNavLink Href="users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People" IconColor="Color.Inherit">Utilisateurs</MudNavLink>
     }
 </MudNavMenu>
 
+<style>
+    
+    .nav-menu .mud-nav-link .mud-icon-root {
+        color: white !important;
+    }
 
+    .nav-menu .mud-nav-link:hover {
+        background-color: rgba(255,255,255,0.1) !important;
+    }
+
+    .nav-menu .mud-nav-link.active {
+        background-color: rgba(255,255,255,0.2) !important;
+        font-weight: bold;
+    }
+
+    .nav-menu .mud-nav-link.active .mud-icon-root {
+        color: var(--mud-palette-primary) !important;
+    }
+
+    .title-nav {
+        font-family: "Cambria", Cambria, serif;
+        background-color: @ColorConstant.colorBackgroundMallow00;
+       
+    }
+
+    .body {
+        background-color: @ColorConstant.colorBackgroundMallow00; /* Couleur de fond */
+    }
+</style>
