@@ -1,0 +1,56 @@
+﻿@page "/pagetransitionlayout"  
+@inject NavigationManager NavigationManager  
+@*Indique que cette page hérite de LayoutComponentBase, ce qui permet de définir une mise en page pour les composants enfants *@
+@inherits LayoutComponentBase 
+
+<div class="page-transition-wrapper @WrapperClass">
+    @* Définit un conteneur div avec une classe CSS dynamique WrapperClass
+       Vérifie si le composant est en cours de chargement *@
+    @if (IsLoading) 
+    {
+        // Si le composant est en cours de chargement, affiche un div avec une classe CSS dynamique CurrentClass pour l'animation de transition
+        <div class="animation-chg-page @CurrentClass"></div>
+    }
+    else  // Si le composant n'est pas en cours de chargement
+    {
+        // Affiche le contenu enfant du composant
+        @ChildContent
+    }
+</div>
+
+<style>
+    .page-transition-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .animation-chg-page {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: -100%; /* Position de départ */
+        transition: transform 0.6s cubic-bezier(0.96, 0.19, 0.14, 0.53), visibility 0.5s ease; /* Courbe de Bézier pour une entrée douce */
+        visibility: visible;
+        background-image: url('/images/BackGroundSwitch.svg'); /* Chemin vers votre fichier SVG */
+        background-size: cover; /* Assurez-vous que l'image couvre toute la div */
+        background-position: center; /* Centre l'image */
+    }
+
+    .page-transition-enter {
+        transform: translateX(-100%); /* Glisser vers la gauche */
+        visibility: visible; /* Assurez-vous qu'elle est visible */
+    }
+
+    .page-transition-leave {
+        transform: translateX(100%); /* Retour vers la droite */
+        opacity: 0%;
+        transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), visibility 0.5s ease; /* Courbe de Bézier pour une sortie douce */
+    }
+
+    .loading {
+        background: lightgrey; /* Changer le fond après l'animation */
+    }
+</style>

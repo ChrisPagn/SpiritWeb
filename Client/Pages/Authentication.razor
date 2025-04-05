@@ -9,7 +9,7 @@
 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-10">
     <MudCard>
         <MudCardHeader>
-            <MudText Typo="Typo.h5">@(isRegistering ? "Créer un compte" : "Connexion")</MudText>
+            <MudText Typo="Typo.h5" Class="title">@(isRegistering ? "Créer un compte" : "Connexion")</MudText>
         </MudCardHeader>
         <MudCardContent>
             <MudTextField @bind-Value="email" Label="Email" Variant="Variant.Outlined" FullWidth="true" />
@@ -26,7 +26,7 @@
             }
         </MudCardContent>
         <MudCardActions>
-            <MudButton OnClick="ToggleMode" Variant="Variant.Text" Color="Color.Secondary">
+            <MudButton OnClick="ToggleMode" Variant="Variant.Text" Color="Color.Secondary" Class="title-registration">
                 @(isRegistering ? "Déjà un compte ? Se connecter" : "Pas encore de compte ? S'inscrire")
             </MudButton>
             <MudSpacer />
@@ -34,7 +34,7 @@
                 @if (isProcessing)
                 {
                     <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                    <MudText Class="ms-2">Traitement...</MudText>
+                    <MudText Class="ms-2 title-registration">Traitement...</MudText>
                 }
                 else
                 {
@@ -45,65 +45,14 @@
     </MudCard>
 </MudContainer>
 
-@code {
-    private string email = "";
-    private string password = "";
-    private string displayName = "";
-    private string errorMessage = "";
-    private bool isRegistering = false;
-    private bool isProcessing = false;
-
-    private void ToggleMode()
-    {
-        isRegistering = !isRegistering;
-        errorMessage = "";
+<style>
+    .title {
+        font-family: "Cambria", Cambria, serif;
+        font-size: 1.5rem;
+        font-weight: bold;
     }
 
-    private async Task HandleAuthentication()
-    {
-        try
-        {
-            isProcessing = true;
-            errorMessage = "";
-
-            if (isRegistering)
-            {
-                var success = await AuthService.RegisterWithEmailAndPasswordAsync(email, password, displayName);
-                if (success)
-                {
-                    // Créer les données initiales
-                    await DatabaseService.CreateInitialDataAsync(AuthService.UserId, displayName);
-                }
-            }
-            else
-            {
-                await AuthService.SignInWithEmailAndPasswordAsync(email, password);
-            }
-
-            // Rediriger vers la page d'accueil
-            NavigationManager.NavigateTo("/");
-        }
-        catch (Exception ex)
-        {
-            errorMessage = TranslateFirebaseError(ex.Message);
-        }
-        finally
-        {
-            isProcessing = false;
-        }
+    .title-registration{
+        font-family: "Cambria", Cambria, serif;                   
     }
-
-    private string TranslateFirebaseError(string message)
-    {
-        if (message.Contains("EMAIL_EXISTS"))
-            return "Cet email est déjà utilisé.";
-        if (message.Contains("INVALID_EMAIL"))
-            return "Email invalide.";
-        if (message.Contains("WEAK_PASSWORD"))
-            return "Le mot de passe doit contenir au moins 6 caractères.";
-        if (message.Contains("EMAIL_NOT_FOUND") || message.Contains("INVALID_PASSWORD"))
-            return "Email ou mot de passe incorrect.";
-
-        return $"Erreur: {message}";
-    }
-}
+    </style>

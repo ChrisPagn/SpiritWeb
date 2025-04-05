@@ -35,32 +35,6 @@ namespace SpiritWeb.Server.Controllers
             return Ok(authResult);
         }
 
-        //[HttpPost("login")]
-        //public async Task<IActionResult> Login(string email, string password)
-        //{
-        //    var authResult = await _authService.SignInWithEmailAndPasswordAsync(email, password);
-
-        //    // Affiche les détails dans la console
-        //    Console.WriteLine($"Tentative de connexion avec l'email : {email}");
-        //    if (authResult != null)
-        //    {
-        //        // Définir la couleur du texte sur vert
-        //        Console.ForegroundColor = ConsoleColor.Green;
-
-        //        // Afficher le message avec la couleur définie
-        //        Console.WriteLine($"Connexion réussie ! ID utilisateur : {authResult.User.LocalId}");
-
-        //        // Réinitialiser la couleur du texte à sa valeur par défaut (blanc)
-        //        Console.ResetColor();
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("La connexion a échoué.");
-        //    }
-
-        //    return Ok(authResult);
-        //}
-
         [HttpPost("login")]
         public async Task<IActionResult> Login(string email, string password)
         {

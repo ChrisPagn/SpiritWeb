@@ -6,6 +6,7 @@
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
 
+
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
     <MudCard>
         <MudCardHeader>
@@ -25,18 +26,13 @@
                 <MudTextField @bind-Value="searchString" Placeholder="Rechercher..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" />
 
                 <MudTable Items="filteredUsers"
+                          Class="fun-table"
                           Hover="true"
-                          Bordered="true"
                           Striped="true"
+                          Bordered="true"
                           Dense="true"
-                          Breakpoint="Breakpoint.Sm"
-                          RowsPerPage="10"
-                          ServerData="LoadServerData"
-                          Filter="TableFilter"
-                          Elevation="1">
-                    <ToolBarContent>
-                        <MudText Typo="Typo.subtitle1" Class="ml-2">Utilisateurs trouvés : @filteredUsers.Count</MudText>
-                    </ToolBarContent>
+                         RowClassFunc="@( (user, index) => GetRowClass(user, index) )">
+
                     <HeaderContent>
                         <MudTh>Nom d'affichage</MudTh>
                         <MudTh>Niveau</MudTh>
@@ -47,78 +43,53 @@
                         <MudTh>Dernière modification</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd DataLabel="Nom d'affichage">@context.DisplayName</MudTd>
-                        <MudTd DataLabel="Niveau">@context.LevelReached</MudTd>
-                        <MudTd DataLabel="Pièces">@context.CoinsCount</MudTd>
+                        <MudTd>@context.DisplayName</MudTd>
+                        <MudTd>@context.LevelReached</MudTd>
+                        <MudTd>
+                            <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Warning" /> @context.CoinsCount
+                        </MudTd>
                         <MudTd DataLabel="Dernier niveau joué">@context.LastLevelPlayed</MudTd>
                         <MudTd DataLabel="Dernier niveau débloqué">@context.LevelReached</MudTd>
-                        <MudTd DataLabel="Objets">@context.InventoryItemsName?.Count</MudTd>
+                        <MudTd>
+                            <MudIcon Icon="@Icons.Material.Filled.Inventory" Color="Color.Info" /> @context.InventoryItemsName?.Count
+                        </MudTd>
                         <MudTd DataLabel="Dernière modification">@context.LastModified.ToLocalTime().ToString("f")</MudTd>
                     </RowTemplate>
                 </MudTable>
+
             }
         </MudCardContent>
     </MudCard>
 </MudContainer>
 
-@code {
-    private List<SaveData> users = new();
-    private string searchString = string.Empty;
-    private bool isLoading = true;
-
-    private List<SaveData> filteredUsers => string.IsNullOrWhiteSpace(searchString)
-        ? users
-        : users.Where(u =>
-            (u.DisplayName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
-            || u.LevelReached.ToString().Contains(searchString)
-            || u.CoinsCount.ToString().Contains(searchString)
-            || u.LastLevelPlayed.ToString().Contains(searchString)
-        ).ToList();
-
-    protected override async Task OnInitializedAsync()
-    {
-        await AuthService.AuthInitialized;
-
-        if (!AuthService.IsAuthenticated)
-        {
-            NavigationManager.NavigateTo("/authentication");
-            return;
-        }
-
-        try
-        {
-            users = await DatabaseService.GetAllUsersAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erreur lors du chargement des utilisateurs: {ex.Message}");
-        }
-        isLoading = false;
+<style>
+    .fun-table {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 10px;
+        background-color: #eeecfd;
+        border-radius: 10px;
+        border: 3px solid #513fe8;
+        box-shadow: 0 0 15px #dcd9fa;
     }
 
-    private bool TableFilter(SaveData user)
-    {
-        if (string.IsNullOrWhiteSpace(searchString))
-            return true;
+        .fun-table thead {
+            background-color: #513fe8;
+            color: white;
+        }
 
-        return (user.DisplayName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) ?? false)
-               || user.LevelReached.ToString().Contains(searchString)
-               || user.CoinsCount.ToString().Contains(searchString)
-               || user.LastLevelPlayed.ToString().Contains(searchString);
-    }
+        .fun-table tr:nth-child(even) {
+            background-color: #dcd9fa;
+        }
 
-    private Task<TableData<SaveData>> LoadServerData(TableState state, CancellationToken cancellationToken)
-    {
-        var data = filteredUsers
-            .Skip(state.Page * state.PageSize)
-            .Take(state.PageSize)
-            .ToList();
+        .fun-table tr:nth-child(odd) {
+            background-color: #eeecfd;
+        }
 
-        return Task.FromResult(new TableData<SaveData>()
-            {
-                TotalItems = filteredUsers.Count,
-                Items = data
-            });
-    }
+        .fun-table tr:hover {
+            background-color: #c2b8ff !important;
+            color: #000;
+            transition: background-color 0.3s ease;
+        }
 
-}
+</style>
+   

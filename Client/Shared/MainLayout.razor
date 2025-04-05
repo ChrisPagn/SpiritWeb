@@ -1,27 +1,4 @@
-﻿@* @inherits LayoutComponentBase
-
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-
-        <footer>
-
-        </footer>
-    </main>
-</div>
- *@
-
- @inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -31,30 +8,36 @@
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
                        OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h6" Class="ml-3">SpiritWeb</MudText>
+        <MudText Typo="Typo.h6" Class="ml-3 title-spiritweb">SpiritWeb</MudText>
         <MudSpacer />
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
     </MudAppBar>
 
     <MudDrawer @bind-Open="@_drawerOpen" Elevation="2">
         <MudDrawerHeader>
-            <MudText Typo="Typo.h6">Menu</MudText>
+            <MudText Typo="Typo.h6" Class="title-menu">Menu</MudText>
         </MudDrawerHeader>
         <NavMenu />
     </MudDrawer>
+    <SpiritWeb.Client.Pages.PageTransitionLayout>   
 
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="my-4 pt-4">
-            @Body
-        </MudContainer>
-    </MudMainContent>
+        <MudMainContent>
+            <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="my-4 pt-4">
+                @Body
+            </MudContainer>
+        </MudMainContent>
+    </SpiritWeb.Client.Pages.PageTransitionLayout>
+    <Footer />
 </MudLayout>
 
-@code {
-    private bool _drawerOpen = true;
 
-    private void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
+<style>
+
+    html, body, .navmenu, .footer, h1, h2, h3, h4, h5, h6 {
+        font-family: "Cambria", Cambria, serif;
     }
-}
+
+    .title-spiritweb, .title-menu {
+        font-family: "Cambria", Cambria, serif;
+    }
+</style>

@@ -1,0 +1,101 @@
+﻿@page "/footer"
+@using MudBlazor
+@inherits MudComponentBase
+
+<footer class="footer">
+    <MudContainer Class="footer-container">
+        <div class="social-media">
+            <p>Suivez-nous sur :</p>
+            <a href="https://www.youtube.com" target="_blank" aria-label="YouTube">
+                <i class="fab fa-youtube"></i>
+            </a>
+            <a href="https://www.facebook.com" target="_blank" aria-label="Facebook">
+                <i class="fab fa-facebook"></i>
+            </a>
+            <a href="https://www.instagram.com" target="_blank" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.twitter.com" target="_blank" aria-label="Twitter">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://www.linkedin.com" target="_blank" aria-label="LinkedIn">
+                <i class="fab fa-linkedin"></i>
+            </a>
+        </div>
+        <div class="app-stores">
+            <a href="#" target="_blank"><img src="images/app-store.svg" alt="Télécharger sur l'App Store" /></a>
+            <a href="#" target="_blank"><img src="images/google_play.png" alt="Disponible sur Google Play" /></a>
+        </div>
+        <div class="legal-links">
+            <a href="#">Conditions d'utilisation</a>
+            <a href="#">Politique de confidentialité</a>
+            <a href="#">Guide des parents</a>
+            <a href="#">Politique de jeu équitable</a>
+            <a href="#">Autres documents légaux</a>
+            <a href="#">Pour les médias</a>
+            <a href="#">Nos domaines</a>
+            <a href="#">Gérer les cookies</a>
+        </div>
+        <div class="company-info">
+            <p>Informations sur l'entreprise.</p>
+            <p>Pagnotta Christopher.</p>
+            <p>Projet TFE BAC 4 Info 2024-2025.</p>
+            
+        </div>
+    </MudContainer>
+</footer>
+
+<style>
+    .footer {
+        width: 100%;
+        background-color: #4939d1; /* Couleur de fond */
+        color: #fff; /* Couleur du texte */
+        text-align: center;
+        font-size: 14px;
+        padding: 20px;
+    }
+
+    .footer-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer .social-media {
+        margin-bottom: 15px;
+    }
+
+        .footer .social-media p {
+            margin: 0 0 10px 0;
+        }
+
+        .footer .social-media a {
+            color: #fff;
+            margin: 0 10px;
+            font-size: 20px;
+        }
+
+            .footer .social-media a:hover {
+                color: #ddd;
+            }
+
+    .footer .app-stores img {
+        height: 40px;
+        margin: 10px;
+    }
+
+    .footer .legal-links a {
+        color: #fff;
+        margin: 0 10px;
+        text-decoration: none;
+    }
+
+        .footer .legal-links a:hover {
+            text-decoration: underline;
+        }
+
+    .footer .company-info {
+        margin-top: 15px;
+        line-height: 1.6;
+    }
+</style>

@@ -8,13 +8,16 @@
     <MudDivider Class="mb-2" />
 
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+    @* Menu par default a modifier ou a supprimer *@
     <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
     <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink>
 
+    @* Verifier si user n'est pas authentifié *@
     @if (!AuthService.IsAuthenticated)
     {
         <MudNavLink Href="authentication" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Login">Authentification</MudNavLink>
     }
+    @* Verifier si user est authentifié *@
     else
     {
         <MudNavLink Href="profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Profil</MudNavLink>
@@ -22,21 +25,4 @@
     }
 </MudNavMenu>
 
-@code {
-    protected override async Task OnInitializedAsync()
-    {
-        AuthService.OnAuthStateChanged += OnAuthStateChanged;
-        await AuthService.AuthInitialized; // Attendre que l'initialisation de l'authentification soit terminée
-        StateHasChanged(); // Forcer un re-rendu initial
-    }
 
-    private void OnAuthStateChanged()
-    {
-        InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        AuthService.OnAuthStateChanged -= OnAuthStateChanged;
-    }
-}
