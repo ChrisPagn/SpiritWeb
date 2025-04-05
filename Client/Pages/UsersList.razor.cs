@@ -3,12 +3,19 @@ using SpiritWeb.Shared.Models;
 
 namespace SpiritWeb.Client.Pages
 {
+    /// <summary>
+    /// Classe représentant la liste des utilisateurs dans l'application.
+    /// Gère le chargement, le filtrage et l'affichage des utilisateurs.
+    /// </summary>
     public partial class UsersList
     {
         private List<SaveData> users = new();
         private string searchString = string.Empty;
         private bool isLoading = true;
 
+        /// <summary>
+        /// Liste des utilisateurs filtrés en fonction de la chaîne de recherche.
+        /// </summary>
         private List<SaveData> filteredUsers => string.IsNullOrWhiteSpace(searchString)
              ? users
              : users.Where(u =>
@@ -18,7 +25,10 @@ namespace SpiritWeb.Client.Pages
                  || (u.LastLevelPlayed?.ToString().Contains(searchString) ?? false)
              ).ToList();
 
-
+        /// <summary>
+        /// Méthode appelée lors de l'initialisation du composant.
+        /// Charge les utilisateurs depuis la base de données si l'utilisateur est authentifié.
+        /// </summary>
         protected override async Task OnInitializedAsync()
         {
             await AuthService.AuthInitialized;
@@ -40,6 +50,11 @@ namespace SpiritWeb.Client.Pages
             isLoading = false;
         }
 
+        /// <summary>
+        /// Filtre les utilisateurs en fonction de la chaîne de recherche.
+        /// </summary>
+        /// <param name="user">L'utilisateur à filtrer.</param>
+        /// <returns>True si l'utilisateur correspond aux critères de recherche, sinon False.</returns>
         private bool TableFilter(SaveData user)
         {
             if (string.IsNullOrWhiteSpace(searchString))
@@ -51,7 +66,12 @@ namespace SpiritWeb.Client.Pages
                    || (user.LastLevelPlayed?.ToString().Contains(searchString) ?? false);
         }
 
-
+        /// <summary>
+        /// Charge les données de la table en fonction de l'état de pagination.
+        /// </summary>
+        /// <param name="state">L'état actuel de la table, incluant la page et la taille de la page.</param>
+        /// <param name="cancellationToken">Le jeton d'annulation.</param>
+        /// <returns>Les données de la table pour la page actuelle.</returns>
         private Task<TableData<SaveData>> LoadServerData(TableState state, CancellationToken cancellationToken)
         {
             var data = filteredUsers
@@ -66,10 +86,15 @@ namespace SpiritWeb.Client.Pages
             });
         }
 
+        /// <summary>
+        /// Détermine la classe CSS à appliquer à une ligne de la table en fonction du niveau atteint par l'utilisateur.
+        /// </summary>
+        /// <param name="user">L'utilisateur pour lequel déterminer la classe CSS.</param>
+        /// <param name="index">L'index de la ligne.</param>
+        /// <returns>La classe CSS à appliquer à la ligne.</returns>
         string GetRowClass(SaveData user, int index)
         {
             return user.LevelReached >= 10 ? "high-level" : "low-level";
         }
-
     }
 }

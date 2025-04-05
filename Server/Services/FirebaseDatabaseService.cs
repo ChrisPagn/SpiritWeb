@@ -5,15 +5,27 @@ using Microsoft.Extensions.Configuration;
 using SpiritWeb.Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SpiritWeb.Server.Services
 {
+    /// <summary>
+    /// Service pour interagir avec Firestore, une base de données NoSQL de Firebase.
+    /// Gère les opérations CRUD pour les données utilisateur.
+    /// </summary>
     public class FirebaseDatabaseService
     {
         private readonly FirestoreDb _firestoreDb;
 
+        /// <summary>
+        /// Initialise une nouvelle instance de la classe <see cref="FirebaseDatabaseService"/>.
+        /// </summary>
+        /// <param name="configuration">Configuration de l'application pour accéder aux paramètres Firebase.</param>
+        /// <exception cref="ArgumentNullException">Lancée si les paramètres Firebase sont manquants.</exception>
+        /// <exception cref="FileNotFoundException">Lancée si le fichier de credentials est introuvable.</exception>
+        /// <exception cref="Exception">Lancée si l'initialisation de Firestore échoue.</exception>
         public FirebaseDatabaseService(IConfiguration configuration)
         {
             try
@@ -57,12 +69,23 @@ namespace SpiritWeb.Server.Services
             }
         }
 
+        /// <summary>
+        /// Sauvegarde les données utilisateur dans Firestore.
+        /// </summary>
+        /// <param name="userId">Identifiant de l'utilisateur.</param>
+        /// <param name="saveData">Les données utilisateur à sauvegarder.</param>
+        /// <exception cref="Exception">Lancée si la sauvegarde des données échoue.</exception>
         public async Task SaveDataAsync(string userId, SaveData saveData)
         {
             DocumentReference docRef = _firestoreDb.Collection("users").Document(userId);
             await docRef.SetAsync(saveData);
         }
 
+        /// <summary>
+        /// Charge les données utilisateur depuis Firestore.
+        /// </summary>
+        /// <param name="userId">Identifiant de l'utilisateur dont les données doivent être chargées.</param>
+        /// <returns>Les données utilisateur chargées, ou null si elles n'existent pas.</returns>
         public async Task<SaveData?> LoadDataAsync(string userId)
         {
             DocumentReference docRef = _firestoreDb.Collection("users").Document(userId);
@@ -76,6 +99,10 @@ namespace SpiritWeb.Server.Services
             return null;
         }
 
+        /// <summary>
+        /// Récupère tous les utilisateurs depuis Firestore.
+        /// </summary>
+        /// <returns>Une liste de tous les utilisateurs.</returns>
         public async Task<List<SaveData>> GetAllUsersAsync()
         {
             CollectionReference usersRef = _firestoreDb.Collection("users");

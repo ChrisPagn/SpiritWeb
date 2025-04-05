@@ -2,6 +2,10 @@
 
 namespace SpiritWeb.Client.Pages
 {
+    /// <summary>
+    /// Classe représentant le profil utilisateur dans l'application.
+    /// Gère le chargement, l'édition et la sauvegarde des données utilisateur.
+    /// </summary>
     public partial class ProfileUser
     {
         private SaveData userData;
@@ -9,9 +13,13 @@ namespace SpiritWeb.Client.Pages
         private bool isLoading = true;
         private bool isEditing = false;
 
+        /// <summary>
+        /// Méthode appelée lors de l'initialisation du composant.
+        /// Charge les données utilisateur si l'utilisateur est authentifié.
+        /// </summary>
         protected override async Task OnInitializedAsync()
         {
-            await AuthService.AuthInitialized; // Attendez que l'auth soit prête
+            await AuthService.AuthInitialized; // Attend que l'authentification soit prête
 
             if (!AuthService.IsAuthenticated)
             {
@@ -32,6 +40,11 @@ namespace SpiritWeb.Client.Pages
             }
         }
 
+        /// <summary>
+        /// Clone les données de sauvegarde d'un utilisateur.
+        /// </summary>
+        /// <param name="source">Les données source à cloner.</param>
+        /// <returns>Une nouvelle instance de SaveData avec les mêmes valeurs que la source.</returns>
         private SaveData CloneSaveData(SaveData source)
         {
             return new SaveData
@@ -47,17 +60,26 @@ namespace SpiritWeb.Client.Pages
             };
         }
 
+        /// <summary>
+        /// Démarre l'édition des données utilisateur.
+        /// </summary>
         private void StartEdit()
         {
             isEditing = true;
         }
 
+        /// <summary>
+        /// Annule les modifications et restaure les données originales.
+        /// </summary>
         private void CancelEdit()
         {
             userData = CloneSaveData(originalData);
             isEditing = false;
         }
 
+        /// <summary>
+        /// Sauvegarde les modifications apportées aux données utilisateur.
+        /// </summary>
         private async Task SaveChanges()
         {
             try
@@ -73,6 +95,9 @@ namespace SpiritWeb.Client.Pages
             }
         }
 
+        /// <summary>
+        /// Déconnecte l'utilisateur et redirige vers la page d'authentification.
+        /// </summary>
         private async Task SignOut()
         {
             await AuthService.SignOut();

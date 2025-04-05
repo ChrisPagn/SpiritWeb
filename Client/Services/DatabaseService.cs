@@ -7,16 +7,27 @@ using System;
 
 namespace SpiritWeb.Client.Services
 {
+    /// <summary>
+    /// Service de gestion des interactions avec la base de données pour les opérations CRUD sur les données utilisateur.
+    /// </summary>
     public class DatabaseService
     {
         private readonly HttpClient _httpClient;
 
+        /// <summary>
+        /// Initialise une nouvelle instance de la classe <see cref="DatabaseService"/>.
+        /// </summary>
+        /// <param name="httpClient">Client HTTP pour les requêtes réseau.</param>
         public DatabaseService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        // Sauvegarde des données utilisateur
+        /// <summary>
+        /// Sauvegarde les données utilisateur dans la base de données.
+        /// </summary>
+        /// <param name="saveData">Les données utilisateur à sauvegarder.</param>
+        /// <exception cref="Exception">Lancée lorsqu'une erreur survient lors de la sauvegarde des données.</exception>
         public async Task SaveDataAsync(SaveData saveData)
         {
             try
@@ -31,7 +42,12 @@ namespace SpiritWeb.Client.Services
             }
         }
 
-        // Chargement des données utilisateur
+        /// <summary>
+        /// Charge les données utilisateur depuis la base de données.
+        /// </summary>
+        /// <param name="userId">Identifiant de l'utilisateur dont les données doivent être chargées.</param>
+        /// <returns>Les données utilisateur chargées.</returns>
+        /// <exception cref="Exception">Lancée lorsqu'une erreur survient lors du chargement des données.</exception>
         public async Task<SaveData?> LoadDataAsync(string userId)
         {
             try
@@ -46,7 +62,11 @@ namespace SpiritWeb.Client.Services
             }
         }
 
-        // Récupération de tous les utilisateurs
+        /// <summary>
+        /// Récupère tous les utilisateurs depuis la base de données.
+        /// </summary>
+        /// <returns>Une liste de tous les utilisateurs.</returns>
+        /// <exception cref="Exception">Lancée lorsqu'une erreur survient lors de la récupération des utilisateurs.</exception>
         public async Task<List<SaveData>> GetAllUsersAsync()
         {
             try
@@ -61,7 +81,12 @@ namespace SpiritWeb.Client.Services
             }
         }
 
-        // Initialisation des données pour un nouvel utilisateur
+        /// <summary>
+        /// Initialise les données pour un nouvel utilisateur.
+        /// </summary>
+        /// <param name="userId">Identifiant de l'utilisateur.</param>
+        /// <param name="displayName">Nom d'affichage de l'utilisateur.</param>
+        /// <exception cref="Exception">Lancée lorsqu'une erreur survient lors de la création des données initiales.</exception>
         public async Task CreateInitialDataAsync(string userId, string displayName)
         {
             try
