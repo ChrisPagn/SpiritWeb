@@ -30,7 +30,9 @@ namespace SpiritWeb.Client.Pages
             try
             {
                 userData = await DatabaseService.LoadDataAsync(AuthService.UserId);
+                Console.WriteLine($"UserData loaded: {userData.UserId}, {userData.DisplayName}");
                 originalData = CloneSaveData(userData);
+                Console.WriteLine($"OriginalData cloned: {originalData.UserId}, {originalData.DisplayName}");
                 isLoading = false;
             }
             catch (Exception ex)
@@ -45,8 +47,10 @@ namespace SpiritWeb.Client.Pages
         /// </summary>
         /// <param name="source">Les données source à cloner.</param>
         /// <returns>Une nouvelle instance de SaveData avec les mêmes valeurs que la source.</returns>
-        private SaveData CloneSaveData(SaveData source)
+        private static SaveData CloneSaveData(SaveData source)
         {
+            if (source == null) return null;
+
             return new SaveData
             {
                 UserId = source.UserId,
@@ -54,11 +58,12 @@ namespace SpiritWeb.Client.Pages
                 CoinsCount = source.CoinsCount,
                 LevelReached = source.LevelReached,
                 LastLevelPlayed = source.LastLevelPlayed,
-                InventoryItems = new List<int>(source.InventoryItems),
-                InventoryItemsName = new List<string>(source.InventoryItemsName),
+                InventoryItems = source.InventoryItems != null ? new List<int>(source.InventoryItems) : new List<int>(),
+                InventoryItemsName = source.InventoryItemsName != null ? new List<string>(source.InventoryItemsName) : new List<string>(),
                 LastModified = source.LastModified
             };
         }
+
 
         /// <summary>
         /// Démarre l'édition des données utilisateur.

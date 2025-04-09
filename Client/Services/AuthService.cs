@@ -8,6 +8,7 @@ using System.Text.Json;
 using Microsoft.JSInterop;
 using FirebaseAdmin.Auth;
 using System.Text.Json.Serialization;
+using SpiritWeb.Client.Models;
 
 namespace SpiritWeb.Client.Services
 {
@@ -155,7 +156,7 @@ namespace SpiritWeb.Client.Services
 
                 if (authResult != null)
                 {
-                    await SetAuthData(authResult.Token, authResult.UserId ?? authResult.User?.LocalId, email, null);
+                    await SetAuthData(authResult.Token, authResult.UserId ?? authResult.LocalId?.LocalId, email, null);
                     return authResult;
                 }
                 return null;
@@ -181,6 +182,8 @@ namespace SpiritWeb.Client.Services
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "userId");
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "userEmail");
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "displayName");
+
+            NotifyAuthenticationStateChanged();
         }
 
         /// <summary>
@@ -201,6 +204,8 @@ namespace SpiritWeb.Client.Services
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userId", userId);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userEmail", email);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", displayName ?? string.Empty);
+
+            NotifyAuthenticationStateChanged();
         }
 
         /// <summary>
@@ -220,40 +225,8 @@ namespace SpiritWeb.Client.Services
         {
             OnAuthStateChanged?.Invoke();
         }
+
+       
     }
 
-    /// <summary>
-    /// Classe représentant le résultat de l'authentification Firebase.
-    /// </summary>
-    public class FirebaseAuthResult
-    {
-        /// <summary>
-        /// Jeton d'authentification.
-        /// </summary>
-        [JsonPropertyName("token")]
-        public string Token { get; set; }
-
-        /// <summary>
-        /// Identifiant de l'utilisateur.
-        /// </summary>
-        [JsonPropertyName("localId")]
-        public string UserId { get; set; }
-
-        /// <summary>
-        /// Objet utilisateur Firebase.
-        /// </summary>
-        [JsonPropertyName("user")]
-        public FirebaseUser User { get; set; }
-    }
-
-    /// <summary>
-    /// Classe représentant un utilisateur Firebase.
-    /// </summary>
-    public class FirebaseUser
-    {
-        /// <summary>
-        /// Identifiant local de l'utilisateur.
-        /// </summary>
-        public string LocalId { get; set; }
-    }
 }

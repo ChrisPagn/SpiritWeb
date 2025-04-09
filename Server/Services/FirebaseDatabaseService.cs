@@ -19,6 +19,7 @@ namespace SpiritWeb.Server.Services
     {
         private readonly FirestoreDb _firestoreDb;
 
+
         /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="FirebaseDatabaseService"/>.
         /// </summary>
@@ -93,11 +94,15 @@ namespace SpiritWeb.Server.Services
 
             if (snapshot.Exists)
             {
-                return snapshot.ConvertTo<SaveData>();
+                SaveData saveData = snapshot.ConvertTo<SaveData>();
+                saveData.UserId = docRef.Id; // Optionnel si ce champ n’est pas dans Firestore
+                return saveData;
             }
 
             return null;
         }
+
+
 
         /// <summary>
         /// Récupère tous les utilisateurs depuis Firestore.

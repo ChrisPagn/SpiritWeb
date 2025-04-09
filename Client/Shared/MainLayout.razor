@@ -4,42 +4,63 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<MudLayout>
+<MudLayout Class="d-flex flex-column" Style="min-height: 100vh;">
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
                        OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h6" Class="ml-3 title-spiritweb">SpiritWeb</MudText>
         <MudSpacer />
-        @* pictogramme-button 3points *@
-        @*<MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />*@
     </MudAppBar>
 
     <MudDrawer @bind-Open="@_drawerOpen" Elevation="2" Class="bodyback">
-        <MudDrawerHeader> 
+        <MudDrawerHeader>
             <MudText Typo="Typo.h6" Class="title-menu">Menu</MudText>
         </MudDrawerHeader>
         <NavMenu />
     </MudDrawer>
-    <SpiritWeb.Client.Pages.PageTransitionLayout>   
 
-        <MudMainContent>
-            <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="my-4 pt-4">
-                @Body
-            </MudContainer>
-        </MudMainContent>
-    </SpiritWeb.Client.Pages.PageTransitionLayout>
-    <Footer />
+    <div class="content-wrapper">
+        <SpiritWeb.Client.Pages.PageTransitionLayout>
+            <MudMainContent Class="flex-grow-1">
+                <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="main-container">
+                    @Body
+                </MudContainer>
+            </MudMainContent>
+        </SpiritWeb.Client.Pages.PageTransitionLayout>
+    </div>
+
+    <Footer Class="footer" />
 </MudLayout>
 
-
 <style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
 
+    .content-wrapper {
+        flex: 1 0 auto; /* Prend l'espace disponible */
+        padding-bottom: 2rem; /* Espace avant le footer */
+    }
+
+    .main-container {
+        padding-bottom: 2rem; /* Espace supplémentaire si nécessaire */
+    }
+
+    .footer {
+        flex-shrink: 0; /* Empêche le footer de rétrécir */
+        width: 100%;
+    }
+
+    /* Vos styles existants */
     html, body, .navmenu, .footer {
         font-family: "Cambria", Cambria, serif;
     }
-    .bodyback{
-        background-color: #4939d1; /* Couleur de fond */
-        color: #fff; /* Couleur du texte */
+
+    .bodyback {
+        background-color: #4939d1;
+        color: #fff;
     }
 
     .title-spiritweb, .title-menu {

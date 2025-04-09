@@ -6,12 +6,13 @@
 @inject DatabaseService DatabaseService
 @inject NavigationManager NavigationManager
 
-<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6">
-    <MudCard>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6 mb-10" Style="height: calc(100vh - 120px);">
+    <MudCard Style="height: 100%; display: flex; flex-direction: column;">
         <MudCardHeader>
-            <MudText Typo="Typo.h4">Profil Utilisateur</MudText>
+            <MudText Typo="Typo.h4" Class="title">Profil Utilisateur</MudText>
         </MudCardHeader>
-        <MudCardContent>
+
+        <MudCardContent Style="flex: 1; overflow-y: auto; padding-bottom: 1rem; border-top: 1px solid var(--mud-palette-lines-default);" >
             @if (isLoading)
             {
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -24,27 +25,31 @@
             {
                 <MudGrid>
                     <MudItem xs="12" sm="6">
-                        <MudTextField @bind-Value="userData.DisplayName" Label="Nom d'affichage" Variant="Variant.Outlined" 
-                                     FullWidth="true" ReadOnly="!isEditing" />
+                        <MudTextField @bind-Value="userData.DisplayName" Label="Nom d'affichage" Variant="Variant.Outlined"
+                                      FullWidth="true" ReadOnly="!isEditing" />
                     </MudItem>
                     <MudItem xs="12" sm="6">
-                        <MudTextField Value="@AuthService.UserEmail" Label="Email" Variant="Variant.Outlined" 
-                                     FullWidth="true" ReadOnly="true" />
+                        <MudTextField @bind-Value="userData.UserId" Label="Id utilisateur" Variant="Variant.Outlined"
+                                      FullWidth="true" ReadOnly="!isEditing" />
                     </MudItem>
                     <MudItem xs="12" sm="6">
-                        <MudTextField @bind-Value="userData.CoinsCount" Label="Pièces" Variant="Variant.Outlined" 
-                                     FullWidth="true" ReadOnly="!isEditing" />
+                        <MudTextField Value="@AuthService.UserEmail" Label="Email" Variant="Variant.Outlined"
+                                      FullWidth="true" ReadOnly="true" />
                     </MudItem>
                     <MudItem xs="12" sm="6">
-                        <MudTextField @bind-Value="userData.LevelReached" Label="Niveau atteint" Variant="Variant.Outlined" 
-                                     FullWidth="true" ReadOnly="!isEditing" />
+                        <MudTextField @bind-Value="userData.CoinsCount" Label="Pièces" Variant="Variant.Outlined"
+                                      FullWidth="true" ReadOnly="!isEditing" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField @bind-Value="userData.LevelReached" Label="Niveau atteint" Variant="Variant.Outlined"
+                                      FullWidth="true" ReadOnly="!isEditing" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="userData.LastLevelPlayed" Label="Dernier niveau joué" Variant="Variant.Outlined" 
-                                    FullWidth="true" ReadOnly="!isEditing" />
+                        <MudTextField @bind-Value="userData.LastLevelPlayed" Label="Dernier niveau joué" Variant="Variant.Outlined"
+                                      FullWidth="true" ReadOnly="!isEditing" />
                     </MudItem>
                     <MudItem xs="12">
-                        <MudText Typo="Typo.h6">Inventaire</MudText>
+                        <MudText Typo="Typo.h6" Class="title">Inventaire</MudText>
                         <MudList T="string" Dense="true">
                             @if (userData.InventoryItemsName.Count == 0)
                             {
@@ -70,7 +75,8 @@
                 </MudGrid>
             }
         </MudCardContent>
-        <MudCardActions>
+
+        <MudCardActions Class="pa-4" Style="border-top: 1px solid var(--mud-palette-lines-default);">
             @if (!isLoading && userData != null)
             {
                 @if (isEditing)
@@ -89,3 +95,14 @@
     </MudCard>
 </MudContainer>
 
+<style>
+    .title {
+        font-family: "Cambria", Cambria, serif;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .title-registration {
+        font-family: "Cambria", Cambria, serif;
+    }
+</style>

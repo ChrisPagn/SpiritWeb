@@ -28,29 +28,32 @@
 <style>
     
     .nav-menu .mud-nav-link .mud-icon-root {
-        color: white !important;
+/*         color: white !important;
+ */
     }
 
     .nav-menu .mud-nav-link:hover {
-        background-color: rgba(255,255,255,0.1) !important;
+        background-color: @ColorConstant.colorBackgroundMallow90;
+        font-weight: bold;
+        color: @ColorConstant.colorBackgroundMallow00;    
     }
+    
 
     .nav-menu .mud-nav-link.active {
-        background-color: rgba(255,255,255,0.2) !important;
+        background-color: @ColorConstant.colorBackgroundMallow90;
         font-weight: bold;
     }
+        
 
     .nav-menu .mud-nav-link.active .mud-icon-root {
-        color: var(--mud-palette-primary) !important;
-    }
+        background-color: @ColorConstant.colorBackgroundMallow90; 
+        font-weight: bold;
+        border-radius: 5px;
+     }
 
     .title-nav {
-        font-family: "Cambria", Cambria, serif;
-        background-color: @ColorConstant.colorBackgroundMallow00;
-       
+        font-family: "Cambria", Cambria, serif !important;
+        background-color: @ColorConstant.colorBackgroundMallow00;      
     }
 
-    .body {
-        background-color: @ColorConstant.colorBackgroundMallow00; /* Couleur de fond */
-    }
 </style>
