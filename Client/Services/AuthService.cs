@@ -96,13 +96,14 @@ namespace SpiritWeb.Client.Services
             }
         }
 
+
         /// <summary>
-        /// Enregistre un nouvel utilisateur avec un email, un mot de passe et un nom d'affichage.
+        /// Inscrit un nouvel utilisateur avec un email, un mot de passe et un nom d'affichage.
         /// </summary>
-        /// <param name="email">Email de l'utilisateur.</param>
-        /// <param name="password">Mot de passe de l'utilisateur.</param>
-        /// <param name="displayName">Nom d'affichage de l'utilisateur.</param>
-        /// <returns>True si l'enregistrement est réussi, sinon False.</returns>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="displayName"></param>
+        /// <returns></returns>
         public async Task<bool> RegisterWithEmailAndPasswordAsync(string email, string password, string displayName)
         {
             try
@@ -117,7 +118,14 @@ namespace SpiritWeb.Client.Services
 
                 if (authResult != null)
                 {
-                    await SetAuthData(authResult.Token, authResult.UserId, email, displayName);
+                    // S'assurer que l'UserId est bien défini avant de continuer
+                    string userId = authResult.UserId ?? authResult.LocalId?.LocalId;
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        throw new Exception("L'ID utilisateur n'a pas été retourné par Firebase");
+                    }
+
+                    await SetAuthData(authResult.Token, userId, email, displayName);
                     return true;
                 }
                 return false;

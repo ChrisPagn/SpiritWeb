@@ -21,9 +21,11 @@
             errorMessage = "";
         }
 
+
         /// <summary>
-        /// Gère le processus d'authentification, soit l'inscription soit la connexion, en fonction du mode actuel.
+        /// Gère l'authentification de l'utilisateur, que ce soit pour l'inscription ou la connexion.
         /// </summary>
+        /// <returns></returns>
         private async Task HandleAuthentication()
         {
             try
@@ -37,21 +39,28 @@
                     var success = await AuthService.RegisterWithEmailAndPasswordAsync(email, password, displayName);
                     if (success)
                     {
+                        // Attendre que l'ID utilisateur soit disponible
+                        while (string.IsNullOrEmpty(AuthService.UserId))
+                        {
+                            await Task.Delay(100);
+                        }
+
                         // Créer les données initiales pour le nouvel utilisateur
                         await DatabaseService.CreateInitialDataAsync(AuthService.UserId, displayName);
+
+                        // Rediriger seulement après que tout est complet
+                        NavigationManager.NavigateTo("/");
                     }
                 }
                 else
                 {
                     // Connecter l'utilisateur avec email et mot de passe
                     await AuthService.SignInWithEmailAndPasswordAsync(email, password);
+                    NavigationManager.NavigateTo("/");
                 }
-                // Rediriger vers la page d'accueil après une authentification réussie
-                NavigationManager.NavigateTo("/");
             }
             catch (Exception ex)
             {
-                // Gérer les erreurs d'authentification et afficher un message d'erreur approprié
                 errorMessage = TranslateFirebaseError(ex.Message);
             }
             finally

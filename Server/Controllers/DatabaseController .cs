@@ -3,6 +3,7 @@ using SpiritWeb.Shared.Models;
 using SpiritWeb.Server.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace SpiritWeb.Server.Controllers
 {
@@ -25,16 +26,34 @@ namespace SpiritWeb.Server.Controllers
         }
 
         /// <summary>
-        /// Sauvegarde les données utilisateur dans la base de données.
+        /// /// <summary>
+        /// Sauvegarde les données utilisateur dans la base de données Firestore.
+        /// Ce endpoint accepte un objet SaveData complet et le persiste dans la collection "users"
+        /// en utilisant le UserId comme identifiant de document.
         /// </summary>
-        /// <param name="userId">Identifiant de l'utilisateur.</param>
-        /// <param name="saveData">Les données utilisateur à sauvegarder.</param>
-        /// <returns>Une réponse HTTP indiquant le succès de l'opération.</returns>
-        [HttpPost("save")]
-        public async Task<IActionResult> SaveData(string userId, [FromBody] SaveData saveData)
+        /// <param name="saveData"></param>
+        /// <returns></returns>        
+        [HttpPost("save")] 
+        public async Task<IActionResult> SaveData([FromBody] SaveData saveData)
         {
-            await _databaseService.SaveDataAsync(userId, saveData);
-            return Ok();
+            try
+            {
+                if (saveData == null || string.IsNullOrEmpty(saveData.UserId))
+                {
+                    return BadRequest("Données invalides");
+                }
+
+                Console.WriteLine($"Données reçues: {JsonSerializer.Serialize(saveData)}");
+
+                // Passez directement saveData.UserId
+                await _databaseService.SaveDataAsync(saveData.UserId, saveData);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERREUR Serveur: {ex}");
+                return StatusCode(500, $"Erreur interne: {ex.Message}");
+            }
         }
 
         /// <summary>

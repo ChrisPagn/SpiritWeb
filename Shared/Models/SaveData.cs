@@ -38,7 +38,7 @@ namespace SpiritWeb.Shared.Models
         /// Dernier niveau joué par l'utilisateur.
         /// </summary>
         [FirestoreProperty]
-        public string LastLevelPlayed { get; set; }
+        public string LastLevelPlayed { get; set; } = "Pas encore atteint de niveau!";
 
         /// <summary>
         /// Liste des identifiants des objets dans l'inventaire de l'utilisateur.

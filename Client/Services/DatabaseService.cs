@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
+using System.Text.Json;
 
 namespace SpiritWeb.Client.Services
 {
@@ -28,19 +29,45 @@ namespace SpiritWeb.Client.Services
         /// </summary>
         /// <param name="saveData">Les données utilisateur à sauvegarder.</param>
         /// <exception cref="Exception">Lancée lorsqu'une erreur survient lors de la sauvegarde des données.</exception>
+        //public async Task SaveDataAsync(SaveData saveData)
+        //{
+        //    try
+        //    {
+        //        var response = await _httpClient.PostAsJsonAsync($"api/Database/save?userId={saveData.UserId}", saveData);
+        //        response.EnsureSuccessStatusCode();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Erreur lors de la sauvegarde des données : {ex.Message}");
+        //        throw;
+        //    }
+        //}
+
+
         public async Task SaveDataAsync(SaveData saveData)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync($"api/Database/save?userId={saveData.UserId}", saveData);
+                Console.WriteLine($"Données envoyées: {JsonSerializer.Serialize(saveData)}");
+
+                // Envoyez seulement le corps, le userId est déjà dans saveData
+                var response = await _httpClient.PostAsJsonAsync($"api/Database/save", saveData);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Erreur de sauvegarde: {response.StatusCode}, Détails: {errorContent}");
+                }
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la sauvegarde des données : {ex.Message}");
+                Console.WriteLine($"Erreur complète sauvegarde: {ex.ToString()}");
                 throw;
             }
         }
+
+
 
         /// <summary>
         /// Charge les données utilisateur depuis la base de données.
@@ -94,10 +121,10 @@ namespace SpiritWeb.Client.Services
                 var saveData = new SaveData
                 {
                     UserId = userId,
-                    DisplayName = displayName,
+                    DisplayName = displayName ?? "Utilisateur",
                     CoinsCount = 0,
-                    LevelReached = 1,
-                    LastLevelPlayed = "level01",
+                    LevelReached = 0,
+                    LastLevelPlayed = "Pas encore atteint de niveau!",
                     InventoryItems = new List<int>(),
                     InventoryItemsName = new List<string>(),
                     LastModified = DateTime.UtcNow

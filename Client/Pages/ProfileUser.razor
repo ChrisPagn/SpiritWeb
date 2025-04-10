@@ -5,9 +5,10 @@
 @inject AuthService AuthService
 @inject DatabaseService DatabaseService
 @inject NavigationManager NavigationManager
+@using SpiritWeb.Client.Models
 
 <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6 mb-10" Style="height: calc(100vh - 120px);">
-    <MudCard Style="height: 100%; display: flex; flex-direction: column;">
+    <MudCard Style="height: 100%; display: flex; flex-direction: column;" Class="body">
         <MudCardHeader>
             <MudText Typo="Typo.h4" Class="title">Profil Utilisateur</MudText>
         </MudCardHeader>
@@ -25,44 +26,70 @@
             {
                 <MudGrid>
                     <MudItem xs="12" sm="6">
-                        <MudTextField @bind-Value="userData.DisplayName" Label="Nom d'affichage" Variant="Variant.Outlined"
-                                      FullWidth="true" ReadOnly="!isEditing" />
+                        <MudTextField @bind-Value="userData.DisplayName" 
+                                        Label="Nom d'affichage" 
+                                        Variant="Variant.Outlined"
+                                        FullWidth="true" ReadOnly="!isEditing" />
                     </MudItem>
+
                     <MudItem xs="12" sm="6">
-                        <MudTextField @bind-Value="userData.UserId" Label="Id utilisateur" Variant="Variant.Outlined"
-                                      FullWidth="true" ReadOnly="!isEditing" />
+                        <MudTextField Value="@GetShortUserId(userData.UserId)"
+                                      Label="ID utilisateur"
+                                      Variant="Variant.Outlined"
+                                      FullWidth="true"
+                                      ReadOnly="true" />
                     </MudItem>
+
                     <MudItem xs="12" sm="6">
-                        <MudTextField Value="@AuthService.UserEmail" Label="Email" Variant="Variant.Outlined"
-                                      FullWidth="true" ReadOnly="true" />
+                        <MudTextField Value="@AuthService.UserEmail" 
+                                            Label="Email"
+                                            Variant="Variant.Outlined"
+                                            FullWidth="true" 
+                                            ReadOnly="true" />
                     </MudItem>
+
                     <MudItem xs="12" sm="6">
-                        <MudTextField @bind-Value="userData.CoinsCount" Label="Pièces" Variant="Variant.Outlined"
-                                      FullWidth="true" ReadOnly="!isEditing" />
+                        <MudTextField @bind-Value="userData.CoinsCount" 
+                                        Label="Pièces" 
+                                        Variant="Variant.Outlined"
+                                        FullWidth="true" 
+                                        ReadOnly="true" />
                     </MudItem>
+
                     <MudItem xs="12" sm="6">
-                        <MudTextField @bind-Value="userData.LevelReached" Label="Niveau atteint" Variant="Variant.Outlined"
-                                      FullWidth="true" ReadOnly="!isEditing" />
+                        <MudTextField @bind-Value="userData.LevelReached" 
+                                        Label="Niveau atteint" 
+                                        Variant="Variant.Outlined"
+                                        FullWidth="true" 
+                                        ReadOnly="true" />
                     </MudItem>
+
                     <MudItem xs="12">
-                        <MudTextField @bind-Value="userData.LastLevelPlayed" Label="Dernier niveau joué" Variant="Variant.Outlined"
-                                      FullWidth="true" ReadOnly="!isEditing" />
+                        <MudTextField @bind-Value="userData.LastLevelPlayed" 
+                                        Label="Dernier niveau joué" 
+                                        Variant="Variant.Outlined"
+                                        FullWidth="true" 
+                                        ReadOnly="true" />
                     </MudItem>
+
                     <MudItem xs="12">
                         <MudText Typo="Typo.h6" Class="title">Inventaire</MudText>
+
+                        <MudText Typo="Typo.body2">Nombre d'objets : @userData.InventoryItemsName?.Count</MudText>
+
                         <MudList T="string" Dense="true">
-                            @if (userData.InventoryItemsName.Count == 0)
+                            @if (userData.InventoryItemsName == null || userData.InventoryItemsName.Count == 0)
                             {
-                                <MudListItem T="string">
+                                <MudListItem>
                                     <MudText>Aucun objet dans l'inventaire</MudText>
                                 </MudListItem>
                             }
                             else
                             {
-                                @for (int i = 0; i < userData.InventoryItemsName.Count; i++)
+                                @foreach (var item in userData.InventoryItemsName)
                                 {
-                                    <MudListItem T="string">
-                                        <MudText>@userData.InventoryItemsName[i] (ID: @userData.InventoryItems[i])</MudText>
+                                    <MudListItem>
+                                        <MudText>@item</MudText>
                                     </MudListItem>
                                 }
                             }
@@ -96,6 +123,11 @@
 </MudContainer>
 
 <style>
+    .body{
+        background-color: @ColorConstant.colorBackgroundMallow80;
+        border-radius: 0.5rem;
+    }
+
     .title {
         font-family: "Cambria", Cambria, serif;
         font-size: 1.5rem;

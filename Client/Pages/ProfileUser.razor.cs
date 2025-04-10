@@ -85,18 +85,34 @@ namespace SpiritWeb.Client.Pages
         /// <summary>
         /// Sauvegarde les modifications apportées aux données utilisateur.
         /// </summary>
+        //private async Task SaveChanges()
+        //{
+        //    try
+        //    {
+        //        userData.LastModified = DateTime.UtcNow;
+        //        await DatabaseService.SaveDataAsync(userData);
+        //        originalData = CloneSaveData(userData);
+        //        isEditing = false;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Erreur lors de la sauvegarde des modifications: {ex.Message}");
+        //    }
+        //}
+
         private async Task SaveChanges()
         {
             try
             {
+                Console.WriteLine($"Sauvegarde pour {userData.UserId}");
                 userData.LastModified = DateTime.UtcNow;
-                await DatabaseService.SaveDataAsync(userData);
+                await DatabaseService.SaveDataAsync(userData); 
                 originalData = CloneSaveData(userData);
                 isEditing = false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la sauvegarde des modifications: {ex.Message}");
+                Console.WriteLine($"Erreur complète: {ex}");
             }
         }
 
@@ -107,6 +123,19 @@ namespace SpiritWeb.Client.Pages
         {
             await AuthService.SignOut();
             NavigationManager.NavigateTo("/authentication");
+        }
+
+        /// <summary>
+        /// Récupère l'ID utilisateur abrégé pour l'affichage.
+        /// </summary>
+        /// <param name="fullId"></param>
+        /// <returns></returns>
+        private string GetShortUserId(string fullId)
+        {
+            if (string.IsNullOrEmpty(fullId) || fullId.Length <= 6)
+                return fullId;
+
+            return $"...{fullId.Substring(fullId.Length - 6)}";
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FirebaseAdmin.Auth;
+using Microsoft.AspNetCore.Mvc;
+using SpiritWeb.Client.Models;
 using SpiritWeb.Server.Services;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -23,30 +25,41 @@ namespace SpiritWeb.Server.Controllers
             _authService = authService;
         }
 
+
         /// <summary>
-        /// Enregistre un nouvel utilisateur avec un email, un mot de passe et un nom d'affichage.
+        /// Inscrit un nouvel utilisateur avec un email, un mot de passe et un nom d'affichage.
         /// </summary>
-        /// <param name="email">Email de l'utilisateur.</param>
-        /// <param name="password">Mot de passe de l'utilisateur.</param>
-        /// <param name="displayName">Nom d'affichage de l'utilisateur.</param>
-        /// <returns>Le résultat de l'authentification Firebase.</returns>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="displayName"></param>
+        /// <returns></returns>
         [HttpPost("register")]
-        public async Task<IActionResult> Register(string email, string password, string displayName)
+        public async Task<ActionResult<FirebaseAuthResult>> Register(string email, string password, string displayName)
         {
-            var authResult = await _authService.RegisterWithEmailAndPasswordAsync(email, password, displayName);
-
-            // Affiche les détails dans la console
-            Console.WriteLine($"Utilisateur enregistré avec l'email : {email}");
-            if (authResult != null)
+            try
             {
-                Console.WriteLine($"ID utilisateur : {authResult.User.LocalId}");  // Supposons que authResult contient l'ID utilisateur
-            }
-            else
-            {
-                Console.WriteLine("L'enregistrement a échoué.");
-            }
+                UserRecord userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(new UserRecordArgs
+                {
+                    Email = email,
+                    Password = password,
+                    DisplayName = displayName
+                });
 
-            return Ok(authResult);
+                // Générer un token personnalisé
+                var token = await FirebaseAuth.DefaultInstance.CreateCustomTokenAsync(userRecord.Uid);
+
+                return new FirebaseAuthResult
+                {
+                    Token = token,
+                    UserId = userRecord.Uid,
+                    Email = email,
+                    DisplayName = displayName
+                };
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>

@@ -73,13 +73,19 @@ namespace SpiritWeb.Server.Services
         /// <summary>
         /// Sauvegarde les données utilisateur dans Firestore.
         /// </summary>
-        /// <param name="userId">Identifiant de l'utilisateur.</param>
+        /// <param name="userId">Identifiant de l'utilisateur/document.</param>
         /// <param name="saveData">Les données utilisateur à sauvegarder.</param>
         /// <exception cref="Exception">Lancée si la sauvegarde des données échoue.</exception>
         public async Task SaveDataAsync(string userId, SaveData saveData)
         {
+            // Vérification de cohérence entre l'ID du document et le UserId des données
+            if (saveData.UserId != userId)
+            {
+                throw new ArgumentException($"Incohérence d'ID: userId paramètre={userId}, saveData.UserId={saveData.UserId}");
+            }
+
             DocumentReference docRef = _firestoreDb.Collection("users").Document(userId);
-            await docRef.SetAsync(saveData);
+            await docRef.SetAsync(saveData, SetOptions.MergeAll);
         }
 
         /// <summary>
