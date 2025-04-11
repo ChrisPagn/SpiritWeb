@@ -51,6 +51,12 @@ namespace SpiritWeb.Client.Services
         public event Action? OnAuthStateChanged;
 
         /// <summary>
+        /// Rôle de l'utilisateur authentifié (ex: "admin", "contributor", "user" par default).
+        /// </summary>
+        public string UserRole { get; private set; }
+
+
+        /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="AuthService"/>.
         /// </summary>
         /// <param name="httpClient">Client HTTP pour les requêtes réseau.</param>
@@ -81,6 +87,7 @@ namespace SpiritWeb.Client.Services
                 var userId = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
                 var email = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "userEmail");
                 var displayName = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "displayName");
+                var role = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "userRole");
 
                 if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(userId))
                 {
@@ -88,6 +95,7 @@ namespace SpiritWeb.Client.Services
                     UserEmail = email;
                     DisplayName = displayName;
                     IsAuthenticated = true;
+                    UserRole = role ?? "user"; // Récupération du rôle de l'utilisateur
                 }
             }
             catch (Exception ex)
@@ -184,11 +192,13 @@ namespace SpiritWeb.Client.Services
             UserId = null;
             UserEmail = null;
             DisplayName = null;
+            UserRole = null; 
             IsAuthenticated = false;
 
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "userId");
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "userEmail");
+            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "userRole");
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "displayName");
 
             NotifyAuthenticationStateChanged();
@@ -201,20 +211,39 @@ namespace SpiritWeb.Client.Services
         /// <param name="userId">Identifiant de l'utilisateur.</param>
         /// <param name="email">Email de l'utilisateur.</param>
         /// <param name="displayName">Nom d'affichage de l'utilisateur.</param>
-        private async Task SetAuthData(string token, string userId, string email, string displayName)
+        private async Task SetAuthData(string token, string userId, string email, string displayName, string role = "user")
         {
             UserId = userId;
             UserEmail = email;
             DisplayName = displayName ?? string.Empty;
             IsAuthenticated = true;
+            UserRole = role; // Stockage du rôle
 
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", token);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userId", userId);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userEmail", email);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", displayName ?? string.Empty);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userRole", role);
 
             NotifyAuthenticationStateChanged();
         }
+
+        ///// <summary>
+        ///// Charge les données utilisateur depuis la base de données.
+        ///// </summary>
+        ///// <param name="userId"></param>
+        ///// <returns></returns>
+        //private async Task<SaveData?> LoadUserDataAsync(string userId)
+        //{
+        //    try
+        //    {
+        //        return await _httpClient.GetFromJsonAsync<SaveData>($"api/Database/load/{userId}");
+        //    }
+        //    catch
+        //    {
+        //        return null;
+        //    }
+        //}
 
         /// <summary>
         /// Définit l'état d'authentification.

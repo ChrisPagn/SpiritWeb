@@ -59,6 +59,14 @@ namespace SpiritWeb.Shared.Models
         public DateTime LastModified { get; set; }
 
         /// <summary>
+        /// Rôle de l'utilisateur (ex: "admin", "contributor", "user").
+        /// </summary>
+        [FirestoreProperty]
+        public string Role { get; set; } = "user";
+
+        
+
+        /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="SaveData"/>.
         /// </summary>
         public SaveData() { }
@@ -77,7 +85,7 @@ namespace SpiritWeb.Shared.Models
         public SaveData(string userId, string displayName, int coinsCount,
                         int levelReached, List<int> inventoryItems,
                         List<string> inventoryItemsName, DateTime lastModified,
-                        string lastLevelPlayed)
+                        string lastLevelPlayed, string roles)
         {
             UserId = userId;
             DisplayName = displayName;
@@ -87,6 +95,21 @@ namespace SpiritWeb.Shared.Models
             InventoryItemsName = inventoryItemsName ?? new List<string>();
             LastModified = lastModified;
             LastLevelPlayed = lastLevelPlayed;
+            Role = roles;
+        }
+
+        /// <summary>
+        /// Vérifie si l'utilisateur peut être promu au rôle de contributeur.
+        /// </summary>
+        public void CheckForPromotion()
+        {
+            if (Role == "user" && CoinsCount >= 50)
+            {
+                Role = "contributor";
+            }else
+            {
+                Role = "admin";
+            }
         }
     }
 }

@@ -7,7 +7,7 @@
 @inject NavigationManager NavigationManager
 @using SpiritWeb.Client.Models
  
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6" >
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6" >
     <MudCard>
         <MudCardHeader Class="title">
             <MudText Typo="Typo.h4" Class="title">Liste des Utilisateurs</MudText>
@@ -35,6 +35,7 @@
 
                     <HeaderContent>
                         <MudTh>Nom d'affichage</MudTh>
+                        <MudTh>Rôle</MudTh>
                         <MudTh>Niveau</MudTh>
                         <MudTh>Pièces</MudTh>
                         <MudTh>Dernier niveau joué</MudTh>
@@ -44,6 +45,7 @@
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd>@context.DisplayName</MudTd>
+                        <MudTd>@context.Role</MudTd>
                         <MudTd>@context.LevelReached</MudTd>
                         <MudTd>
                             <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Warning" /> @context.CoinsCount
@@ -65,10 +67,12 @@
 <style>
     body{
         background-color: @ColorConstant.colorBackgroundMallow80;
+       
     }
 
     .card-body {
         background-color: @ColorConstant.colorBackgroundMallow80; /* Même couleur que le body */
+       
     }
 
     .title {

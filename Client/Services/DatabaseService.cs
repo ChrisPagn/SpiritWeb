@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
 using System.Text.Json;
+using SpiritWeb.Shared.Models;
 
 namespace SpiritWeb.Client.Services
 {
@@ -27,27 +28,15 @@ namespace SpiritWeb.Client.Services
         /// <summary>
         /// Sauvegarde les données utilisateur dans la base de données.
         /// </summary>
-        /// <param name="saveData">Les données utilisateur à sauvegarder.</param>
-        /// <exception cref="Exception">Lancée lorsqu'une erreur survient lors de la sauvegarde des données.</exception>
-        //public async Task SaveDataAsync(SaveData saveData)
-        //{
-        //    try
-        //    {
-        //        var response = await _httpClient.PostAsJsonAsync($"api/Database/save?userId={saveData.UserId}", saveData);
-        //        response.EnsureSuccessStatusCode();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Erreur lors de la sauvegarde des données : {ex.Message}");
-        //        throw;
-        //    }
-        //}
-
-
+        /// <param name="saveData"></param>
+        /// <returns></returns>
         public async Task SaveDataAsync(SaveData saveData)
         {
             try
             {
+                // Vérifie la promotion avant sauvegarde
+                saveData.CheckForPromotion();
+             
                 Console.WriteLine($"Données envoyées: {JsonSerializer.Serialize(saveData)}");
 
                 // Envoyez seulement le corps, le userId est déjà dans saveData
@@ -127,7 +116,8 @@ namespace SpiritWeb.Client.Services
                     LastLevelPlayed = "Pas encore atteint de niveau!",
                     InventoryItems = new List<int>(),
                     InventoryItemsName = new List<string>(),
-                    LastModified = DateTime.UtcNow
+                    LastModified = DateTime.UtcNow,
+                    Role = "user" // Toujours user par défaut
                 };
 
                 await SaveDataAsync(saveData);
@@ -138,5 +128,6 @@ namespace SpiritWeb.Client.Services
                 throw;
             }
         }
+
     }
 }

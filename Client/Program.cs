@@ -16,5 +16,7 @@ builder.Services.AddMudServices();
 // Ajout des services d'authentification et de base de données
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<DatabaseService>();
+// Ajout du service d'autorisation
+builder.Services.AddScoped<AuthorizationService>();
 
 await builder.Build().RunAsync();
