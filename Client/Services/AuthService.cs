@@ -134,6 +134,12 @@ namespace SpiritWeb.Client.Services
                     }
 
                     await SetAuthData(authResult.Token, userId, email, displayName);
+
+                    // Attendre un moment que les données initiales soient créées
+                    await Task.Delay(1000);
+
+                    // Puis charger le rôle depuis la base de données
+                    await LoadUserRoleFromDatabase();
                     return true;
                 }
                 return false;
@@ -172,7 +178,15 @@ namespace SpiritWeb.Client.Services
 
                 if (authResult != null)
                 {
+                    //await SetAuthData(authResult.Token, authResult.UserId ?? authResult.LocalId?.LocalId, email, null);
+                    //return authResult;
+
+                    // D'abord, définir les données d'authentification de base avec "user" comme rôle par défaut
                     await SetAuthData(authResult.Token, authResult.UserId ?? authResult.LocalId?.LocalId, email, null);
+
+                    // Ensuite, charger les données utilisateur pour obtenir le rôle réel
+                    await LoadUserRoleFromDatabase();
+
                     return authResult;
                 }
                 return null;
@@ -226,6 +240,46 @@ namespace SpiritWeb.Client.Services
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userRole", role);
 
             NotifyAuthenticationStateChanged();
+        }
+
+
+        /// <summary>
+        /// Charge le rôle utilisateur depuis la base de données et met à jour l'état d'authentification.
+        /// </summary>
+        public async Task LoadUserRoleFromDatabase()
+        {
+            if (!IsAuthenticated || string.IsNullOrEmpty(UserId))
+                return;
+
+            try
+            {
+                // Appel au DatabaseService pour charger les données utilisateur
+                var userData = await _httpClient.GetFromJsonAsync<SaveData>($"api/Database/load/{UserId}");
+
+                if (userData != null && !string.IsNullOrEmpty(userData.Role))
+                {
+                    // Mettre à jour uniquement le rôle et notifier du changement
+                    UserRole = userData.Role;
+                    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userRole", UserRole);
+                    NotifyAuthenticationStateChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur lors du chargement du rôle: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Rafraîchit le rôle de l'utilisateur depuis la base de données.
+        /// À appeler après des opérations qui pourraient changer le rôle utilisateur.
+        /// </summary>
+        public async Task RefreshUserRole()
+        {
+            if (IsAuthenticated)
+            {
+                await LoadUserRoleFromDatabase();
+            }
         }
 
         ///// <summary>

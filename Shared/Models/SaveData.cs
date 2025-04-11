@@ -106,9 +106,6 @@ namespace SpiritWeb.Shared.Models
             if (Role == "user" && CoinsCount >= 50)
             {
                 Role = "contributor";
-            }else
-            {
-                Role = "admin";
             }
         }
     }

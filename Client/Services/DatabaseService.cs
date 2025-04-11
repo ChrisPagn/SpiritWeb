@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System;
 using System.Text.Json;
 using SpiritWeb.Shared.Models;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace SpiritWeb.Client.Services
 {
@@ -15,14 +17,15 @@ namespace SpiritWeb.Client.Services
     public class DatabaseService
     {
         private readonly HttpClient _httpClient;
-
+        private readonly IServiceProvider _serviceProvider;
         /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="DatabaseService"/>.
         /// </summary>
         /// <param name="httpClient">Client HTTP pour les requêtes réseau.</param>
-        public DatabaseService(HttpClient httpClient)
+        public DatabaseService(HttpClient httpClient, IServiceProvider serviceProvider)
         {
             _httpClient = httpClient;
+            _serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -48,6 +51,10 @@ namespace SpiritWeb.Client.Services
                     Console.WriteLine($"Erreur de sauvegarde: {response.StatusCode}, Détails: {errorContent}");
                 }
                 response.EnsureSuccessStatusCode();
+
+                // Après une sauvegarde réussie, rafraîchir le rôle utilisateur
+                var authService = _serviceProvider.GetRequiredService<AuthService>();
+                await authService.RefreshUserRole();
             }
             catch (Exception ex)
             {
