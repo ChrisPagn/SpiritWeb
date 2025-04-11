@@ -42,7 +42,7 @@ namespace SpiritWeb.Client.Pages
                 {
                     // Compléter le modèle avec les informations utilisateur
                     surveyModel.UserId = AuthService.UserId;
-                    surveyModel.UserDisplayName = AuthService.DisplayName;
+                    //surveyModel.UserDisplayName = AuthService.DisplayName;
                     surveyModel.SubmissionDate = DateTime.UtcNow;
 
                     // Enregistrer dans Firestore
@@ -70,7 +70,7 @@ namespace SpiritWeb.Client.Pages
         /// <summary>
         /// Enregistre le modèle d'enquête dans Firestore
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="surveyModel"></param>
         /// <returns></returns>
         private async Task SaveSurveyToFirestore(SurveyModel surveyModel)
         {

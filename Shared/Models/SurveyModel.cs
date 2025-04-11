@@ -22,9 +22,9 @@ namespace SpiritWeb.Shared.Models
         [FirestoreProperty]
         public string UserId { get; set; }
 
-        /// <summary>
-        /// Nom d'affichage de l'utilisateur qui a soumis l'enquête
-        /// </summary>
+        ///// <summary>
+        ///// Nom d'affichage de l'utilisateur qui a soumis l'enquête
+        ///// </summary>
         [FirestoreProperty]
         public string UserDisplayName { get; set; }
 

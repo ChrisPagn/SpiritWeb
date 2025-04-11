@@ -127,7 +127,7 @@ namespace SpiritWeb.Client.Services
                 if (authResult != null)
                 {
                     // S'assurer que l'UserId est bien défini avant de continuer
-                    string userId = authResult.UserId ?? authResult.LocalId?.LocalId;
+                    string userId = authResult.UserId ?? authResult.User?.LocalId;
                     if (string.IsNullOrEmpty(userId))
                     {
                         throw new Exception("L'ID utilisateur n'a pas été retourné par Firebase");
@@ -180,7 +180,7 @@ namespace SpiritWeb.Client.Services
                 {
                   
                     // D'abord, définir les données d'authentification de base avec "user" comme rôle par défaut
-                    await SetAuthData(authResult.Token, authResult.UserId ?? authResult.LocalId?.LocalId, email, null);
+                    await SetAuthData(authResult.Token, authResult.UserId ?? authResult.User?.LocalId, email, null);
 
                     // Ensuite, charger les données utilisateur pour obtenir le rôle réel
                     await LoadUserRoleFromDatabase();
@@ -227,14 +227,14 @@ namespace SpiritWeb.Client.Services
         {
             UserId = userId;
             UserEmail = email;
-            DisplayName = displayName ?? string.Empty;
+            DisplayName = displayName;
             IsAuthenticated = true;
-            UserRole = role; // Stockage du rôle
+            UserRole = role; 
 
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", token);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userId", userId);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userEmail", email);
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", displayName ?? string.Empty);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", displayName);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userRole", role);
 
             NotifyAuthenticationStateChanged();

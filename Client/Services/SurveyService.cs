@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Text.Json;
+using Google.Cloud.Firestore;
 
 namespace SpiritWeb.Client.Services
 {
@@ -49,6 +50,9 @@ namespace SpiritWeb.Client.Services
                 throw;
             }
         }
+
+
+
 
         /// <summary>
         /// Récupère toutes les suggestions d'optimisation

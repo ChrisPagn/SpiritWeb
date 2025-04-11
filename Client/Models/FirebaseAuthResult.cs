@@ -25,7 +25,7 @@ namespace SpiritWeb.Client.Models
         /// Objet utilisateur Firebase.
         /// </summary>
         [JsonPropertyName("user")]
-        public FirebaseUser? LocalId { get; set; }
+        public FirebaseUser? User { get; set; }
 
         /// <summary>
         /// Adresse e-mail de l'utilisateur.

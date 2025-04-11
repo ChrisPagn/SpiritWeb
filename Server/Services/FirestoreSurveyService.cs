@@ -30,8 +30,33 @@ namespace SpiritWeb.Server.Services
         /// </summary>
         /// <param name="model">Le modèle d'enquête à enregistrer</param>
         /// <returns>L'identifiant de l'enquête créée</returns>
+        //public async Task<string> SaveSurveyAsync(SurveyModel model)
+        //{
+        //    CollectionReference suggestionsCollection = _firestoreDb.Collection(COLLECTION_NAME);
+        //    DocumentReference docRef = await suggestionsCollection.AddAsync(model);
+        //    return docRef.Id;
+        //}
+
+        // Dans FirestoreSurveyService.cs
         public async Task<string> SaveSurveyAsync(SurveyModel model)
         {
+            // Si le DisplayName est null, essayez de le récupérer
+            if (string.IsNullOrEmpty(model.UserDisplayName) && !string.IsNullOrEmpty(model.UserId))
+            {
+                DocumentReference userRef = _firestoreDb.Collection("users").Document(model.UserId);
+                DocumentSnapshot userSnapshot = await userRef.GetSnapshotAsync();
+
+                if (userSnapshot.Exists)
+                {
+                    // Récupérer le DisplayName du document utilisateur
+                    var userData = userSnapshot.ToDictionary();
+                    if (userData.ContainsKey("DisplayName"))
+                    {
+                        model.UserDisplayName = userData["DisplayName"].ToString();
+                    }
+                }
+            }
+
             CollectionReference suggestionsCollection = _firestoreDb.Collection(COLLECTION_NAME);
             DocumentReference docRef = await suggestionsCollection.AddAsync(model);
             return docRef.Id;

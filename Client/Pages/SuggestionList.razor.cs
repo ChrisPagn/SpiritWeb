@@ -95,8 +95,8 @@ namespace SpiritWeb.Client.Pages
             if (suggestion.OptimizationSuggestion.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            if (suggestion.UserDisplayName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                return true;
+            //if (suggestion.UserDisplayName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            //    return true;
 
             if (suggestion.FavoriteFeature.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 return true;

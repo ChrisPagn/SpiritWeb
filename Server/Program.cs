@@ -8,8 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// Dans Program.cs, ajoutez ceci avant builder.Build():
+// comment a ajouter
 var credentialPath = Path.Combine(Directory.GetCurrentDirectory(), "Secrets/firebase-service-account.json");
+
+//comment a ajouter
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialPath);
 
 // Enregistrement des services Firebase
