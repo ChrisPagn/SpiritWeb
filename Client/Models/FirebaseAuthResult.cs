@@ -36,6 +36,11 @@ namespace SpiritWeb.Client.Models
         /// Nom d'affichage de l'utilisateur.
         /// </summary>
         public string DisplayName { get; set; }
+
+        /// <summary>
+        /// Role de l'utilisateur Firebase.
+        /// </summary>
+        public string? Role { get; internal set; }
     }
 
     /// <summary>

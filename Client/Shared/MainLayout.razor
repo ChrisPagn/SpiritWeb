@@ -2,6 +2,7 @@
 
 <MudThemeProvider />
 <MudDialogProvider />
+<MudPopoverProvider />
 <MudSnackbarProvider />
 
 <MudLayout Class="d-flex flex-column" Style="min-height: 100vh;">
@@ -19,7 +20,7 @@
         <NavMenu />
     </MudDrawer>
 
-    <div class="content-wrapper">
+    <div class="content-wrapper" style="padding-bottom: 100px;">
         <SpiritWeb.Client.Pages.PageTransitionLayout>
             <MudMainContent Class="flex-grow-1">
                 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="main-container">
@@ -33,31 +34,7 @@
 </MudLayout>
 
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-    }
-
-    .content-wrapper {
-        flex: 1 0 auto; /* Prend l'espace disponible */
-        padding-bottom: 2rem; /* Espace avant le footer */
-    }
-
-    .main-container {
-        padding-bottom: 2rem; /* Espace supplémentaire si nécessaire */
-    }
-
-    .footer {
-        flex-shrink: 0; /* Empêche le footer de rétrécir */
-        width: 100%;
-    }
-
-    /* Vos styles existants */
-    html, body, .navmenu, .footer {
-        font-family: "Cambria", Cambria, serif;
-    }
-
+  
     .bodyback {
         background-color: #4939d1;
         color: #fff;

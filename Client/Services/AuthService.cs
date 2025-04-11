@@ -178,9 +178,7 @@ namespace SpiritWeb.Client.Services
 
                 if (authResult != null)
                 {
-                    //await SetAuthData(authResult.Token, authResult.UserId ?? authResult.LocalId?.LocalId, email, null);
-                    //return authResult;
-
+                  
                     // D'abord, définir les données d'authentification de base avec "user" comme rôle par défaut
                     await SetAuthData(authResult.Token, authResult.UserId ?? authResult.LocalId?.LocalId, email, null);
 
@@ -267,6 +265,35 @@ namespace SpiritWeb.Client.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Erreur lors du chargement du rôle: {ex.Message}");
+            }
+        }
+
+        public async Task LoadUserDataFromDatabase()
+        {
+            if (!IsAuthenticated || string.IsNullOrEmpty(UserId))
+                return;
+
+            try
+            {
+                var userData = await _httpClient.GetFromJsonAsync<FirebaseAuthResult>($"api/Database/load/{UserId}");
+
+                if (userData != null)
+                {
+                    // Mettre à jour toutes les propriétés en une fois
+                    DisplayName = userData.DisplayName ?? DisplayName; // Garde l'ancienne valeur si null
+                    UserRole = userData.Role ?? "user"; // Valeur par défaut
+
+                    // Mise à jour synchrone du localStorage
+                    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", DisplayName);
+                    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userRole", UserRole);
+
+                    NotifyAuthenticationStateChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur lors du chargement des données utilisateur: {ex.Message}");
+                // Optionnel : Ajouter un Snackbar pour informer l'utilisateur
             }
         }
 

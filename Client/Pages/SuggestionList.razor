@@ -1,0 +1,120 @@
+﻿@page "/suggestionList"
+@using SpiritWeb.Shared.Models
+@using MudBlazor
+@using SpiritWeb.Client.Services
+@inject SurveyService SurveyService
+@inject AuthService AuthService
+@inject ISnackbar Snackbar
+@using SpiritWeb.Client.Models
+@using SpiritWeb.Client.Services
+@inject NavigationManager NavigationManager
+@inject AuthService AuthService
+@inject DatabaseService DatabaseService
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5" Class="title-suggestion">Suggestions d'Optimisation</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            @if (isLoading)
+            {
+                <div class="d-flex justify-center my-4">
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                </div>
+            }
+            else if (suggestions == null || !suggestions.Any())
+            {
+                <MudAlert Severity="Severity.Info" Class="my-2">Aucune suggestion d'optimisation pour le moment.</MudAlert>
+            }
+            else
+            {
+                <MudTable Items="@suggestions" 
+                         Dense="false" 
+                         Hover="true" 
+                         Bordered="false" 
+                         Striped="true" 
+                         Filter="new Func<SurveyModel, bool>(FilterFunc)"
+                         SortLabel="Trier par">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Suggestions</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="searchString" 
+                                     Placeholder="Rechercher" 
+                                     Adornment="Adornment.Start" 
+                                     AdornmentIcon="@Icons.Material.Filled.Search" 
+                                     IconSize="Size.Medium" 
+                                     Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <HeaderContent>
+                        <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.UserDisplayName)">Contributeur</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.SubmissionDate)">Date</MudTableSortLabel></MudTh>
+                        <MudTh>Suggestion</MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.VotesCount)">Votes</MudTableSortLabel></MudTh>
+                        <MudTh>Action</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Contributeur">@context.UserDisplayName</MudTd>
+                        <MudTd DataLabel="Date">@context.SubmissionDate.ToString("dd/MM/yyyy")</MudTd>
+                        <MudTd DataLabel="Suggestion">
+                            <MudText Typo="Typo.body1">@context.OptimizationSuggestion</MudText>
+                            <MudChip T="string" Color="Color.Info" Size="Size.Small" Class="mt-1">@context.FavoriteFeature</MudChip>
+                        </MudTd>
+                        <MudTd DataLabel="Votes">
+                            <MudBadge Content="@context.VotesCount" Color="Color.Primary" Overlap="true" Class="ml-3">
+                                <MudIcon Icon="@Icons.Material.Filled.ThumbUp" />
+                            </MudBadge>
+                        </MudTd>
+                        <MudTd DataLabel="Action">
+                            @if (AuthService.IsAuthenticated)
+                            {
+                                @if (userVotes.ContainsKey(context.Id) && userVotes[context.Id])
+                                {
+                                    <MudButton Variant="Variant.Filled" 
+                                             Color="Color.Success" 
+                                             StartIcon="@Icons.Material.Filled.Check" 
+                                             Size="Size.Small" 
+                                             Disabled="true">
+                                        Voté
+                                    </MudButton>
+                                }
+                                else
+                                {
+                                    <MudButton Variant="Variant.Outlined" 
+                                             Color="Color.Primary" 
+                                             StartIcon="@Icons.Material.Filled.ThumbUp" 
+                                             Size="Size.Small" 
+                                             OnClick="@(() => VoteForSuggestion(context.Id))">
+                                        Voter
+                                    </MudButton>
+                                }
+                            }
+                            else
+                            {
+                                <MudTooltip Text="Connectez-vous pour voter">
+                                    <MudButton Variant="Variant.Outlined" 
+                                             Color="Color.Primary" 
+                                             StartIcon="@Icons.Material.Filled.ThumbUp" 
+                                             Size="Size.Small" 
+                                             Disabled="true">
+                                        Voter
+                                    </MudButton>
+                                </MudTooltip>
+                            }
+                        </MudTd>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new int[] { 5, 10, 25 }" />
+                    </PagerContent>
+                </MudTable>
+            }
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+<style>
+    .title-suggestion {
+        font-family: "Cambria", Cambria, serif;
+        color: @ColorConstant.colorBackgroundMallow00;
+    }
+</style>

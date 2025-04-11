@@ -1,0 +1,112 @@
+﻿@page "/suggestion"
+@using SpiritWeb.Client.Services
+@using SpiritWeb.Shared.Models
+@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager NavigationManager
+@inject AuthService AuthService
+@inject DatabaseService DatabaseService
+@inject SurveyService SurveyService
+@inject ISnackbar Snackbar
+@using SpiritWeb.Client.Models
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6 mb-12" Style="height: calc(100vh - 64px); overflow-y: auto;">
+    <MudPaper Elevation="3" Class="pa-8 mb-8">
+        <MudText Typo="Typo.h4" Class="mb-4 title-suggestion" Align="Align.Center">Votre Avis sur l'Expérience de Jeu</MudText>
+        <MudText Typo="Typo.body1" Class="mb-6 text-center" >
+            En tant que contributeur spécial, votre avis est précieux pour améliorer l'expérience de jeu.
+            Merci de prendre quelques minutes pour répondre à ce court questionnaire.
+        </MudText>
+
+        <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" Class="px-4"> 
+            <!-- Question 1 -->
+            <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border: 1px solid var(--mud-palette-lines-default); border-radius: var(--mud-default-borderradius);">
+                <MudText Typo="Typo.h6" Class="mb-3">1. Comment évaluez-vous votre expérience globale du jeu ?</MudText>
+                <MudRadioGroup @bind-Value="@surveyModel.SatisfactionRating" Required RequiredError="Une réponse est requise" Class="ml-2">
+                    <MudRadio Value="5" Color="Color.Success">Excellent</MudRadio>
+                    <MudRadio Value="4" Color="Color.Success">Très bon</MudRadio>
+                    <MudRadio Value="3" Color="Color.Info">Bon</MudRadio>
+                    <MudRadio Value="2" Color="Color.Warning">Passable</MudRadio>
+                    <MudRadio Value="1" Color="Color.Error">À améliorer</MudRadio>
+                </MudRadioGroup>
+            </MudPaper>
+
+            <!-- Question 2 -->
+            <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border: 1px solid var(--mud-palette-lines-default); border-radius: var(--mud-default-borderradius);">
+                <MudText Typo="Typo.h6" Class="mb-3">2. À quelle fréquence jouez-vous ?</MudText>
+                <MudRadioGroup @bind-Value="@surveyModel.PlayFrequency" Required RequiredError="Une réponse est requise" Class="ml-2">
+                    <MudRadio Value="1" Color="Color.Primary">Tous les jours</MudRadio>
+                    <MudRadio Value="2" Color="Color.Primary">Plusieurs fois par semaine</MudRadio>
+                    <MudRadio Value="3" Color="Color.Primary">Une fois par semaine</MudRadio>
+                    <MudRadio Value="4" Color="Color.Primary">Quelques fois par mois</MudRadio>
+                    <MudRadio Value="5" Color="Color.Primary">Rarement</MudRadio>
+                </MudRadioGroup>
+            </MudPaper>
+
+            <!-- Question 3 -->
+            <MudPaper Elevation="0" Class="pa-4 mb-4" Style="border: 1px solid var(--mud-palette-lines-default); border-radius: var(--mud-default-borderradius);">
+                <MudText Typo="Typo.h6" Class="mb-3">3. Quelle fonctionnalité appréciez-vous le plus ?</MudText>
+                <MudSelect @bind-Value="@surveyModel.FavoriteFeature" 
+                          Required RequiredError="Une réponse est requise" 
+                          Label="Sélectionnez une fonctionnalité" 
+                          Variant="Variant.Outlined"
+                          Class="w-100">
+                    <MudSelectItem Value="@("Système de niveaux")">Système de niveaux</MudSelectItem>
+                    <MudSelectItem Value="@("Collection d'objets")">Collection d'objets</MudSelectItem>
+                    <MudSelectItem Value="@("Système de pièces")">Système de pièces</MudSelectItem>
+                    <MudSelectItem Value="@("Interface utilisateur")">Interface utilisateur</MudSelectItem>
+                    <MudSelectItem Value="@("Autre")">Autre</MudSelectItem>
+                </MudSelect>
+            </MudPaper>
+
+            <!-- Suggestion -->
+            <MudPaper Elevation="0" Class="pa-4 mb-6" Style="border: 1px solid var(--mud-palette-lines-default); border-radius: var(--mud-default-borderradius);">
+                <MudText Typo="Typo.h6" Class="mb-3">Suggestion d'optimisation</MudText>
+                <MudTextField @bind-Value="@surveyModel.OptimizationSuggestion"
+                            Label="Votre suggestion"
+                            Variant="Variant.Outlined"
+                            Lines="4"
+                            Counter="300"
+                            MaxLength="300"
+                            Required="true"
+                            RequiredError="Une suggestion est requise"
+                            HelperText="Partagez vos idées pour améliorer le jeu"
+                            Class="w-100"/>
+            </MudPaper>
+
+            
+            <MudButton OnClick="@(()=>Submit())"
+                        Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        StartIcon="@Icons.Material.Filled.Send"
+                        Class="mt-2 mb-4 px-8"
+                        FullWidth="false"
+                        Disabled="@(!success || isSubmitting)">
+                @if (isSubmitting)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                    <span>Envoi en cours...</span>
+                }
+                else
+                {
+                    <span>Envoyer ma suggestion</span>
+                }
+            </MudButton> 
+        </MudForm>
+    </MudPaper>
+</MudContainer>
+
+<style>
+    .title-suggestion {
+        font-family: "Cambria", Cambria, serif;
+        color: @ColorConstant.colorBackgroundMallow00;
+    }
+    
+    /* Optionnel: pour un meilleur espacement sur mobile */
+    @@media (max-width: 600px) {
+        .MudContainer {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+    }
+</style>

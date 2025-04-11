@@ -18,5 +18,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<DatabaseService>();
 // Ajout du service d'autorisation
 builder.Services.AddScoped<AuthorizationService>();
+// Ajout du service de gestion des enquêtes
+builder.Services.AddScoped<SurveyService>();
 
 await builder.Build().RunAsync();
