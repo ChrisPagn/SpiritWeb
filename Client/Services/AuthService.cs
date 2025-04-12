@@ -128,6 +128,7 @@ namespace SpiritWeb.Client.Services
                 {
                     // S'assurer que l'UserId est bien défini avant de continuer
                     string userId = authResult.UserId ?? authResult.User?.LocalId;
+                   
                     if (string.IsNullOrEmpty(userId))
                     {
                         throw new Exception("L'ID utilisateur n'a pas été retourné par Firebase");
@@ -138,8 +139,12 @@ namespace SpiritWeb.Client.Services
                     // Attendre un moment que les données initiales soient créées
                     await Task.Delay(1000);
 
-                    // Puis charger le rôle depuis la base de données
+                    // Charger les données utilisateur depuis la base de données
+                    await LoadUserDataFromDatabase();
+
+                    //// Puis charger le rôle depuis la base de données
                     await LoadUserRoleFromDatabase();
+                    //await LoadUserRoleDisplaynameDataFromDatabase();
                     return true;
                 }
                 return false;
@@ -152,11 +157,11 @@ namespace SpiritWeb.Client.Services
         }
 
         /// <summary>
-        /// Connecte un utilisateur avec un email et un mot de passe.
+        ///     Se connecte à un utilisateur avec un email et un mot de passe.
         /// </summary>
-        /// <param name="email">Email de l'utilisateur.</param>
-        /// <param name="password">Mot de passe de l'utilisateur.</param>
-        /// <returns>Le résultat de l'authentification Firebase.</returns>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public async Task<FirebaseAuthResult> SignInWithEmailAndPasswordAsync(string email, string password)
         {
             try
@@ -178,12 +183,21 @@ namespace SpiritWeb.Client.Services
 
                 if (authResult != null)
                 {
-                  
-                    // D'abord, définir les données d'authentification de base avec "user" comme rôle par défaut
-                    await SetAuthData(authResult.Token, authResult.UserId ?? authResult.User?.LocalId, email, null);
+                    // Récupérer le displayName depuis authResult s'il est disponible
+                    string displayName = authResult.User?.DisplayName
+                                      ?? authResult.DisplayName
+                                      ?? await GetDisplayNameFromDatabase(authResult.UserId ?? authResult.User?.LocalId);
 
-                    // Ensuite, charger les données utilisateur pour obtenir le rôle réel
+                    // Définir les données d'authentification avec le displayName
+                    await SetAuthData(
+                        authResult.Token,
+                        authResult.UserId ?? authResult.User?.LocalId,
+                        email,
+                        displayName);
+
+                    //// Charger les données utilisateur pour obtenir le rôle réel
                     await LoadUserRoleFromDatabase();
+                    //await LoadUserRoleDisplaynameDataFromDatabase();
 
                     return authResult;
                 }
@@ -193,6 +207,27 @@ namespace SpiritWeb.Client.Services
             {
                 Console.WriteLine($"Erreur de connexion : {ex.Message}");
                 throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Récupère le nom d'affichage de l'utilisateur depuis la base de données.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        private async Task<string> GetDisplayNameFromDatabase(string userId)
+        {
+            if (string.IsNullOrEmpty(userId)) return null;
+
+            try
+            {
+                var userData = await _httpClient.GetFromJsonAsync<SaveData>($"api/Database/load/{userId}");
+                return userData?.DisplayName;
+            }
+            catch
+            {
+                return null;
             }
         }
 
@@ -234,17 +269,19 @@ namespace SpiritWeb.Client.Services
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", token);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userId", userId);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userEmail", email);
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", displayName);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", displayName ?? "");
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userRole", role);
 
             NotifyAuthenticationStateChanged();
         }
 
 
+
         /// <summary>
-        /// Charge le rôle utilisateur depuis la base de données et met à jour l'état d'authentification.
+        ///     Charge les données utilisateur depuis la base de données.
         /// </summary>
-        public async Task LoadUserRoleFromDatabase()
+        /// <returns></returns>
+        public async Task LoadUserDataFromDatabase()
         {
             if (!IsAuthenticated || string.IsNullOrEmpty(UserId))
                 return;
@@ -254,48 +291,83 @@ namespace SpiritWeb.Client.Services
                 // Appel au DatabaseService pour charger les données utilisateur
                 var userData = await _httpClient.GetFromJsonAsync<SaveData>($"api/Database/load/{UserId}");
 
-                if (userData != null && !string.IsNullOrEmpty(userData.Role))
+                if (userData != null)
                 {
-                    // Mettre à jour uniquement le rôle et notifier du changement
-                    UserRole = userData.Role;
-                    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userRole", UserRole);
-                    NotifyAuthenticationStateChanged();
+                    bool hasChanges = false;
+
+                    // Mettre à jour le rôle si disponible
+                    if (!string.IsNullOrEmpty(userData.Role) && UserRole != userData.Role)
+                    {
+                        UserRole = userData.Role;
+                        await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userRole", UserRole);
+                        hasChanges = true;
+                    }
+
+                    // Mettre à jour le displayName si disponible
+                    if (!string.IsNullOrEmpty(userData.DisplayName) && DisplayName != userData.DisplayName)
+                    {
+                        DisplayName = userData.DisplayName;
+                        await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", DisplayName);
+                        hasChanges = true;
+                    }
+
+                    // Notifier seulement si des changements ont eu lieu
+                    if (hasChanges)
+                    {
+                        NotifyAuthenticationStateChanged();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors du chargement du rôle: {ex.Message}");
+                Console.WriteLine($"Erreur lors du chargement des données utilisateur: {ex.Message}");
             }
         }
 
-        public async Task LoadUserDataFromDatabase()
+
+        /// <summary>
+        ///       Charge le rôle de l'utilisateur depuis la base de données.
+        /// </summary>
+        /// <returns></returns>
+        public async Task LoadUserRoleFromDatabase()
         {
             if (!IsAuthenticated || string.IsNullOrEmpty(UserId))
                 return;
 
             try
             {
-                var userData = await _httpClient.GetFromJsonAsync<FirebaseAuthResult>($"api/Database/load/{UserId}");
+                var userData = await _httpClient.GetFromJsonAsync<SaveData>($"api/Database/load/{UserId}");
+                if (userData == null) return;
 
-                if (userData != null)
+                bool hasChanges = false;
+
+                // Gestion du rôle
+                if (!string.IsNullOrEmpty(userData.Role) && UserRole != userData.Role)
                 {
-                    // Mettre à jour toutes les propriétés en une fois
-                    DisplayName = userData.DisplayName ?? DisplayName; // Garde l'ancienne valeur si null
-                    UserRole = userData.Role ?? "user"; // Valeur par défaut
-
-                    // Mise à jour synchrone du localStorage
-                    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", DisplayName);
+                    UserRole = userData.Role;
                     await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userRole", UserRole);
+                    hasChanges = true;
+                }
 
+                // Gestion du DisplayName (seulement si nouvelle valeur non nulle et différente)
+                if (!string.IsNullOrEmpty(userData.DisplayName) && DisplayName != userData.DisplayName)
+                {
+                    DisplayName = userData.DisplayName;
+                    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "displayName", DisplayName);
+                    hasChanges = true;
+                }
+
+                if (hasChanges)
+                {
                     NotifyAuthenticationStateChanged();
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors du chargement des données utilisateur: {ex.Message}");
-                // Optionnel : Ajouter un Snackbar pour informer l'utilisateur
+                Console.WriteLine($"Erreur lors du chargement des données: {ex.Message}");
             }
         }
+
 
         /// <summary>
         /// Rafraîchit le rôle de l'utilisateur depuis la base de données.
@@ -306,25 +378,9 @@ namespace SpiritWeb.Client.Services
             if (IsAuthenticated)
             {
                 await LoadUserRoleFromDatabase();
+                //await LoadUserRoleDisplaynameDataFromDatabase();
             }
         }
-
-        ///// <summary>
-        ///// Charge les données utilisateur depuis la base de données.
-        ///// </summary>
-        ///// <param name="userId"></param>
-        ///// <returns></returns>
-        //private async Task<SaveData?> LoadUserDataAsync(string userId)
-        //{
-        //    try
-        //    {
-        //        return await _httpClient.GetFromJsonAsync<SaveData>($"api/Database/load/{userId}");
-        //    }
-        //    catch
-        //    {
-        //        return null;
-        //    }
-        //}
 
         /// <summary>
         /// Définit l'état d'authentification.

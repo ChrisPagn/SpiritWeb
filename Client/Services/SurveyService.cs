@@ -31,13 +31,15 @@ namespace SpiritWeb.Client.Services
         /// <summary>
         /// Enregistre une nouvelle enquête/suggestion dans Firestore
         /// </summary>
-        /// <param name="model">Le modèle d'enquête à enregistrer</param>
+        /// <param name="surveyModel">Le modèle d'enquête à enregistrer</param>
         /// <returns>L'identifiant de l'enquête créée</returns>
         public async Task<string> SaveSurveyAsync(SurveyModel surveyModel)
         {
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("api/Survey/submit", surveyModel);
+                Console.WriteLine(JsonSerializer.Serialize(surveyModel));
+
                 response.EnsureSuccessStatusCode();
 
                 // Récupérer l'ID généré par Firestore

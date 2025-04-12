@@ -14,7 +14,7 @@ namespace SpiritWeb.Server.Services
     {
         private readonly FirestoreDb _firestoreDb;
         private const string COLLECTION_NAME = "suggestions";
-        private const string VOTES_SUBCOLLECTION = "votes";
+        //private const string VOTES_SUBCOLLECTION = "votes";
 
         /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="FirestoreSurveyService"/>.
@@ -40,6 +40,9 @@ namespace SpiritWeb.Server.Services
         // Dans FirestoreSurveyService.cs
         public async Task<string> SaveSurveyAsync(SurveyModel model)
         {
+            //// Normalisation des données
+            //model.Votes = model.Votes ?? new List<string>(); // Garantit que Votes n'est jamais null
+
             // Si le DisplayName est null, essayez de le récupérer
             if (string.IsNullOrEmpty(model.UserDisplayName) && !string.IsNullOrEmpty(model.UserId))
             {
@@ -48,7 +51,6 @@ namespace SpiritWeb.Server.Services
 
                 if (userSnapshot.Exists)
                 {
-                    // Récupérer le DisplayName du document utilisateur
                     var userData = userSnapshot.ToDictionary();
                     if (userData.ContainsKey("DisplayName"))
                     {
@@ -73,31 +75,35 @@ namespace SpiritWeb.Server.Services
             return snapshot.Documents.Select(doc => doc.ConvertTo<SurveyModel>()).ToList();
         }
 
-        /// <summary>
-        /// Vérifie si un utilisateur a déjà voté pour une suggestion
-        /// </summary>
-        /// <param name="suggestionId">Identifiant de la suggestion</param>
-        /// <param name="userId">Identifiant de l'utilisateur</param>
-        /// <returns>True si l'utilisateur a déjà voté</returns>
-        public async Task<bool> HasUserVotedAsync(string suggestionId, string userId)
-        {
-            DocumentReference suggestionDocRef = _firestoreDb.Collection(COLLECTION_NAME).Document(suggestionId);
-            CollectionReference votesCollection = suggestionDocRef.Collection(VOTES_SUBCOLLECTION);
-            QuerySnapshot snapshot = await votesCollection.WhereEqualTo("UserId", userId).GetSnapshotAsync();
-            return snapshot.Documents.Any();
-        }
+        //-------------------------------------------------------------
+        //partie de gestion pour les votes
+        //-------------------------------------------------------------
 
-        /// <summary>
-        /// Ajoute un vote pour une suggestion spécifique
-        /// </summary>
-        /// <param name="suggestionId">Identifiant de la suggestion</param>
-        /// <param name="userId">Identifiant de l'utilisateur qui vote</param>
-        /// <returns>True si le vote a été enregistré avec succès</returns>
-        public async Task AddVoteAsync(string suggestionId, string userId)
-        {
-            DocumentReference suggestionDocRef = _firestoreDb.Collection(COLLECTION_NAME).Document(suggestionId);
-            CollectionReference votesCollection = suggestionDocRef.Collection(VOTES_SUBCOLLECTION);
-            DocumentReference voteDocRef = await votesCollection.AddAsync(new { UserId = userId, Timestamp = FieldValue.ServerTimestamp });
-        }
+        ///// <summary>
+        ///// Vérifie si un utilisateur a déjà voté pour une suggestion
+        ///// </summary>
+        ///// <param name="suggestionId">Identifiant de la suggestion</param>
+        ///// <param name="userId">Identifiant de l'utilisateur</param>
+        ///// <returns>True si l'utilisateur a déjà voté</returns>
+        //public async Task<bool> HasUserVotedAsync(string suggestionId, string userId)
+        //{
+        //    DocumentReference suggestionDocRef = _firestoreDb.Collection(COLLECTION_NAME).Document(suggestionId);
+        //    CollectionReference votesCollection = suggestionDocRef.Collection(VOTES_SUBCOLLECTION);
+        //    QuerySnapshot snapshot = await votesCollection.WhereEqualTo("UserId", userId).GetSnapshotAsync();
+        //    return snapshot.Documents.Any();
+        //}
+
+        ///// <summary>
+        ///// Ajoute un vote pour une suggestion spécifique
+        ///// </summary>
+        ///// <param name="suggestionId">Identifiant de la suggestion</param>
+        ///// <param name="userId">Identifiant de l'utilisateur qui vote</param>
+        ///// <returns>True si le vote a été enregistré avec succès</returns>
+        //public async Task AddVoteAsync(string suggestionId, string userId)
+        //{
+        //    DocumentReference suggestionDocRef = _firestoreDb.Collection(COLLECTION_NAME).Document(suggestionId);
+        //    CollectionReference votesCollection = suggestionDocRef.Collection(VOTES_SUBCOLLECTION);
+        //    DocumentReference voteDocRef = await votesCollection.AddAsync(new { UserId = userId, Timestamp = FieldValue.ServerTimestamp });
+        //}
     }
 }

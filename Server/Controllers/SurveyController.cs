@@ -4,6 +4,7 @@ using SpiritWeb.Server.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace SpiritWeb.Server.Controllers
 {
@@ -30,23 +31,64 @@ namespace SpiritWeb.Server.Controllers
         /// </summary>
         /// <param name="model">Le modèle d'enquête à enregistrer</param>
         /// <returns>L'identifiant de l'enquête créée</returns>
+        //[HttpPost("submit")]
+        //public async Task<IActionResult> SubmitSurvey([FromBody] SurveyModel model)
+        //{
+        //    if (model == null ||
+        //        string.IsNullOrEmpty(model.UserId) ||
+        //        model.SatisfactionRating == 0 ||
+        //        model.PlayFrequency == 0 ||
+        //        string.IsNullOrEmpty(model.FavoriteFeature) ||
+        //        string.IsNullOrEmpty(model.OptimizationSuggestion))
+        //    {
+        //        return BadRequest("Tous les champs sont requis");
+        //    }
+
+        //    try
+        //    {
+        //        Console.WriteLine(JsonSerializer.Serialize(model));
+        //        if (model == null || string.IsNullOrEmpty(model.UserId))
+        //        {
+        //            return BadRequest("Données invalides");
+        //        }
+        //        Console.WriteLine($"[DEBUG] Modèle reçu : {JsonSerializer.Serialize(model)}");
+
+        //        // Enregistrer l'enquête et récupérer l'ID généré
+        //        string id = await _surveyService.SaveSurveyAsync(model);
+        //        return Ok(id);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Erreur détaillée : {ex.ToString()}"); // Ajoutez cette ligne
+        //        return StatusCode(500, $"Erreur interne: {ex.Message}");
+        //    }
+        //}
+
         [HttpPost("submit")]
         public async Task<IActionResult> SubmitSurvey([FromBody] SurveyModel model)
         {
             try
             {
-                if (model == null || string.IsNullOrEmpty(model.UserId))
+                // Validation consolidée (sans vérification des votes)
+                if (model == null ||
+                    string.IsNullOrEmpty(model.UserId) ||
+                    model.SatisfactionRating == 0 ||
+                    model.PlayFrequency == 0 ||
+                    string.IsNullOrEmpty(model.FavoriteFeature) ||
+                    string.IsNullOrEmpty(model.OptimizationSuggestion))
                 {
-                    return BadRequest("Données invalides");
+                    return BadRequest("Tous les champs obligatoires doivent être remplis");
                 }
 
-                // Enregistrer l'enquête et récupérer l'ID généré
+                //// Force l'initialisation si null
+                //model.Votes = model.Votes ?? new List<string>();
+
                 string id = await _surveyService.SaveSurveyAsync(model);
                 return Ok(id);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur détaillée : {ex.ToString()}"); // Ajoutez cette ligne
+                Console.WriteLine($"ERREUR COMPLÈTE: {ex}");
                 return StatusCode(500, $"Erreur interne: {ex.Message}");
             }
         }
@@ -70,64 +112,69 @@ namespace SpiritWeb.Server.Controllers
             }
         }
 
-        /// <summary>
-        /// Vote pour une suggestion spécifique
-        /// </summary>
-        /// <param name="suggestionId">Identifiant de la suggestion</param>
-        /// <param name="userId">Identifiant de l'utilisateur qui vote</param>
-        /// <returns>True si le vote a été enregistré avec succès</returns>
-        [HttpPost("vote/{suggestionId}/{userId}")]
-        public async Task<IActionResult> VoteForSuggestion(string suggestionId, string userId)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(suggestionId) || string.IsNullOrEmpty(userId))
-                {
-                    return BadRequest("Paramètres invalides");
-                }
+        //------------------------------------
+        // parie de gestion des votes
+        //------------------------------------
 
-                // Vérifier si l'utilisateur a déjà voté
-                bool hasVoted = await _surveyService.HasUserVotedAsync(suggestionId, userId);
-                if (hasVoted)
-                {
-                    return BadRequest("Vous avez déjà voté pour cette suggestion");
-                }
 
-                // Enregistrer le vote
-                await _surveyService.AddVoteAsync(suggestionId, userId);
-                return Ok(true);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erreur détaillée : {ex.ToString()}"); // Ajoutez cette ligne
-                return StatusCode(500, $"Erreur interne: {ex.Message}");
-            }
-        }
+        ///// <summary>
+        ///// Vote pour une suggestion spécifique
+        ///// </summary>
+        ///// <param name="suggestionId">Identifiant de la suggestion</param>
+        ///// <param name="userId">Identifiant de l'utilisateur qui vote</param>
+        ///// <returns>True si le vote a été enregistré avec succès</returns>
+        //[HttpPost("vote/{suggestionId}/{userId}")]
+        //public async Task<IActionResult> VoteForSuggestion(string suggestionId, string userId)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(suggestionId) || string.IsNullOrEmpty(userId))
+        //        {
+        //            return BadRequest("Paramètres invalides");
+        //        }
 
-        /// <summary>
-        /// Vérifie si un utilisateur a déjà voté pour une suggestion
-        /// </summary>
-        /// <param name="suggestionId">Identifiant de la suggestion</param>
-        /// <param name="userId">Identifiant de l'utilisateur</param>
-        /// <returns>True si l'utilisateur a déjà voté</returns>
-        [HttpGet("hasVoted/{suggestionId}/{userId}")]
-        public async Task<IActionResult> HasUserVoted(string suggestionId, string userId)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(suggestionId) || string.IsNullOrEmpty(userId))
-                {
-                    return BadRequest("Paramètres invalides");
-                }
+        //        // Vérifier si l'utilisateur a déjà voté
+        //        bool hasVoted = await _surveyService.HasUserVotedAsync(suggestionId, userId);
+        //        if (hasVoted)
+        //        {
+        //            return BadRequest("Vous avez déjà voté pour cette suggestion");
+        //        }
 
-                bool hasVoted = await _surveyService.HasUserVotedAsync(suggestionId, userId);
-                return Ok(hasVoted);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erreur détaillée : {ex.ToString()}"); // Ajoutez cette ligne
-                return StatusCode(500, $"Erreur interne: {ex.Message}");
-            }
-        }
+        //        // Enregistrer le vote
+        //        await _surveyService.AddVoteAsync(suggestionId, userId);
+        //        return Ok(true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Erreur détaillée : {ex.ToString()}"); // Ajoutez cette ligne
+        //        return StatusCode(500, $"Erreur interne: {ex.Message}");
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Vérifie si un utilisateur a déjà voté pour une suggestion
+        ///// </summary>
+        ///// <param name="suggestionId">Identifiant de la suggestion</param>
+        ///// <param name="userId">Identifiant de l'utilisateur</param>
+        ///// <returns>True si l'utilisateur a déjà voté</returns>
+        //[HttpGet("hasVoted/{suggestionId}/{userId}")]
+        //public async Task<IActionResult> HasUserVoted(string suggestionId, string userId)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrEmpty(suggestionId) || string.IsNullOrEmpty(userId))
+        //        {
+        //            return BadRequest("Paramètres invalides");
+        //        }
+
+        //        bool hasVoted = await _surveyService.HasUserVotedAsync(suggestionId, userId);
+        //        return Ok(hasVoted);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Erreur détaillée : {ex.ToString()}"); // Ajoutez cette ligne
+        //        return StatusCode(500, $"Erreur interne: {ex.Message}");
+        //    }
+        //}
     }
 }

@@ -35,6 +35,7 @@ namespace SpiritWeb.Client.Models
         /// <summary>
         /// Nom d'affichage de l'utilisateur.
         /// </summary>
+        [JsonPropertyName("displayName")]
         public string DisplayName { get; set; }
 
         /// <summary>
@@ -52,6 +53,8 @@ namespace SpiritWeb.Client.Models
         /// Identifiant local de l'utilisateur.
         /// </summary>
         public string LocalId { get; set; }
+
+        public string DisplayName { get; set; }
     }
 
 }

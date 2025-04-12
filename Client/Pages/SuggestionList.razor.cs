@@ -13,7 +13,7 @@ namespace SpiritWeb.Client.Pages
     {
         private string userId = "";
         private string userDisplayName = "";
-    
+
         private List<SurveyModel> suggestions = new List<SurveyModel>();
         private bool isLoading = true;
         private string searchString = "";
@@ -34,10 +34,10 @@ namespace SpiritWeb.Client.Pages
                 // Vérifier les votes de l'utilisateur connecté
                 if (AuthService.IsAuthenticated)
                 {
-                    foreach (var suggestion in suggestions)
-                    {
-                        userVotes[suggestion.Id] = await SurveyService.HasUserVotedAsync(suggestion.Id);
-                    }
+                    //foreach (var suggestion in suggestions)
+                    //{
+                    //    userVotes[suggestion.Id] = await SurveyService.HasUserVotedAsync(suggestion.Id);
+                    //}
                 }
             }
             catch (Exception ex)
@@ -67,11 +67,11 @@ namespace SpiritWeb.Client.Pages
                     userVotes[suggestionId] = true;
 
                     // Mettre à jour le compteur de votes
-                    var suggestion = suggestions.FirstOrDefault(s => s.Id == suggestionId);
-                    if (suggestion != null)
-                    {
-                        suggestion.VotesCount++;
-                    }
+                    //var suggestion = suggestions.FirstOrDefault(s => s.Id == suggestionId);
+                    //if (suggestion != null)
+                    //{
+                    //    //suggestion.VotesCount++;
+                    //}
 
                     Snackbar.Add("Votre vote a été enregistré", Severity.Success);
                     StateHasChanged();

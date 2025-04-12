@@ -30,6 +30,11 @@ namespace SpiritWeb.Client.Pages
             }
         }
 
+
+        /// <summary>
+        /// Soumet le formulaire d'enquête
+        /// </summary>
+        /// <returns></returns>
         private async Task Submit()
         {
             await form.Validate();
@@ -42,7 +47,7 @@ namespace SpiritWeb.Client.Pages
                 {
                     // Compléter le modèle avec les informations utilisateur
                     surveyModel.UserId = AuthService.UserId;
-                    //surveyModel.UserDisplayName = AuthService.DisplayName;
+                    surveyModel.UserDisplayName = AuthService.DisplayName;
                     surveyModel.SubmissionDate = DateTime.UtcNow;
 
                     // Enregistrer dans Firestore

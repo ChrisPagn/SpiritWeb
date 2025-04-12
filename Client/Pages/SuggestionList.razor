@@ -47,15 +47,15 @@
                                      Class="mt-0"></MudTextField>
                     </ToolBarContent>
                     <HeaderContent>
-@*                         <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.UserDisplayName)">Contributeur</MudTableSortLabel></MudTh>
- *@                        <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.SubmissionDate)">Date</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.UserDisplayName)">Contributeur</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.SubmissionDate)">Date</MudTableSortLabel></MudTh>
                         <MudTh>Suggestion</MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.VotesCount)">Votes</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<Vote, object>(x => x.VotesCount)">Votes</MudTableSortLabel></MudTh>
                         <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-@*                         <MudTd DataLabel="Contributeur">@context.UserDisplayName</MudTd>
- *@                        <MudTd DataLabel="Date">@context.SubmissionDate.ToString("dd/MM/yyyy")</MudTd>
+                        <MudTd DataLabel="Contributeur">@context.UserDisplayName</MudTd>
+                        <MudTd DataLabel="Date">@context.SubmissionDate.ToString("dd/MM/yyyy")</MudTd>
                         <MudTd DataLabel="Suggestion">
                             <MudText Typo="Typo.body1">@context.OptimizationSuggestion</MudText>
                             <MudChip T="string" Color="Color.Info" Size="Size.Small" Class="mt-1">@context.FavoriteFeature</MudChip>
