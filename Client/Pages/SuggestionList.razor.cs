@@ -19,6 +19,7 @@ namespace SpiritWeb.Client.Pages
         private string searchString = "";
         private Dictionary<string, bool> userVotes = new Dictionary<string, bool>();
 
+
         protected override async Task OnInitializedAsync()
         {
             await LoadSuggestions();
@@ -34,10 +35,10 @@ namespace SpiritWeb.Client.Pages
                 // Vérifier les votes de l'utilisateur connecté
                 if (AuthService.IsAuthenticated)
                 {
-                    //foreach (var suggestion in suggestions)
-                    //{
-                    //    userVotes[suggestion.Id] = await SurveyService.HasUserVotedAsync(suggestion.Id);
-                    //}
+                    foreach (var suggestion in suggestions)
+                    {
+                        userVotes[suggestion.Id] = await VoteService.HasUserVotedAsync(suggestion.Id);
+                    }
                 }
             }
             catch (Exception ex)
@@ -60,18 +61,18 @@ namespace SpiritWeb.Client.Pages
 
             try
             {
-                bool success = await SurveyService.VoteForSuggestionAsync(suggestionId);
+                bool success = await VoteService.VoteForSuggestionAsync(suggestionId);
                 if (success)
                 {
                     // Mettre à jour l'interface utilisateur
                     userVotes[suggestionId] = true;
 
                     // Mettre à jour le compteur de votes
-                    //var suggestion = suggestions.FirstOrDefault(s => s.Id == suggestionId);
-                    //if (suggestion != null)
-                    //{
-                    //    //suggestion.VotesCount++;
-                    //}
+                    var suggestion = suggestions.FirstOrDefault(s => s.Id == suggestionId);
+                    if (suggestion != null)
+                    {
+                        suggestion.VotesCount++;
+                    }
 
                     Snackbar.Add("Votre vote a été enregistré", Severity.Success);
                     StateHasChanged();

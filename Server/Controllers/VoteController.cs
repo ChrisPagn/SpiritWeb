@@ -29,7 +29,7 @@ namespace SpiritWeb.Server.Controllers
         /// <param name="suggestionId">Identifiant de la suggestion</param>
         /// <param name="userId">Identifiant de l'utilisateur qui vote</param>
         /// <returns>True si le vote a été enregistré avec succès</returns>
-        [HttpPost("vote/{suggestionId}/{userId}")]
+        [HttpPost("save/{suggestionId}/{userId}")]
         public async Task<IActionResult> VoteForSuggestion(string suggestionId, string userId)
         {
             try

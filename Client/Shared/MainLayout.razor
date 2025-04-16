@@ -20,7 +20,7 @@
         <NavMenu OnLinkClick="DrawerClose" />
     </MudDrawer>
 
-    <div class="content-wrapper" style="padding-bottom: 50px;">
+    <div class="content-wrapper" style="flex: 1; padding-bottom: 80px;"> 
         <SpiritWeb.Client.Pages.PageTransitionLayout>
             <MudMainContent Class="flex-grow-1">
                 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="main-container">
@@ -29,8 +29,9 @@
             </MudMainContent>
         </SpiritWeb.Client.Pages.PageTransitionLayout>
     </div>
-
     <Footer Class="footer" />
+
+   
 </MudLayout>
 
 <style>
@@ -41,5 +42,19 @@
 
     .title-spiritweb, .title-menu {
         font-family: "Cambria", Cambria, serif;
+    }
+
+    .footer {
+        margin-top: 2rem; /* Espace au-dessus du footer */
+        padding: 1rem 0; /* Espace interne */
+        position: relative;
+        bottom: 0;
+        width: 100%;
+    }
+
+    /* Optionnel : pour s'assurer que le contenu pousse le footer vers le bas */
+    .content-wrapper {
+        min-height: calc(100vh - [hauteur-du-footer]px);
+        padding-bottom: [espace-souhaité]px;
     }
 </style>
