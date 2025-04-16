@@ -3,7 +3,7 @@
 @implements IDisposable
 @using SpiritWeb.Client.Models
 
-<MudNavMenu Class="nav-menu">
+<MudNavMenu Class="nav-menu" Expanded="@_isMenuExpanded">
 
     <MudText Typo="Typo.h6" Class="px-4 py-2 title-nav">Navigation</MudText>
 
@@ -12,12 +12,14 @@
     <MudNavLink Href=""
                 Match="NavLinkMatch.All"
                 Icon="@Icons.Material.Filled.Home"
-                IconColor="Color.Inherit">Home</MudNavLink>
+                IconColor="Color.Inherit"
+                OnClick="@HandleNavClick">Home</MudNavLink>
                 
     <MudNavLink Href="suggestionList"
                 Match="NavLinkMatch.All"
                 Icon="@Icons.Material.Filled.HowToVote"
-                IconColor="Color.Inherit">Votes des suggestions</MudNavLink>
+                IconColor="Color.Inherit"
+                OnClick="@HandleNavClick">Votes des suggestions</MudNavLink>
 
     @* Verifier si user n'est pas authentifié *@
     @if (!AuthService.IsAuthenticated)
@@ -25,7 +27,8 @@
         <MudNavLink Href="authentication"
                     Match="NavLinkMatch.Prefix"
                     Icon="@Icons.Material.Filled.Login"
-                    IconColor="Color.Inherit">Authentification</MudNavLink>
+                    IconColor="Color.Inherit"
+                    OnClick="@HandleNavClick">Authentification</MudNavLink>
     }
     @* Verifier si user est authentifié *@
     else
@@ -34,13 +37,15 @@
         <MudNavLink Href="profile"
                     Match="NavLinkMatch.Prefix"
                     Icon="@Icons.Material.Filled.Person"
-                    IconColor="Color.Inherit">Profil</MudNavLink>
+                    IconColor="Color.Inherit"
+                    OnClick="@HandleNavClick">Profil</MudNavLink>
 
         @* Menu pour les rôles user et au-dessus *@
         <MudNavLink Href="users"
                     Match="NavLinkMatch.Prefix"
                     Icon="@Icons.Material.Filled.People"
-                    IconColor="Color.Inherit">Utilisateurs</MudNavLink>
+                    IconColor="Color.Inherit"
+                    OnClick="@HandleNavClick">Utilisateurs</MudNavLink>
 
         @* Menu supplémentaire pour les contributeurs et admin *@
         @if (AuthService.UserRole == "contributor" || AuthService.UserRole == "admin")
@@ -48,7 +53,8 @@
             <MudNavLink Href="suggestion"
                         Match="NavLinkMatch.Prefix"
                         Icon="@Icons.Material.Filled.Lightbulb"
-                        IconColor="Color.Inherit">Suggestions</MudNavLink>
+                        IconColor="Color.Inherit"
+                        OnClick="@HandleNavClick">Suggestions</MudNavLink>
         }
 
         @* Menu réservé aux admin *@
@@ -57,7 +63,8 @@
             <MudNavLink Href="dashboardadmin"
                         Match="NavLinkMatch.Prefix"
                         Icon="@Icons.Material.Filled.Dashboard"
-                        IconColor="Color.Inherit">Admin Dashboard</MudNavLink>
+                        IconColor="Color.Inherit"
+                        OnClick="@HandleNavClick">Admin Dashboard</MudNavLink>
         }
     }
 </MudNavMenu>

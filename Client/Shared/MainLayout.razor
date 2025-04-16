@@ -7,7 +7,7 @@
 
 <MudLayout Class="d-flex flex-column" Style="min-height: 100vh;">
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+        <MudIconButton Icon="@(_drawerOpen ? Icons.Material.Filled.Close : Icons.Material.Filled.Menu)" Color="Color.Inherit" Edge="Edge.Start"
                        OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h6" Class="ml-3 title-spiritweb">SpiritWeb</MudText>
         <MudSpacer />
@@ -17,10 +17,10 @@
         <MudDrawerHeader>
             <MudText Typo="Typo.h6" Class="title-menu">Menu</MudText>
         </MudDrawerHeader>
-        <NavMenu />
+        <NavMenu OnLinkClick="DrawerClose" />
     </MudDrawer>
 
-    <div class="content-wrapper" style="padding-bottom: 100px;">
+    <div class="content-wrapper" style="padding-bottom: 50px;">
         <SpiritWeb.Client.Pages.PageTransitionLayout>
             <MudMainContent Class="flex-grow-1">
                 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="main-container">
@@ -34,7 +34,6 @@
 </MudLayout>
 
 <style>
-  
     .bodyback {
         background-color: #4939d1;
         color: #fff;
