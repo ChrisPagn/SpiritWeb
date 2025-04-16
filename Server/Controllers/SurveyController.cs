@@ -64,11 +64,12 @@ namespace SpiritWeb.Server.Controllers
         //    }
         //}
 
-        [HttpPost("submit")]
+        [HttpPost("save")]
         public async Task<IActionResult> SubmitSurvey([FromBody] SurveyModel model)
         {
             try
             {
+                var toto = model;
                 // Validation consolidée (sans vérification des votes)
                 if (model == null ||
                     string.IsNullOrEmpty(model.UserId) ||

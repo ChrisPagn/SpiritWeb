@@ -14,7 +14,7 @@ namespace SpiritWeb.Shared.Models
         /// Identifiant unique de l'enquête (généré automatiquement par Firestore)
         /// </summary>
         [FirestoreDocumentId]
-        public string Id { get; set; }
+        public string Id { get; set; } = "0";
 
         /// <summary>
         /// Identifiant de l'utilisateur qui a soumis l'enquête
@@ -58,7 +58,8 @@ namespace SpiritWeb.Shared.Models
         [FirestoreProperty]
         public string OptimizationSuggestion { get; set; }
 
-        
+        [FirestoreProperty]
+        public int VotesCount { get; set; }
 
         /// <summary>
         /// Constructeur par défaut
@@ -66,6 +67,7 @@ namespace SpiritWeb.Shared.Models
         public SurveyModel()
         {
             // Constructeur par défaut
+            Id = "0";
         }
 
         /// <summary>

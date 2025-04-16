@@ -11,12 +11,12 @@
 @inject AuthService AuthService
 @inject DatabaseService DatabaseService
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
     <MudCard>
-        <MudCardHeader>
+        <MudCardHeader Class="title">
             <MudText Typo="Typo.h5" Class="title-suggestion">Suggestions d'Optimisation</MudText>
         </MudCardHeader>
-        <MudCardContent>
+        <MudCardContent Class="card-body">
             @if (isLoading)
             {
                 <div class="d-flex justify-center my-4">
@@ -29,7 +29,8 @@
             }
             else
             {
-                <MudTable Items="@suggestions" 
+                <MudTable Items="@suggestions"
+                         Class="fun-table"
                          Dense="false" 
                          Hover="true" 
                          Bordered="false" 
@@ -37,7 +38,7 @@
                          Filter="new Func<SurveyModel, bool>(FilterFunc)"
                          SortLabel="Trier par">
                     <ToolBarContent>
-                        <MudText Typo="Typo.h6">Suggestions</MudText>
+                        <MudText Typo="Typo.h6" Class="title-suggestion">Suggestions</MudText>
                         <MudSpacer />
                         <MudTextField @bind-Value="searchString" 
                                      Placeholder="Rechercher" 
@@ -50,7 +51,7 @@
                         <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.UserDisplayName)">Contributeur</MudTableSortLabel></MudTh>
                         <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.SubmissionDate)">Date</MudTableSortLabel></MudTh>
                         <MudTh>Suggestion</MudTh>
-                        <MudTh><MudTableSortLabel SortBy="new Func<Vote, object>(x => x.VotesCount)">Votes</MudTableSortLabel></MudTh>
+                        <MudTh><MudTableSortLabel SortBy="new Func<SurveyModel, object>(x => x.VotesCount)">Votes</MudTableSortLabel></MudTh>
                         <MudTh>Action</MudTh>
                     </HeaderContent>
                     <RowTemplate>
@@ -115,6 +116,53 @@
 <style>
     .title-suggestion {
         font-family: "Cambria", Cambria, serif;
-        color: @ColorConstant.colorBackgroundMallow00;
+        color: black;
+        font-size: 1.5rem;
+        font-weight: bold;
+   }
+
+    body {
+        background-color: @ColorConstant.colorBackgroundMallow80;
     }
+
+    .card-body {
+        background-color: @ColorConstant.colorBackgroundMallow80; /* Même couleur que le body */
+    }
+
+    .title {
+        background-color: @ColorConstant.colorBackgroundMallow80;
+        font-family: "Cambria", Cambria, serif;
+        color: black;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .fun-table {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 10px;
+        background-color: @ColorConstant.colorBackgroundMallow90;
+        border-radius: 10px;
+        border: 3px solid @ColorConstant.colorBackgroundMallowBordure;
+        box-shadow: 0 10px 35px #dcd9fa;
+    }
+
+        .fun-table thead th {
+            background-color: #c2b8ff !important;
+            color: black !important;
+            font-weight: bold;
+        }
+
+        .fun-table tr:nth-child(even) {
+            background-color: #dcd9fa;
+        }
+
+        .fun-table tr:nth-child(odd) {
+            background-color: #eeecfd;
+        }
+
+        .fun-table tr:hover {
+            background-color: @ColorConstant.colorBackgroundMallowHover !important;
+            color: #000;
+            transition: background-color 0.3s ease;
+        }
 </style>

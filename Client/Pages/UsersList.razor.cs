@@ -10,6 +10,7 @@ namespace SpiritWeb.Client.Pages
     public partial class UsersList
     {
         private List<SaveData> users = new();
+        private SaveData? selectedUser;
         private string searchString = string.Empty;
         private bool isLoading = true;
 
@@ -72,18 +73,37 @@ namespace SpiritWeb.Client.Pages
         /// <param name="state">L'état actuel de la table, incluant la page et la taille de la page.</param>
         /// <param name="cancellationToken">Le jeton d'annulation.</param>
         /// <returns>Les données de la table pour la page actuelle.</returns>
-        private Task<TableData<SaveData>> LoadServerData(TableState state, CancellationToken cancellationToken)
+        private async Task<TableData<SaveData>> LoadServerData(TableState state, CancellationToken cancellationToken)
         {
-            var data = filteredUsers
-                .Skip(state.Page * state.PageSize)
-                .Take(state.PageSize)
-                .ToList();
-
-            return Task.FromResult(new TableData<SaveData>()
+            try
             {
-                TotalItems = filteredUsers.Count,
-                Items = data
-            });
+                // Si vous avez un service backend qui gère la pagination côté serveur
+                // var result = await DatabaseService.GetUsersPaginatedAsync(state.Page, state.PageSize, searchString, cancellationToken);
+                // return new TableData<SaveData>() { TotalItems = result.TotalCount, Items = result.Items };
+
+                // Version côté client avec filtrage
+                var filtered = filteredUsers;
+                var totalItems = filtered.Count;
+                var pagedData = filtered
+                    .Skip(state.Page * state.PageSize)
+                    .Take(state.PageSize)
+                    .ToList();
+
+                return new TableData<SaveData>()
+                {
+                    TotalItems = totalItems,
+                    Items = pagedData
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur lors du chargement des données: {ex.Message}");
+                return new TableData<SaveData>()
+                {
+                    TotalItems = 0,
+                    Items = new List<SaveData>()
+                };
+            }
         }
 
         /// <summary>

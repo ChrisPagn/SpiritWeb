@@ -25,13 +25,15 @@
             {
                 <MudTextField @bind-Value="searchString" Placeholder="Rechercher..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" />
 
-                <MudTable Items="filteredUsers"
+                <MudTable Items="@filteredUsers"
                           Class="fun-table"
                           Hover="true"
                           Striped="true"
                           Bordered="true"
                           Dense="true"
-                         RowClassFunc="@( (user, index) => GetRowClass(user, index) )">
+                          RowClassFunc="@( (user, index) => GetRowClass(user, index) )"
+                          ServerData="@LoadServerData"
+                          @bind-SelectedItem="selectedUser">
 
                     <HeaderContent>
                         <MudTh>Nom d'affichage</MudTh>
@@ -43,6 +45,7 @@
                         <MudTh>Objets</MudTh>
                         <MudTh>Dernière modification</MudTh>
                     </HeaderContent>
+
                     <RowTemplate>
                         <MudTd>@context.DisplayName</MudTd>
                         <MudTd>@context.Role</MudTd>
@@ -57,6 +60,10 @@
                         </MudTd>
                         <MudTd DataLabel="Dernière modification">@context.LastModified.ToLocalTime().ToString("f")</MudTd>
                     </RowTemplate>
+
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new int[] { 5, 10, 25 }" />
+                    </PagerContent>
                 </MudTable>
 
             }

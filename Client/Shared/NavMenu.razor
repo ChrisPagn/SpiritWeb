@@ -19,17 +19,6 @@
                 Icon="@Icons.Material.Filled.HowToVote"
                 IconColor="Color.Inherit">Votes des suggestions</MudNavLink>
 
-    @* Menu par default a modifier ou a supprimer *@
-    <MudNavLink Href="counter"
-                Match="NavLinkMatch.Prefix"
-                Icon="@Icons.Material.Filled.Add"
-                IconColor="Color.Inherit">Counter</MudNavLink>
-
-    <MudNavLink Href="fetchdata"
-                Match="NavLinkMatch.Prefix"
-                Icon="@Icons.Material.Filled.List"
-                IconColor="Color.Inherit">Fetch data</MudNavLink>
-
     @* Verifier si user n'est pas authentifié *@
     @if (!AuthService.IsAuthenticated)
     {

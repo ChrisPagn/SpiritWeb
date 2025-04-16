@@ -37,7 +37,7 @@ namespace SpiritWeb.Client.Services
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/Survey/submit", surveyModel);
+                var response = await _httpClient.PostAsJsonAsync($"api/Survey/save", surveyModel);
                 Console.WriteLine(JsonSerializer.Serialize(surveyModel));
 
                 response.EnsureSuccessStatusCode();

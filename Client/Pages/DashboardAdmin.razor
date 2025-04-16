@@ -1,0 +1,92 @@
+﻿@page "/dashboardadmin"
+@using SpiritWeb.Client.Services
+@using MudBlazor
+@using SpiritWeb.Client.Models
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+    <MudGrid Justify="Justify.Center" Spacing="4">
+        <!-- Titre du dashboard -->
+        <MudItem xs="12">
+            <MudText Typo="Typo.h4" Class="text-center mb-6" Style="Cambria">Administration Dashboard</MudText>
+        </MudItem>
+
+        <!-- Card Gestion Utilisateurs -->
+        <MudItem xs="12" sm="6" md="4" lg="3">
+            <MudLink Href="/users" Underline="Underline.None">
+                <MudCard Class="dashboard-card">
+                    <MudCardContent>
+                        <div class="text-center">
+                            <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Color="Color.Primary" Class="mb-3" />
+                            <MudText Typo="Typo.h6">Listes Utilisateurs</MudText>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudLink>
+        </MudItem>
+
+        <!-- Card Suggestions -->
+        <MudItem xs="12" sm="6" md="4" lg="3">
+            <MudLink Href="/suggestionList" Underline="Underline.None">
+                <MudCard Class="dashboard-card">
+                    <MudCardContent>
+                        <div class="text-center">
+                            <MudIcon Icon="@Icons.Material.Filled.Lightbulb" Size="Size.Large" Color="Color.Info" Class="mb-3" />
+                            <MudText Typo="Typo.h6">Suggestions</MudText>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudLink>
+        </MudItem>
+
+        <!-- Card Statistiques -->
+        <MudItem xs="12" sm="6" md="4" lg="3">
+            <MudLink Href="/stats" Underline="Underline.None">
+                <MudCard Class="dashboard-card">
+                    <MudCardContent>
+                        <div class="text-center">
+                            <MudIcon Icon="@Icons.Material.Filled.Analytics" Size="Size.Large" Color="Color.Warning" Class="mb-3" />
+                            <MudText Typo="Typo.h6">Statistiques</MudText>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudLink>
+        </MudItem>
+
+        <!-- Card Paramètres -->
+        <MudItem xs="12" sm="6" md="4" lg="3">
+            <MudLink Href="/settings" Underline="Underline.None">
+                <MudCard Class="dashboard-card">
+                    <MudCardContent>
+                        <div class="text-center">
+                            <MudIcon Icon="@Icons.Material.Filled.Settings" Size="Size.Large" Color="Color.Secondary" Class="mb-3" />
+                            <MudText Typo="Typo.h6">Paramètres</MudText>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudLink>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<style>
+    .dashboard-card {
+        height: 100%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        background-color: @ColorConstant.colorBackgroundMallow90;
+        border: 2px solid @ColorConstant.colorBackgroundMallowBordure;
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background-color: @ColorConstant.colorBackgroundMallowHover;
+        }
+
+    body {
+        background-color: @ColorConstant.colorBackgroundMallow80;
+    }
+</style>
+

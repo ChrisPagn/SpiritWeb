@@ -1,3 +1,4 @@
+using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.ResponseCompression;
 using SpiritWeb.Server.Services;
 
@@ -14,9 +15,21 @@ var credentialPath = Path.Combine(Directory.GetCurrentDirectory(), "Secrets/fire
 //comment a ajouter
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialPath);
 
+// Récupération de l'ID de projet depuis la configuration
+var firebaseProjectId = builder.Configuration["Firebase:ProjectId"];
+if (string.IsNullOrEmpty(firebaseProjectId))
+{
+    throw new InvalidOperationException("Firebase ProjectId n'est pas configuré dans appsettings.json");
+}
+// Enregistrement de FirestoreDb
+builder.Services.AddSingleton(FirestoreDb.Create(firebaseProjectId));
+
 // Enregistrement des services Firebase
 builder.Services.AddScoped<FirebaseAuthService>();
 builder.Services.AddScoped<FirebaseDatabaseService>();
+builder.Services.AddScoped<FirestoreSurveyService>();
+builder.Services.AddScoped<FirestoreVoteService>();
+
 
 var app = builder.Build();
 
