@@ -10,5 +10,6 @@
         public const string colorBackgroundMallow90 = "#eeecfd";
         public const string colorBackgroundMallowHover = "#c2b8ff";
         public const string colorBackgroundMallowBordure = "#513fe8";
+
     }
 }

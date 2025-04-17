@@ -35,7 +35,7 @@ namespace SpiritWeb.Shared.Models
         public DateTime SubmissionDate { get; set; }
 
         /// <summary>
-        /// Niveau de satisfaction global (1-5, où 5 est le plus satisfait)
+        /// Niveau de satisfaction global (5: Excellent, 4:Très bon, 3:Bon, 2:Passable, 1:À améliorer)
         /// </summary>
         [FirestoreProperty]
         public int SatisfactionRating { get; set; }
@@ -47,7 +47,7 @@ namespace SpiritWeb.Shared.Models
         public int PlayFrequency { get; set; }
 
         /// <summary>
-        /// Fonctionnalité préférée du jeu
+        /// Fonctionnalité préférée du jeu ( Système de niveaux, Collection d'objets, Système de pièces, Interface utilisateur, Autre)
         /// </summary>
         [FirestoreProperty]
         public string FavoriteFeature { get; set; }
