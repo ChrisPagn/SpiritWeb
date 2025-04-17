@@ -86,7 +86,8 @@
                                              Color="Color.Primary" 
                                              StartIcon="@Icons.Material.Filled.ThumbUp" 
                                              Size="Size.Small" 
-                                             OnClick="@(() => VoteForSuggestion(context.Id))">
+                                             OnClick="@(() => VoteForSuggestion(context.Id))"
+                                               Disabled="@buttonDisabled">
                                         Voter
                                     </MudButton>
                                 }

@@ -18,13 +18,22 @@ namespace SpiritWeb.Client.Pages
         private bool isLoading = true;
         private string searchString = "";
         private Dictionary<string, bool> userVotes = new Dictionary<string, bool>();
+        public bool buttonDisabled{ get; set; } = false;
 
-
+        /// <summary>
+        /// Initialise la page
+        /// </summary>
+        /// <returns></returns>
         protected override async Task OnInitializedAsync()
         {
             await LoadSuggestions();
         }
 
+
+        /// <summary>
+        /// Charge toutes les suggestions
+        /// </summary>
+        /// <returns></returns>
         private async Task LoadSuggestions()
         {
             isLoading = true;
@@ -51,43 +60,83 @@ namespace SpiritWeb.Client.Pages
             }
         }
 
+        /// <summary>
+        /// Vote pour une suggestion
+        /// </summary>
+        /// <param name="suggestionId"></param>
+        /// <returns></returns>
         private async Task VoteForSuggestion(string suggestionId)
         {
+            buttonDisabled = true;
+
             if (!AuthService.IsAuthenticated)
             {
                 Snackbar.Add("Vous devez être connecté pour voter", Severity.Warning);
+                buttonDisabled = false;
                 return;
             }
 
             try
             {
-                bool success = await VoteService.VoteForSuggestionAsync(suggestionId);
-                if (success)
-                {
-                    // Mettre à jour l'interface utilisateur
-                    userVotes[suggestionId] = true;
+                var statusCode = await VoteService.VoteForSuggestionAsync(suggestionId);
 
-                    // Mettre à jour le compteur de votes
-                    var suggestion = suggestions.FirstOrDefault(s => s.Id == suggestionId);
-                    if (suggestion != null)
-                    {
-                        suggestion.VotesCount++;
-                    }
-
-                    Snackbar.Add("Votre vote a été enregistré", Severity.Success);
-                    StateHasChanged();
-                }
-                else
+                switch (statusCode)
                 {
-                    Snackbar.Add("Une erreur est survenue lors de l'enregistrement du vote", Severity.Error);
+                    case 200:
+                        
+                        userVotes[suggestionId] = true;
+
+                        // Mettre à jour le compteur de votes
+                        var suggestion = suggestions.FirstOrDefault(s => s.Id == suggestionId);
+                        if (suggestion != null)
+                        {
+                            suggestion.VotesCount++;
+                        }
+
+                        Snackbar.Add("Votre vote a été enregistré", Severity.Success);
+                        StateHasChanged();
+                        break;
+
+                    case 0:
+                        Snackbar.Add("Vous devez être connecté pour voter", Severity.Warning);
+                        break;
+
+                    case 1:
+                        Snackbar.Add("Une erreur interne est survenue", Severity.Error);
+                        break;
+
+                    case 409:
+                        Snackbar.Add("Vous avez déjà voté pour cette suggestion", Severity.Warning);
+                        break;
+
+                    case 400:
+                        Snackbar.Add("Requête invalide. Veuillez réessayer.", Severity.Error);
+                        break;
+
+                    case 500:
+                        Snackbar.Add("Erreur interne du serveur. Veuillez réessayer plus tard.", Severity.Error);
+                        break;
+
+                    default:
+                        Snackbar.Add($"Une erreur inattendue est survenue (Code: {statusCode})", Severity.Error);
+                        break;
                 }
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"Erreur: {ex.Message}", Severity.Error);
+                Snackbar.Add($"Erreur inattendue: {ex.Message}", Severity.Error);
+            }
+            finally
+            {
+                buttonDisabled = false;
             }
         }
 
+        /// <summary>
+        /// Filtre les suggestions en fonction de la chaîne de recherche
+        /// </summary>
+        /// <param name="suggestion"></param>
+        /// <returns></returns>
         private bool FilterFunc(SurveyModel suggestion)
         {
             if (string.IsNullOrWhiteSpace(searchString))
@@ -105,6 +154,11 @@ namespace SpiritWeb.Client.Pages
             return false;
         }
 
+
+        /// <summary>
+        /// Actualise les données
+        /// </summary>
+        /// <returns></returns>
         public async Task RefreshData()
         {
             await LoadSuggestions();

@@ -43,7 +43,7 @@ namespace SpiritWeb.Server.Controllers
                 bool hasVoted = await _voteService.HasUserVotedAsync(suggestionId, userId);
                 if (hasVoted)
                 {
-                    return BadRequest("Vous avez déjà voté pour cette suggestion");
+                    return Conflict("Vous avez déjà voté pour cette suggestion");
                 }
 
                 // Enregistrer le vote

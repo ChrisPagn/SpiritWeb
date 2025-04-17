@@ -22,7 +22,5 @@ namespace SpiritWeb.Shared.Models
         [FirestoreProperty]
         public int VotesCount { get; set; } = 0;
 
-        [FirestoreProperty]
-        public DateTime LastUpdated { get; set; }
     }
 }

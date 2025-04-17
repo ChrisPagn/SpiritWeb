@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace SpiritWeb.Client.Shared
 {
@@ -13,7 +14,7 @@ namespace SpiritWeb.Client.Shared
         /// </summary>
         [Parameter]
         public EventCallback OnLinkClick { get; set; }
-        private bool _isMenuExpanded = true; // État par défaut
+        public bool _isMenuExpanded { get; set; }= true; // État par défaut
 
 
         /// <summary>
@@ -24,7 +25,18 @@ namespace SpiritWeb.Client.Shared
         {
             AuthService.OnAuthStateChanged += OnAuthStateChanged;
             await AuthService.AuthInitialized; // Attendre que l'initialisation de l'authentification soit terminée
+
+            Navigation.LocationChanged += OnLocationChanged;
             StateHasChanged(); // Forcer un re-rendu initial
+        }
+
+        private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+        {
+            Console.WriteLine($"Navigation détectée vers : {e.Location} && statut de menu : {_isMenuExpanded}");
+
+            // Fermer automatiquement le menu ici
+            _isMenuExpanded = false;
+            StateHasChanged(); // Mettre à jour l'affichage si besoin
         }
 
         /// <summary>
@@ -41,6 +53,8 @@ namespace SpiritWeb.Client.Shared
         public void Dispose()
         {
             AuthService.OnAuthStateChanged -= OnAuthStateChanged;
+            Navigation.LocationChanged -= OnLocationChanged;
+
         }
 
         /// <summary>

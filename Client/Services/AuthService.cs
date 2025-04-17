@@ -197,7 +197,6 @@ namespace SpiritWeb.Client.Services
 
                     //// Charger les données utilisateur pour obtenir le rôle réel
                     await LoadUserRoleFromDatabase();
-                    //await LoadUserRoleDisplaynameDataFromDatabase();
 
                     return authResult;
                 }
@@ -378,7 +377,6 @@ namespace SpiritWeb.Client.Services
             if (IsAuthenticated)
             {
                 await LoadUserRoleFromDatabase();
-                //await LoadUserRoleDisplaynameDataFromDatabase();
             }
         }
 

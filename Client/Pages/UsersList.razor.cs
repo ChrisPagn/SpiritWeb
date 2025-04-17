@@ -77,10 +77,6 @@ namespace SpiritWeb.Client.Pages
         {
             try
             {
-                // Si vous avez un service backend qui gère la pagination côté serveur
-                // var result = await DatabaseService.GetUsersPaginatedAsync(state.Page, state.PageSize, searchString, cancellationToken);
-                // return new TableData<SaveData>() { TotalItems = result.TotalCount, Items = result.Items };
-
                 // Version côté client avec filtrage
                 var filtered = filteredUsers;
                 var totalItems = filtered.Count;

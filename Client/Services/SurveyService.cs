@@ -53,9 +53,6 @@ namespace SpiritWeb.Client.Services
             }
         }
 
-
-
-
         /// <summary>
         /// Récupère toutes les suggestions d'optimisation
         /// </summary>
@@ -72,9 +69,6 @@ namespace SpiritWeb.Client.Services
                 Console.WriteLine($"Erreur lors de la récupération des suggestions : {ex.Message}");
                 throw;
             }
-        }
-
-
-       
+        }       
     }
 }

@@ -1,13 +1,15 @@
 ﻿@using SpiritWeb.Client.Services
 @inject AuthService AuthService
 @implements IDisposable
+@inject NavigationManager Navigation
 @using SpiritWeb.Client.Models
 
-<MudNavMenu Class="nav-menu" Expanded="@_isMenuExpanded">
+<MudNavMenu Class="nav-menu" @bind-Expanded="_isMenuExpanded">
 
     <MudText Typo="Typo.h6" Class="px-4 py-2 title-nav">Navigation</MudText>
 
     <MudDivider Class="mb-2" />
+  
 
     <MudNavLink Href=""
                 Match="NavLinkMatch.All"
@@ -21,6 +23,7 @@
                 IconColor="Color.Inherit"
                 OnClick="@HandleNavClick">Votes des suggestions</MudNavLink>
 
+           
     @* Verifier si user n'est pas authentifié *@
     @if (!AuthService.IsAuthenticated)
     {
@@ -67,6 +70,7 @@
                         OnClick="@HandleNavClick">Admin Dashboard</MudNavLink>
         }
     }
+
 </MudNavMenu>
  
 

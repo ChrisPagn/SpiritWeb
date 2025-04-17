@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace SpiritWeb.Client.Services
@@ -29,20 +30,24 @@ namespace SpiritWeb.Client.Services
         /// </summary>
         /// <param name="suggestionId">Identifiant de la suggestion</param>
         /// <returns>True si le vote a été enregistré avec succès</returns>
-        public async Task<bool> VoteForSuggestionAsync(string suggestionId)
+        public async Task<int> VoteForSuggestionAsync(string suggestionId)
         {
             if (!_authService.IsAuthenticated)
-                return false;
+            {
+                return 0; // le 0 == "non connecté"
+            }
+                //return false;
 
             try
             {
                 var response = await _httpClient.PostAsync($"api/Vote/save/{suggestionId}/{_authService.UserId}", null);
-                return response.IsSuccessStatusCode;
+                return (int)response.StatusCode;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erreur lors du vote pour la suggestion : {ex.Message}");
-                return false;
+                return 1; // le 1 == "erreur interne" 
+                          //false;
             }
         }
 

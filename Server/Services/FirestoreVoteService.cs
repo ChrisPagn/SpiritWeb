@@ -8,8 +8,13 @@ namespace SpiritWeb.Server.Services
 {
     public class FirestoreVoteService
     {
+        
         private readonly FirestoreDb _firestore;
 
+        /// <summary>
+        /// Initialise une nouvelle instance de la classe <see cref="FirestoreVoteService"/>.
+        /// </summary>
+        /// <param name="firestore"></param>
         public FirestoreVoteService(FirestoreDb firestore)
         {
             _firestore = firestore;
@@ -47,68 +52,49 @@ namespace SpiritWeb.Server.Services
         /// <summary>
         /// Ajoute un vote pour une suggestion
         /// </summary>
+        /// <param name="suggestionId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<bool> AddVoteAsync(string suggestionId, string userId)
         {
             try
             {
                 DocumentReference voteRef = _firestore.Collection("votes").Document(suggestionId);
+                DocumentSnapshot snapshot = await voteRef.GetSnapshotAsync();
 
-                if (await HasUserVotedAsync(suggestionId, userId))
+                Vote voteModel;
+
+                if (snapshot.Exists)
                 {
-                    return false;
+                    voteModel = snapshot.ConvertTo<Vote>() ?? new Vote();
+
+                    if (voteModel.UserIds == null)
+                        voteModel.UserIds = new List<string>();
+
+                    if (voteModel.UserIds.Contains(userId))
+                        return false; // déjà voté
+
+                    voteModel.UserIds.Add(userId);
+                    voteModel.VotesCount = voteModel.UserIds.Count;
+                }
+                else
+                {
+                    voteModel = new Vote
+                    {
+                        SuggestionId = suggestionId,
+                        UserIds = new List<string> { userId },
+                        VotesCount = 1
+                    };
                 }
 
-                return await _firestore.RunTransactionAsync(async transaction =>
-                {
-                    DocumentSnapshot snapshot = await transaction.GetSnapshotAsync(voteRef);
+                // Sauvegarde du vote
+                await voteRef.SetAsync(voteModel);
 
-                    if (snapshot.Exists)
-                    {
-                        // Correction ici: utilisation correcte de TryGetValue avec 'out'
-                        snapshot.TryGetValue("UserIds", out List<string> userIds);
-                        snapshot.TryGetValue("VotesCount", out int votesCount);
+                // Mise à jour du compteur de votes dans la suggestion (incrémentation atomique)
+                DocumentReference suggestionRef = _firestore.Collection("suggestions").Document(suggestionId);
+                await suggestionRef.UpdateAsync("VotesCount", FieldValue.Increment(1));
 
-                        userIds ??= new List<string>();
-                        userIds.Add(userId);
-                        votesCount = userIds.Count;
-
-                        transaction.Update(voteRef, new Dictionary<string, object>
-                        {
-                            ["UserIds"] = userIds,
-                            ["VotesCount"] = votesCount,
-                            ["LastUpdated"] = DateTime.Now
-                        });
-                    }
-                    else
-                    {
-                        var newVote = new Dictionary<string, object>
-                        {
-                            ["SuggestionId"] = suggestionId,
-                            ["UserIds"] = new List<string> { userId },
-                            ["VotesCount"] = 1,
-                            ["LastUpdated"] = DateTime.Now
-                        };
-                        transaction.Set(voteRef, newVote);
-                    }
-
-                    DocumentReference suggestionRef = _firestore.Collection("suggestions").Document(suggestionId);
-                    DocumentSnapshot suggestionSnapshot = await transaction.GetSnapshotAsync(suggestionRef);
-
-                    if (suggestionSnapshot.Exists)
-                    {
-                        // Correction ici aussi
-                        if (suggestionSnapshot.TryGetValue("VotesCount", out int currentVotes))
-                        {
-                            transaction.Update(suggestionRef, "VotesCount", currentVotes + 1);
-                        }
-                        else
-                        {
-                            transaction.Update(suggestionRef, "VotesCount", 1);
-                        }
-                    }
-
-                    return true;
-                });
+                return true;
             }
             catch (Exception ex)
             {
