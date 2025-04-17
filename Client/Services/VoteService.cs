@@ -11,6 +11,19 @@ namespace SpiritWeb.Client.Services
        
         private readonly HttpClient _httpClient;
         private readonly AuthService _authService;
+
+        /// <summary>
+        /// Initialise une nouvelle instance de la classe <see cref="VoteService"/>.
+        /// </summary>
+        /// <param name="httpClient"></param>
+        /// <param name="authService"></param>
+        public VoteService(HttpClient httpClient, AuthService authService)
+        {
+            _httpClient = httpClient;
+            _authService = authService;
+        }
+
+
         /// <summary>
         /// Vote pour une suggestion spécifique
         /// </summary>

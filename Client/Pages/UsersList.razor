@@ -58,7 +58,7 @@
                         <MudTd>
                             <MudIcon Icon="@Icons.Material.Filled.Inventory" Color="Color.Info" /> @context.InventoryItemsName?.Count
                         </MudTd>
-                        <MudTd DataLabel="Dernière modification">@context.LastModified.ToLocalTime().ToString("f")</MudTd>
+                        <MudTd DataLabel="Dernière modification">@context.LastModified.ToLocalTime().ToString("g")</MudTd>
                     </RowTemplate>
 
                     <PagerContent>

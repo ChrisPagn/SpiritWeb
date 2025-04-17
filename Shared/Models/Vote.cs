@@ -10,17 +10,19 @@ namespace SpiritWeb.Shared.Models
     [FirestoreData]
     public class Vote
     {
-        /// <summary>
-        /// Liste des utilisateurs ayant voté pour cette suggestion
-        /// </summary>
-        //[FirestoreProperty]
-        public List<string> Votes { get; set; } = new List<string>();
+        [FirestoreDocumentId]
+        public string Id { get; set; } = "0";
 
-        /// <summary>
-        /// Nombre total de votes reçus
-        /// </summary>
-        //[FirestoreProperty]
+        [FirestoreProperty]
+        public string SuggestionId { get; set; }
+
+        [FirestoreProperty]
+        public List<string> UserIds { get; set; } = new List<string>();
+
+        [FirestoreProperty]
         public int VotesCount { get; set; } = 0;
 
+        [FirestoreProperty]
+        public DateTime LastUpdated { get; set; }
     }
 }

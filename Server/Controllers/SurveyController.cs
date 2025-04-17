@@ -36,7 +36,6 @@ namespace SpiritWeb.Server.Controllers
         {
             try
             {
-                var toto = model;
                 // Validation consolidée (sans vérification des votes)
                 if (model == null ||
                     string.IsNullOrEmpty(model.UserId) ||
@@ -47,9 +46,6 @@ namespace SpiritWeb.Server.Controllers
                 {
                     return BadRequest("Tous les champs obligatoires doivent être remplis");
                 }
-
-                //// Force l'initialisation si null
-                //model.Votes = model.Votes ?? new List<string>();
 
                 string id = await _surveyService.SaveSurveyAsync(model);
                 return Ok(id);
