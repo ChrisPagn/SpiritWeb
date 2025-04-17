@@ -81,18 +81,32 @@
                 </MudCard>
             </MudItem>
 
-            <!-- Graphique de fréquence de jeu -->
+            <!-- 2Graphique de fréquence de jeu -->
             <MudItem xs="12" md="6">
                 <MudCard Class="mb-6">
                     <MudCardHeader>
                         <MudText Typo="Typo.h5" Class="title-suggestion">Fréquence de jeu des utilisateurs</MudText>
                     </MudCardHeader>
                     <MudCardContent>
-                        <MudChart ChartType="ChartType.Bar" Width="100%" Height="300px"
-                                  InputData="@frequencyData" InputLabels="@frequencyLabels" />
+                        <MudChart ChartType="ChartType.Donut"
+                                  InputData="@frequencyData"
+                                  InputLabels="@frequencyLabels"
+                                  Width="300px" Height="300px"
+                                  Class="mx-auto"
+                                  Options="@(new ChartOptions {
+                          ChartPalette = new[] { "#594AE2", "#72A1E5", "#9ADBC5", "#F56C6C", "#FFCF56" }
+                      })">
+                            <CustomGraphics>
+                                <text class="donut-inner-text" x="50%" y="35%" dominant-baseline="middle" text-anchor="middle"
+                                      fill="black" font-family="Cambria" font-size="4">Total</text>
+                                <text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+                                      fill="black" font-family="Cambria" font-size="6">@frequencyData.Sum().ToString()</text>
+                            </CustomGraphics>
+                        </MudChart>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
+
 
             <!-- Top des suggestions les plus votées -->
             <MudItem xs="12">

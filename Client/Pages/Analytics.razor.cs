@@ -25,6 +25,11 @@ namespace SpiritWeb.Client.Pages
         private List<ChartSeries> featureSatisfactionSeries = new List<ChartSeries>();
         private string[] featureLabels;
 
+
+        /// <summary>
+        /// Méthode d'initialisation de la page
+        /// </summary>
+        /// <returns></returns>
         protected override async Task OnInitializedAsync()
         {
             // Vérifier les droits d'accès (optionnel: limiter aux administrateurs)
@@ -41,6 +46,10 @@ namespace SpiritWeb.Client.Pages
             await LoadData();
         }
 
+        /// <summary>
+        /// Méthode pour charger les données de l'enquête
+        /// </summary>
+        /// <returns></returns>
         private async Task LoadData()
         {
             try
@@ -60,6 +69,9 @@ namespace SpiritWeb.Client.Pages
             }
         }
 
+        /// <summary>
+        /// Préparer les données pour les graphiques
+        /// </summary>
         private void PrepareChartData()
         {
             // 1. Données de satisfaction
@@ -68,12 +80,20 @@ namespace SpiritWeb.Client.Pages
                 satisfactionData[i] = suggestions.Count(s => s.SatisfactionRating == i + 1);
             }
 
+           
             // 2. Données de fréquence de jeu
+            var validSuggestions = suggestions.Where(s => s.PlayFrequency >= 1 && s.PlayFrequency <= 5).ToList();
             for (int i = 0; i < 5; i++)
             {
-                frequencyData[i] = suggestions.Count(s => s.PlayFrequency == i + 1);
+                frequencyData[i] = validSuggestions.Count(s => s.PlayFrequency == i + 1);
             }
 
+            for (int i = 0; i < 5; i++)
+            {
+                Console.WriteLine($"Label {frequencyLabels[i]} : {frequencyData[i]}");
+            }
+
+           
             // 3. Top 5 des suggestions les plus votées
             topSuggestions = suggestions
                 .OrderByDescending(s => s.VotesCount)
@@ -92,6 +112,9 @@ namespace SpiritWeb.Client.Pages
             PrepareFeatureSatisfactionData();
         }
 
+        /// <summary>
+        /// Préparer les données de satisfaction par fonctionnalité
+        /// </summary>
         private void PrepareFeatureSatisfactionData()
         {
             // Extraire les fonctionnalités uniques, en ignorant les valeurs nulles
@@ -132,6 +155,10 @@ namespace SpiritWeb.Client.Pages
             }
         }
 
+        /// <summary>
+        /// Récupérer la fonctionnalité la plus populaire
+        /// </summary>
+        /// <returns></returns>
         private string GetMostPopularFeature()
         {
             if (!suggestions.Any())
