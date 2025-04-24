@@ -57,26 +57,6 @@ namespace SpiritWeb.Client.Shared
 
         }
 
-        /// <summary>
-        /// Méthode appelée lors du clic sur un lien de navigation.
-        /// </summary>
-        /// <returns></returns>
-        //private async Task HandleNavClick()
-        //{
-        //    if (OnLinkClick.HasDelegate)
-        //    {
-        //        await OnLinkClick.InvokeAsync();
-        //        StateHasChanged(); // Forcer un re-rendu initial
-        //    }
-        //}
-        //private async Task HandleNavClick()
-        //{
-        //    if (OnLinkClick.HasDelegate)
-        //    {
-        //        await OnLinkClick.InvokeAsync();
-        //    }
-        //    isMenuExpanded = false; // Ferme le menu après clic
-        //}
         private async Task HandleNavClick()
         {
             // 1. Ferme le drawer parent (via l'event du MainLayout)

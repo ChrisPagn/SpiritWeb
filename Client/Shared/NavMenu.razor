@@ -15,7 +15,8 @@
                 Match="NavLinkMatch.All"
                 Icon="@Icons.Material.Filled.Home"
                 IconColor="Color.Inherit"
-                OnClick="@HandleNavClick">Home</MudNavLink>
+                OnClick="@HandleNavClick"
+                Class="title-nav">Home</MudNavLink>
                 
    
 
@@ -27,7 +28,8 @@
                     Match="NavLinkMatch.Prefix"
                     Icon="@Icons.Material.Filled.Login"
                     IconColor="Color.Inherit"
-                    OnClick="@HandleNavClick">Authentification</MudNavLink>
+                    OnClick="@HandleNavClick"
+                    Class="title-nav">Authentification</MudNavLink>
     }
 
     @* Verifier si user est authentifié *@
@@ -38,21 +40,24 @@
                     Match="NavLinkMatch.Prefix"
                     Icon="@Icons.Material.Filled.Person"
                     IconColor="Color.Inherit"
-                    OnClick="@HandleNavClick">Profil</MudNavLink>
+                    OnClick="@HandleNavClick"
+                    Class="title-nav">Profil</MudNavLink>
 
         @* Menu pour les rôles user et au-dessus *@
         <MudNavLink Href="classement"
                     Match="NavLinkMatch.Prefix"
                     Icon="@Icons.Material.Filled.WorkspacePremium"
                     IconColor="Color.Inherit"
-                    OnClick="@HandleNavClick">Classement</MudNavLink>
+                    OnClick="@HandleNavClick"
+                    Class="title-nav">Classement</MudNavLink>
 
         <!-- Menu pour voir la liste de suggestion et votes-->
         <MudNavLink Href="suggestionList"
                     Match="NavLinkMatch.All"
                     Icon="@Icons.Material.Filled.HowToVote"
                     IconColor="Color.Inherit"
-                    OnClick="@HandleNavClick">Votes des suggestions</MudNavLink>
+                    OnClick="@HandleNavClick"
+                    Class="title-nav">Votes des suggestions</MudNavLink>
 
         @* Menu supplémentaire pour les contributeurs et admin *@
         @if (AuthService.UserRole == "contributor" || AuthService.UserRole == "admin")
@@ -61,7 +66,8 @@
                         Match="NavLinkMatch.Prefix"
                         Icon="@Icons.Material.Filled.Lightbulb"
                         IconColor="Color.Inherit"
-                        OnClick="@HandleNavClick">Suggestions</MudNavLink>
+                        OnClick="@HandleNavClick"
+                        Class="title-nav">Suggestions</MudNavLink>
         }
 
         @* Menu réservé aux admin *@
@@ -71,7 +77,8 @@
                         Match="NavLinkMatch.Prefix"
                         Icon="@Icons.Material.Filled.Dashboard"
                         IconColor="Color.Inherit"
-                        OnClick="@HandleNavClick">Admin Dashboard</MudNavLink>
+                        OnClick="@HandleNavClick"
+                        Class="title-nav">Admin Dashboard</MudNavLink>
         }
     }
 
@@ -79,33 +86,40 @@
  
 
 <style>
-    .nav-menu .mud-nav-link .mud-icon-root {
-/*         color: white !important;
- */
+    /* Style de base */
+    .nav-menu .mud-nav-link {
+        transition: all 0.3s ease;
     }
 
-    .nav-menu .mud-nav-link:hover {
-        background-color: @ColorConstant.colorBackgroundMallow90;
-        font-weight: bold;
-        color: @ColorConstant.colorBackgroundMallow00;    
-    }
-    
+        .nav-menu .mud-nav-link .mud-icon-root {
+            color: black !important;
+        }
 
-    .nav-menu .mud-nav-link.active {
-        background-color: @ColorConstant.colorBackgroundMallow90;
-        font-weight: bold;
-    }
-        
+        /* Style pour le hover */
+        .nav-menu .mud-nav-link:hover {
+            background-color: @ColorConstant.colorBackgroundMallowHover !important;
+            font-weight: bold;
+            color: @ColorConstant.colorBackgroundMallow90 !important;
+        }
 
-    .nav-menu .mud-nav-link.active .mud-icon-root {
-        background-color: @ColorConstant.colorBackgroundMallow90; 
-        font-weight: bold;
-        border-radius: 5px;
-     }
+        /* Style pour l'élément actif/sélectionné */
+        .nav-menu .mud-nav-link.active {
+            background-color: @ColorConstant.colorBackgroundMallowBordure !important;
+            color: @ColorConstant.colorBackgroundMallow90 !important;
+            font-weight: bold;
+            border-left: 4px solid @ColorConstant.colorBackgroundMallow90;
+        }
 
+            /* Style pour l'icône de l'élément actif */
+            .nav-menu .mud-nav-link.active .mud-icon-root {
+                color: @ColorConstant.colorBackgroundMallow90 !important;
+            }
+
+    /* Style du titre */
     .title-nav {
         font-family: "Cambria", Cambria, serif !important;
-        background-color: @ColorConstant.colorBackgroundMallow00;      
+        background-color: @ColorConstant.colorBackgroundMallow00 !important;
     }
 
+   
 </style>
