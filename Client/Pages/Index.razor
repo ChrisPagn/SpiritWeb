@@ -17,13 +17,63 @@
         </MudCardContent>
     </MudCard>
 
+    <MudPaper Class="mt-4 d-flex justify-content-center align-items-center pixel-art-container"
+              Style="width: 1200px; background: linear-gradient(135deg, #dcd9fa, #ffffff); padding: 40px 0;">
+        <div class="character-container">
+            <div class="sprite-walk"></div>
+        </div>
+    </MudPaper>
 </MudContainer>
 
 <style>
     body {
         background-color: @ColorConstant.colorBackgroundMallow80;
         font-family: 'Press Start 2P', cursive;
-    }  
+    }
 
-    
+    .pixel-art-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 300px;
+    }
+
+    .character-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .sprite-walk {
+        width: 52px;
+        height: 96px;
+        transform: scale(3);
+        image-rendering: pixelated;
+        background-repeat: no-repeat;
+        background-position: center;
+        animation: walkAnimation 1.2s steps(1) infinite;
+    }
+
+    @@keyframes walkAnimation {
+        0% {
+            background-image: url('/images/sprite-walk1.png');
+        }
+
+        25% {
+            background-image: url('/images/sprite-walk2.png');
+        }
+
+        50% {
+            background-image: url('/images/sprite-walk3.png');
+        }
+
+        75% {
+            background-image: url('/images/sprite-walk4.png');
+        }
+
+        100% {
+            background-image: url('/images/sprite-walk1.png');
+        }
+    }
 </style>

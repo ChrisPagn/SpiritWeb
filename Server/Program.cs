@@ -9,11 +9,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// comment a ajouter
+// Définit le chemin d'accès au fichier de credentials Firebase
+// Combine le répertoire courant avec le chemin relatif du fichier JSON (SDK)
 var credentialPath = Path.Combine(Directory.GetCurrentDirectory(), "Secrets/firebase-service-account.json");
 
-//comment a ajouter
+// Configure la variable d'environnement requise par Firebase SDK
+// Cette variable doit pointer vers le fichier de credentials service account
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialPath);
+
+if (!File.Exists(credentialPath))
+{
+    throw new FileNotFoundException($"Fichier de credentials Firebase introuvable: {credentialPath}");
+}
 
 // Récupération de l'ID de projet depuis la configuration
 var firebaseProjectId = builder.Configuration["Firebase:ProjectId"];
@@ -25,10 +32,10 @@ if (string.IsNullOrEmpty(firebaseProjectId))
 builder.Services.AddSingleton(FirestoreDb.Create(firebaseProjectId));
 
 // Enregistrement des services Firebase
-builder.Services.AddScoped<FirebaseAuthService>();
-builder.Services.AddScoped<FirebaseDatabaseService>();
-builder.Services.AddScoped<FirestoreSurveyService>();
-builder.Services.AddScoped<FirestoreVoteService>();
+builder.Services.AddSingleton<FirebaseAuthService>();
+builder.Services.AddSingleton<FirebaseDatabaseService>();
+builder.Services.AddSingleton<FirestoreSurveyService>();
+builder.Services.AddSingleton<FirestoreVoteService>();
 
 
 var app = builder.Build();

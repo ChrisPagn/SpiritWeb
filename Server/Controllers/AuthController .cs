@@ -38,6 +38,7 @@ namespace SpiritWeb.Server.Controllers
         {
             try
             {
+                // Créer un nouvel utilisateur avec l'email et le mot de passe fournis
                 UserRecord userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(new UserRecordArgs
                 {
                     Email = email,
@@ -48,6 +49,7 @@ namespace SpiritWeb.Server.Controllers
                 // Générer un token personnalisé
                 var token = await FirebaseAuth.DefaultInstance.CreateCustomTokenAsync(userRecord.Uid);
 
+                // Créer un lien d'authentification Firebase
                 return new FirebaseAuthResult
                 {
                     Token = token,

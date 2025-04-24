@@ -1,0 +1,201 @@
+﻿@page "/classement"
+@using SpiritWeb.Shared.Models
+@using SpiritWeb.Client.Services
+@using MudBlazor
+@using System.Globalization
+@using SpiritWeb.Client.Models
+@inject DatabaseService DatabaseService
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+    <MudCard>
+        <MudCardHeader Class="title">
+            <MudText Typo="Typo.h4" Class="title">Classement des Joueurs</MudText>
+        </MudCardHeader>
+        <MudCardContent Class="card-body">
+            @if (isLoading)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
+            else if (users == null || users.Count == 0)
+            {
+                <MudAlert Severity="Severity.Info">Aucun joueur trouvé.</MudAlert>
+            }
+            else
+            {
+                <MudTabs @bind-ActivePanelIndex="activeTabIndex" Class="mb-4 panel">
+                    @* Tri par niveau *@
+                    <MudTabPanel Class="title-panel" Text="Par niveau">
+                        <MudTable Items="@users.OrderByDescending(u => u.LevelReached).ThenBy(u => u.LastModified)"
+                                  Class="fun-table"
+                                  Hover="true"
+                                  Striped="true"
+                                  Bordered="true"
+                                  Dense="true">
+                            <HeaderContent>
+                                <MudTh>Position</MudTh>
+                                <MudTh>Nom d'affichage</MudTh>
+                                <MudTh>Niveau</MudTh>
+                                <MudTh>Dernier niveau joué</MudTh>
+                                <MudTh>Dernière activité</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>@(users.OrderByDescending(u => u.LevelReached).ToList().IndexOf(context) + 1)</MudTd>
+                                <MudTd>@context.DisplayName</MudTd>
+                                <MudTd>@context.LevelReached</MudTd>
+                                <MudTd>@context.LastLevelPlayed</MudTd>
+                                <MudTd>@context.LastModified.ToLocalTime().ToString("f", new CultureInfo("fr-FR"))</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudTabPanel>
+                    @* Tri par pieces *@
+                    <MudTabPanel Class="title-panel" Text="Par pièces">
+                        <MudTable Items="@users.OrderByDescending(u => u.CoinsCount).ThenBy(u => u.LastModified)"  
+                                  Class="fun-table"
+                                  Hover="true"
+                                  Striped="true"
+                                  Bordered="true"
+                                  Dense="true">
+                            <HeaderContent>
+                                <MudTh>Position</MudTh>
+                                <MudTh>Nom d'affichage</MudTh>
+                                <MudTh>Pièces</MudTh>
+                                <MudTh>Niveau</MudTh>
+                                <MudTh>Dernière activité</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>@(users.OrderByDescending(u => u.CoinsCount).ToList().IndexOf(context) + 1)</MudTd>
+                                <MudTd>@context.DisplayName</MudTd>
+                                <MudTd>
+                                    <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Warning" /> @context.CoinsCount
+                                </MudTd>
+                                <MudTd>@context.LevelReached</MudTd>
+                                <MudTd>@context.LastModified.ToLocalTime().ToString("f", new CultureInfo("fr-FR"))</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudTabPanel>
+                    @* Tri par objets *@
+                    <MudTabPanel Class="title-panel" Text="Par objets">
+                        <MudTable Items="@users.OrderByDescending(u => u.InventoryItemsName?.Count ?? 0).ThenBy(u => u.LastModified)"
+                                  Class="fun-table"
+                                  Hover="true"
+                                  Striped="true"
+                                  Bordered="true"
+                                  Dense="true">
+                            <HeaderContent>
+                                <MudTh>Position</MudTh>
+                                <MudTh>Nom d'affichage</MudTh>
+                                <MudTh>Objets</MudTh>
+                                <MudTh>Niveau</MudTh>
+                                <MudTh>Dernière activité</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>@(users.OrderByDescending(u => u.InventoryItemsName?.Count ?? 0).ToList().IndexOf(context) + 1)</MudTd>
+                                <MudTd>@context.DisplayName</MudTd>
+                                <MudTd>
+                                    <MudIcon Icon="@Icons.Material.Filled.Inventory" Color="Color.Info" /> @(context.InventoryItemsName?.Count ?? 0)
+                                </MudTd>
+                                <MudTd>@context.LevelReached</MudTd>
+                                <MudTd>@context.LastModified.ToLocalTime().ToString("f", new CultureInfo("fr-FR"))</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudTabPanel>
+                </MudTabs>
+            }
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+<style>
+    body {
+        background-color: @ColorConstant.colorBackgroundMallow80;
+    }
+
+    .card-body {
+        background-color: @ColorConstant.colorBackgroundMallow80;
+    }
+
+    .title {
+        background-color: @ColorConstant.colorBackgroundMallow80;
+        font-family: "Cambria", Cambria, serif;
+        color: black;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .panel {
+        background-color: @ColorConstant.colorBackgroundMallow80;
+        border-radius: 10px;
+    }
+
+    .panel .mud-tabs-toolbar {
+        background-color: @ColorConstant.colorBackgroundMallow80 !important;
+        border-bottom: 2px solid @ColorConstant.colorBackgroundMallowBordure;
+    }
+
+    .panel .mud-tab {
+        color: black;
+        font-family: "Cambria", Cambria, serif;
+        font-size: 14px;
+    }
+
+    .panel .mud-tab-active {
+        background-color: @ColorConstant.colorBackgroundMallow00;
+        color: @ColorConstant.colorBackgroundMallow90;
+        font-weight: bold;
+    }
+
+    .title-panel {
+        background-color: @ColorConstant.colorBackgroundMallow80;
+        border-radius: 0 10px 0 10px;
+    }
+
+    .mud-tabs-tabbar-content{
+        background-color: @ColorConstant.colorBackgroundMallow80 !important;
+    }
+
+    .fun-table {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 10px;
+        background-color: @ColorConstant.colorBackgroundMallow90;
+        border-radius: 10px;
+        border: 3px solid @ColorConstant.colorBackgroundMallowBordure;
+        box-shadow: 0 10px 35px #dcd9fa;
+        margin-top: 20px;
+    }
+
+        .fun-table thead th {
+            background-color: #c2b8ff !important;
+            color: black !important;
+            font-weight: bold;
+        }
+
+        .fun-table tr:nth-child(even) {
+            background-color: #dcd9fa;
+        }
+
+        .fun-table tr:nth-child(odd) {
+            background-color: #eeecfd;
+        }
+
+        .fun-table tr:hover {
+            background-color: @ColorConstant.colorBackgroundMallowHover !important;
+            color: #000;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Styles pour les trois premiers du classement */
+        .fun-table tr:first-child {
+            background-color: gold !important;
+            font-weight: bold;
+        }
+
+        .fun-table tr:nth-child(2) {
+            background-color: silver !important;
+        }
+
+        .fun-table tr:nth-child(3) {
+            background-color: #cd7f32 !important; /* bronze */
+        }
+</style>

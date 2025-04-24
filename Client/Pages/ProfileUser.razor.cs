@@ -1,4 +1,7 @@
-﻿using SpiritWeb.Shared.Models;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using SpiritWeb.Shared.Models;
+
 
 namespace SpiritWeb.Client.Pages
 {
@@ -24,12 +27,14 @@ namespace SpiritWeb.Client.Pages
             if (!AuthService.IsAuthenticated)
             {
                 NavigationManager.NavigateTo("/authentication");
+                Snackbar.Add("Veuillez vous connecter avant d'afficher votre profil!", Severity.Warning);
                 return;
             }
 
             try
             {
                 userData = await DatabaseService.LoadDataAsync(AuthService.UserId);
+
                 Console.WriteLine($"UserData loaded: {userData.UserId}, {userData.DisplayName}");
                 originalData = CloneSaveData(userData);
                 Console.WriteLine($"OriginalData cloned: {originalData.UserId}, {originalData.DisplayName}");
@@ -37,7 +42,7 @@ namespace SpiritWeb.Client.Pages
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors du chargement des données: {ex.Message}");
+                Snackbar.Add("Échec du chargement du profil. Veuillez réessayer.", Severity.Error);
                 isLoading = false;
             }
         }
@@ -70,6 +75,8 @@ namespace SpiritWeb.Client.Pages
         /// </summary>
         private void StartEdit()
         {
+            Snackbar.Add("Vous ne pouvez modifier que votre nom d'affichage!", Severity.Info);
+
             isEditing = true;
         }
 
@@ -82,37 +89,29 @@ namespace SpiritWeb.Client.Pages
             isEditing = false;
         }
 
-        /// <summary>
-        /// Sauvegarde les modifications apportées aux données utilisateur.
-        /// </summary>
-        //private async Task SaveChanges()
-        //{
-        //    try
-        //    {
-        //        userData.LastModified = DateTime.UtcNow;
-        //        await DatabaseService.SaveDataAsync(userData);
-        //        originalData = CloneSaveData(userData);
-        //        isEditing = false;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Erreur lors de la sauvegarde des modifications: {ex.Message}");
-        //    }
-        //}
 
         private async Task SaveChanges()
         {
             try
             {
-                Console.WriteLine($"Sauvegarde pour {userData.UserId}");
+                if (string.IsNullOrWhiteSpace(userData.DisplayName))
+                {
+                    Snackbar.Add("Le nom d'affichage ne peut pas être vide", Severity.Warning);
+                    return;
+                }
+                
+                Snackbar.Add("Sauvegarde de vos données en cours... ", Severity.Info);
+
                 userData.LastModified = DateTime.UtcNow;
                 await DatabaseService.SaveDataAsync(userData); 
                 originalData = CloneSaveData(userData);
+                Snackbar.Add($"Sauvegarde réussie pour {userData.DisplayName} !", Severity.Success);
                 isEditing = false;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erreur complète: {ex}");
+                Snackbar.Add("Échec de la sauvegarde. Veuillez réessayer.", Severity.Error);
             }
         }
 
@@ -122,6 +121,7 @@ namespace SpiritWeb.Client.Pages
         private async Task SignOut()
         {
             await AuthService.SignOut();
+            Snackbar.Add("Vous avez été déconnecté avec succès", Severity.Info);
             NavigationManager.NavigateTo("/authentication");
         }
 

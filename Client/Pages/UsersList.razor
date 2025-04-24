@@ -2,10 +2,11 @@
 @using SpiritWeb.Shared.Models
 @using SpiritWeb.Client.Services
 @using MudBlazor
+@using System.Globalization
+@using SpiritWeb.Client.Models
 @inject DatabaseService DatabaseService
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
-@using SpiritWeb.Client.Models
  
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6" >
     <MudCard>
@@ -58,7 +59,9 @@
                         <MudTd>
                             <MudIcon Icon="@Icons.Material.Filled.Inventory" Color="Color.Info" /> @context.InventoryItemsName?.Count
                         </MudTd>
-                        <MudTd DataLabel="Dernière modification">@context.LastModified.ToLocalTime().ToString("g")</MudTd>
+                        <MudTd DataLabel="Dernière modification">
+                            @context.LastModified.ToLocalTime().ToString("f", new System.Globalization.CultureInfo("fr-FR"))
+                        </MudTd>
                     </RowTemplate>
 
                     <PagerContent>

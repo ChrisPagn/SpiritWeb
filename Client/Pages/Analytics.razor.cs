@@ -3,6 +3,9 @@ using SpiritWeb.Shared.Models;
 
 namespace SpiritWeb.Client.Pages
 {
+    /// <summary>
+    /// Classe de la page d'analyse des résultats de l'enquête
+    /// </summary>
     public partial class Analytics
     {
         private List<SurveyModel> suggestions = new List<SurveyModel>();
@@ -35,8 +38,8 @@ namespace SpiritWeb.Client.Pages
             // Vérifier les droits d'accès (optionnel: limiter aux administrateurs)
             await AuthService.AuthInitialized;
 
-            if (!AuthService.IsAuthenticated ||
-                (AuthService.UserRole != "contributor" && AuthService.UserRole != "admin"))
+            // Vérifier si l'utilisateur est authentifié et a le rôle approprié
+            if (!AuthService.IsAuthenticated || AuthService.UserRole != "admin")
             {
                 NavigationManager.NavigateTo("/");
                 Snackbar.Add("Vous n'avez pas les droits pour accéder à cette page", Severity.Warning);
@@ -105,6 +108,7 @@ namespace SpiritWeb.Client.Pages
             // Tronquer les suggestions trop longues pour l'affichage dans le graphique
             voteLabels = topSuggestions.Select(s => {
                 var text = s.OptimizationSuggestion;
+                // Si le texte est trop long, tronquer et ajouter "..." (17+3)
                 return text.Length > 20 ? text.Substring(0, 17) + "..." : text;
             }).ToArray();
 
@@ -134,13 +138,14 @@ namespace SpiritWeb.Client.Pages
                 int satisfactionLevel = i;
                 var seriesData = new double[features.Length];
 
+                // Remplir les données de la série pour chaque fonctionnalité
                 for (int j = 0; j < features.Length; j++)
                 {
                     string feature = features[j];
                     seriesData[j] = suggestions
                         .Count(s => s.FavoriteFeature == feature && s.SatisfactionRating == satisfactionLevel);
                 }
-
+                // Créer le nom de la série en fonction du niveau de satisfaction
                 string seriesName = satisfactionLevel switch
                 {
                     1 => "À améliorer",
@@ -151,6 +156,7 @@ namespace SpiritWeb.Client.Pages
                     _ => "Inconnu"
                 };
 
+                // Ajouter la série au graphique
                 featureSatisfactionSeries.Add(new ChartSeries { Name = seriesName, Data = seriesData });
             }
         }
@@ -163,7 +169,7 @@ namespace SpiritWeb.Client.Pages
         {
             if (!suggestions.Any())
                 return "-";
-
+            // Compter les occurrences de chaque fonctionnalité
             return suggestions
                 .GroupBy(s => s.FavoriteFeature)
                 .OrderByDescending(g => g.Count())

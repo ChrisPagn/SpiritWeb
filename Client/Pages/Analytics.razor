@@ -8,7 +8,14 @@
 @inject ISnackbar Snackbar
 @using SpiritWeb.Client.Models
 
+
+<!--
+  Page du tableau de bord analytique
+  Cette vue affiche les statistiques et graphiques des suggestions et habitudes des joueurs
+  Utilise le framework MudBlazor pour les composants UI
+-->
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6 mb-12" Style="height: calc(100vh - 64px); overflow-y: auto;">
+    <!-- En-tête de la page -->
     <MudPaper Elevation="3" Class="pa-4 mb-4">
         <MudText Typo="Typo.h4" Class="mb-2 title-suggestion" Align="Align.Center">Tableau de Bord Analytique</MudText>
         <MudText Typo="Typo.body1" Class="mb-4 text-center" Align="Align.Center">
@@ -16,6 +23,7 @@
         </MudText>
     </MudPaper>
 
+    <!-- Affichage d'un message de chargement pendant le chargement des données -->
     @if (isLoading)
     {
         <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" Class="my-7" />
@@ -24,35 +32,42 @@
     {
         <MudGrid>
 
-            <!-- Vue d'ensemble des statistiques -->
+            <!--1: Vue d'ensemble des statistiques clés avec cartes -->
             <MudItem xs="12">
                 <MudPaper Elevation="2" Class="pa-4 mb-4">
                     <MudGrid>
-                        
+                        <!-- Carte 1: Nombre total de suggestions -->
                         <MudItem xs="12" md="3">
                             <MudPaper Elevation="0" Class="pa-4 d-flex flex-column align-center justify-center mud-background-gray pa-2" Style="height:100%;">
                                 <MudIcon Icon="@Icons.Material.Filled.Assessment" Color="Color.Primary" Size="Size.Large" />
+                                <!-- Affichage du nombre total de suggestions -->
                                 <MudText Typo="Typo.h5" Align="Align.Center">@suggestions.Count</MudText>
                                 <MudText Typo="Typo.subtitle1" Align="Align.Center">Suggestions Totales</MudText>
                             </MudPaper>
                         </MudItem>
+                        <!-- Carte 2: Nombre total de votes -->
                         <MudItem xs="12" md="3">
                             <MudPaper Elevation="0" Class="pa-4 d-flex flex-column align-center justify-center mud-background-gray pa-2" Style="height:100%;">
                                 <MudIcon Icon="@Icons.Material.Filled.ThumbUp" Color="Color.Secondary" Size="Size.Large" />
+                                <!-- Affichage du nombre total de votes -->
                                 <MudText Typo="Typo.h5" Align="Align.Center">@suggestions.Sum(s => s.VotesCount)</MudText>
                                 <MudText Typo="Typo.subtitle1" Align="Align.Center">Votes Totaux</MudText>
                             </MudPaper>
                         </MudItem>
+                        <!--3: Note moyenne de satisfaction -->
                         <MudItem xs="12" md="3">
                             <MudPaper Elevation="0" Class="pa-4 d-flex flex-column align-center justify-center mud-background-gray pa-2" Style="height:100%;">
                                 <MudIcon Icon="@Icons.Material.Filled.Stars" Color="Color.Success" Size="Size.Large" />
+                                <!-- Affichage de la note moyenne de satisfaction, arrondie à 1 décimale -->
                                 <MudText Typo="Typo.h5" Align="Align.Center">@(suggestions.Any() ? Math.Round(suggestions.Average(s => s.SatisfactionRating), 1) : 0)</MudText>
                                 <MudText Typo="Typo.subtitle1" Align="Align.Center">Satisfaction Moyenne</MudText>
                             </MudPaper>
                         </MudItem>
+                        <!--4: Fonctionnalité préférée des utilisateurs -->
                         <MudItem xs="12" md="3">
                             <MudPaper Elevation="0" Class="pa-4 d-flex flex-column align-center justify-center mud-background-gray pa-2" Style="height:100%;">
                                 <MudIcon Icon="@Icons.Material.Filled.Favorite" Color="Color.Error" Size="Size.Large" />
+                                <!-- Affichage de la fonctionnalité préférée des utilisateurs -->
                                 <MudText Typo="Typo.h5" Align="Align.Center">@(GetMostPopularFeature())</MudText>
                                 <MudText Typo="Typo.subtitle1" Align="Align.Center">Fonct. Préférée</MudText>
                             </MudPaper>
@@ -61,13 +76,14 @@
                 </MudPaper>
             </MudItem>
 
-            <!-- Graphique de satisfaction -->
+            <!--2 Graphique en donut montrant la répartition des niveaux de satisfaction -->
             <MudItem xs="12" md="6">
                 <MudCard Class="mb-6">
                     <MudCardHeader>
                         <MudText Typo="Typo.h5" Class="title-suggestion">Répartition des niveaux de satisfaction</MudText>
                     </MudCardHeader>
                     <MudCardContent>
+                        <!-- Graphique en donut avec données de satisfaction -->
                         <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px"
                                 InputData="@satisfactionData" InputLabels="@satisfactionLabels" Class="mx-auto">
                             <CustomGraphics>
@@ -81,13 +97,14 @@
                 </MudCard>
             </MudItem>
 
-            <!-- 2Graphique de fréquence de jeu -->
+            <!--3 Graphique en donut montrant la fréquence de jeu des utilisateursu -->
             <MudItem xs="12" md="6">
                 <MudCard Class="mb-6">
                     <MudCardHeader>
                         <MudText Typo="Typo.h5" Class="title-suggestion">Fréquence de jeu des utilisateurs</MudText>
                     </MudCardHeader>
                     <MudCardContent>
+                        <!-- Graphique en donut avec palette de couleurs personnalisée -->
                         <MudChart ChartType="ChartType.Donut"
                                   InputData="@frequencyData"
                                   InputLabels="@frequencyLabels"
@@ -96,6 +113,8 @@
                                   Options="@(new ChartOptions {
                           ChartPalette = new[] { "#594AE2", "#72A1E5", "#9ADBC5", "#F56C6C", "#FFCF56" }
                       })">
+
+                            <!-- Texte personnalisé au centre du donut -->
                             <CustomGraphics>
                                 <text class="donut-inner-text" x="50%" y="35%" dominant-baseline="middle" text-anchor="middle"
                                       fill="black" font-family="Cambria" font-size="4">Total</text>
@@ -108,7 +127,7 @@
             </MudItem>
 
 
-            <!-- Top des suggestions les plus votées -->
+            <!--4 Graphique en donut du Top 5 des suggestions les plus votées -->
             <MudItem xs="12">
                 <MudCard Class="mb-6">
                     <MudCardHeader>
@@ -116,6 +135,8 @@
                     </MudCardHeader>
                     <MudCardContent>
                         <div class="d-flex flex-column flex-md-row">
+
+                            <!-- Graphique en donut pour visualiser la répartition des votes -->
                             <MudChart ChartType="ChartType.Donut" Width="350px" Height="350px" 
                                     InputData="@voteData" InputLabels="@voteLabels" Class="mx-auto mb-4 mb-md-0">
                                 <CustomGraphics>
@@ -125,7 +146,8 @@
                                           fill="black" font-family="Cambria" font-size="6">@voteData.Sum().ToString()</text>
                                 </CustomGraphics>
                             </MudChart>
-
+                            
+                            <!-- Liste des 5 suggestions les plus votées avec couleurs correspondant au graphique -->
                             <MudList T="object" Class="flex-grow-1 ml-md-4">
                                 @for (int i = 0; i < topSuggestions.Count; i++)
                                 {
@@ -135,11 +157,13 @@
                                     <MudListItem T="object">
                                         <div class="d-flex justify-space-between align-center">
                                             <div class="d-flex align-center">
+                                                <!-- Indicateur de couleur correspondant au graphique -->
                                                 <MudIcon Icon="@Icons.Material.Filled.Circle" Style="@($"color:{color}; margin-right: 8px;")" />
                                                 <div class="text-truncate" style="max-width: 70%;">
                                                     @suggestion.OptimizationSuggestion
                                                 </div>
                                             </div>
+                                            <!-- Badge affichant le nombre de votes -->
                                             <MudBadge Content="@suggestion.VotesCount" Color="Color.Primary" Overlap="true">
                                                 <MudIcon Icon="@Icons.Material.Filled.ThumbUp" />
                                             </MudBadge>
@@ -147,21 +171,19 @@
                                     </MudListItem>
                                 }
                             </MudList>
-
-
-
                         </div>
                     </MudCardContent>
                 </MudCard>
             </MudItem>
 
-            <!-- Graphique à barres empilées pour les fonctionnalités préférées par niveau de satisfaction -->
+            <!--5  Graphique à barres empilées pour les fonctionnalités préférées par niveau de satisfaction -->
             <MudItem xs="12">
                 <MudCard Class="mb-6">
                     <MudCardHeader>
                         <MudText Typo="Typo.h5" Class="title-suggestion">Satisfaction par fonctionnalité</MudText>
                     </MudCardHeader>
                     <MudCardContent>
+                        <!-- Graphique à barres empilées montrant les niveaux de satisfaction pour chaque fonctionnalité -->
                         <MudChart ChartType="ChartType.StackedBar" ChartSeries="@featureSatisfactionSeries" 
                                 XAxisLabels="@featureLabels" Width="100%" Height="400px" />
                     </MudCardContent>
@@ -172,17 +194,19 @@
 </MudContainer>
 
 <style>
+    @*  Police personnalisée pour les titres  *@
     .title-suggestion {
         font-family: "Cambria", Cambria, serif;
         color: @ColorConstant.colorBackgroundMallow00;
     }
     
+    @* Coins arrondis pour les cartes  *@
     .mud-card {
         border-radius: 12px;
         overflow: hidden;
     }
     
-    /* Optionnel: pour un meilleur espacement sur mobile */
+    @*  Optionnel: pour un meilleur espacement sur mobile *@
     @@media (max-width: 600px) {
         .MudContainer {
             padding-left: 8px;
@@ -191,3 +215,15 @@
     }
 </style>
 
+<!-- 
+  Notes sur les méthodes et variables utilisées dans ce code (non visibles) :
+  
+  - isLoading: booléen pour gérer l'état de chargement des données
+  - suggestions: liste des suggestions récupérées de l'API
+  - GetMostPopularFeature(): méthode qui retourne la fonctionnalité la plus populaire basée sur les votes
+  - satisfactionData, satisfactionLabels: données pour le graphique de satisfaction
+  - frequencyData, frequencyLabels: données pour le graphique de fréquence de jeu
+  - voteData, voteLabels: données pour le graphique des votes
+  - topSuggestions: liste des 5 suggestions les plus votées
+  - featureSatisfactionSeries, featureLabels: données pour le graphique de satisfaction par fonctionnalité
+-->

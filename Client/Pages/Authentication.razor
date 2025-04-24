@@ -5,39 +5,53 @@
 @inject NavigationManager NavigationManager
 @inject AuthService AuthService
 @inject DatabaseService DatabaseService
+@inject ISnackbar Snackbar
 
+<!-- Conteneur principal avec largeur maximale "Small" et marge top -->
 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-10">
+    <!-- Carte contenant le formulaire -->
     <MudCard>
+        <!-- En-tête de la carte -->
         <MudCardHeader>
             <MudText Typo="Typo.h5" Class="title">@(isRegistering ? "Créer un compte" : "Connexion")</MudText>
         </MudCardHeader>
+        <!-- Contenu de la carte -->
         <MudCardContent>
+            <!-- Champ de texte pour l'email -->
             <MudTextField @bind-Value="email" Label="Email" Variant="Variant.Outlined" FullWidth="true" />
+            <!-- Champ de texte pour le mot de passe -->
             <MudTextField @bind-Value="password" Label="Mot de passe" Variant="Variant.Outlined" FullWidth="true" InputType="InputType.Password" Class="mt-3" />
 
+            <!-- Champ supplémentaire visible uniquement en mode inscription -->
             @if (isRegistering)
             {
                 <MudTextField @bind-Value="displayName" Label="Nom d'affichage" Variant="Variant.Outlined" FullWidth="true" Class="mt-3" />
             }
-
+            <!-- Affichage des erreurs si message présent -->
             @if (!string.IsNullOrEmpty(errorMessage))
             {
                 <MudAlert Severity="Severity.Error" Class="mt-3">@errorMessage</MudAlert>
             }
         </MudCardContent>
+        <!-- Actions de la carte (pied de carte)-->
         <MudCardActions>
+            <!-- Bouton pour changer de mode (connexion/inscription) -->
             <MudButton OnClick="ToggleMode" Variant="Variant.Text" Color="Color.Secondary" Class="title-registration">
                 @(isRegistering ? "Déjà un compte ? Se connecter" : "Pas encore de compte ? S'inscrire")
             </MudButton>
+            <!-- Espaceur pour aligner le bouton d'action à droite -->
             <MudSpacer />
+            <!-- Bouton d'action pour soumettre le formulaire -->
             <MudButton OnClick="HandleAuthentication" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" Disabled="@isProcessing">
                 @if (isProcessing)
                 {
+                    <!-- Indicateur de chargement circulaire -->
                     <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
                     <MudText Class="ms-2 title-registration">Traitement...</MudText>
                 }
                 else
                 {
+                    <!-- Texte dynamique selon le mode -->
                     @(isRegistering ? "S'inscrire" : "Se connecter")
                 }
             </MudButton>

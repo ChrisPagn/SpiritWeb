@@ -2,10 +2,11 @@
 @using SpiritWeb.Shared.Models
 @using SpiritWeb.Client.Services
 @using MudBlazor
+@using SpiritWeb.Client.Models
 @inject AuthService AuthService
 @inject DatabaseService DatabaseService
 @inject NavigationManager NavigationManager
-@using SpiritWeb.Client.Models
+@inject ISnackbar Snackbar
 
 <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6 mb-10" Style="height: calc(100vh - 120px);">
     <MudCard Style="height: 100%; display: flex; flex-direction: column;" Class="body">

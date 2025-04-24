@@ -17,11 +17,7 @@
                 IconColor="Color.Inherit"
                 OnClick="@HandleNavClick">Home</MudNavLink>
                 
-    <MudNavLink Href="suggestionList"
-                Match="NavLinkMatch.All"
-                Icon="@Icons.Material.Filled.HowToVote"
-                IconColor="Color.Inherit"
-                OnClick="@HandleNavClick">Votes des suggestions</MudNavLink>
+   
 
            
     @* Verifier si user n'est pas authentifié *@
@@ -33,6 +29,7 @@
                     IconColor="Color.Inherit"
                     OnClick="@HandleNavClick">Authentification</MudNavLink>
     }
+
     @* Verifier si user est authentifié *@
     else
     {
@@ -44,11 +41,18 @@
                     OnClick="@HandleNavClick">Profil</MudNavLink>
 
         @* Menu pour les rôles user et au-dessus *@
-        <MudNavLink Href="users"
+        <MudNavLink Href="classement"
                     Match="NavLinkMatch.Prefix"
-                    Icon="@Icons.Material.Filled.People"
+                    Icon="@Icons.Material.Filled.WorkspacePremium"
                     IconColor="Color.Inherit"
-                    OnClick="@HandleNavClick">Utilisateurs</MudNavLink>
+                    OnClick="@HandleNavClick">Classement</MudNavLink>
+
+        <!-- Menu pour voir la liste de suggestion et votes-->
+        <MudNavLink Href="suggestionList"
+                    Match="NavLinkMatch.All"
+                    Icon="@Icons.Material.Filled.HowToVote"
+                    IconColor="Color.Inherit"
+                    OnClick="@HandleNavClick">Votes des suggestions</MudNavLink>
 
         @* Menu supplémentaire pour les contributeurs et admin *@
         @if (AuthService.UserRole == "contributor" || AuthService.UserRole == "admin")
