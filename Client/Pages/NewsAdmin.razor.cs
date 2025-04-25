@@ -29,8 +29,8 @@ namespace SpiritWeb.Client.Pages
             CloseOnEscapeKey = true,
             MaxWidth = MaxWidth.Large,
             FullWidth = true,
-            //BackdropClick = true,
             CloseButton = true,
+            Position = DialogPosition.Center 
         };
 
         /// <summary>
@@ -39,17 +39,16 @@ namespace SpiritWeb.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             await AuthService.AuthInitialized;
-
-            // Vérification des permissions administrateur
             if (!AuthService.IsAuthenticated || AuthService.UserRole != "admin")
             {
                 NavigationManager.NavigateTo("/");
                 return;
             }
-
-            await LoadNewsAsync();
+            //    await LoadNewsAsync();
+            _ = LoadNewsAsync(); // Lance le chargement sans await pour ne pas bloquer l'UI
         }
 
+  
         /// <summary>
         /// Charge la liste des actualités
         /// </summary>
@@ -59,18 +58,11 @@ namespace SpiritWeb.Client.Pages
             {
                 _loading = true;
                 _errorMessage = null;
-
-                _newsList = await NewsService.GetAllNewsAsync();
-
-                // Tri : d'abord les actualités épinglées, puis par date de publication décroissante
-                _newsList = _newsList
-                    .OrderByDescending(n => n.IsPinned)
-                    .ThenByDescending(n => n.PublishDate)
-                    .ToList();
+                _newsList = await NewsService.GetAllNewsAsync() ?? new List<NewsModel>(); // Garantit une liste non-nulle
             }
             catch (Exception ex)
             {
-                //Snackbar.Add($"Erreur lors du chargement des actualités: {ex.Message}", Severity.Error);
+                _newsList = new List<NewsModel>(); // Liste vide en cas d'erreur
                 Snackbar.Add($"Attention erreur lors du chargement ou vous n'avez pas encore créé d'actualités ! ", Severity.Error);
             }
             finally
@@ -84,7 +76,7 @@ namespace SpiritWeb.Client.Pages
         /// Ouvre la boîte de dialogue pour créer ou modifier une actualité
         /// </summary>
         /// <param name="news">Actualité à modifier (null pour une création)</param>
-        private void OpenNewsDialog(NewsModel news = null)
+        private async Task OpenNewsDialog(NewsModel news = null)
         {
             Snackbar.Add("Vous pouvez créer une actualité", Severity.Info);
             if (news == null)
@@ -92,11 +84,15 @@ namespace SpiritWeb.Client.Pages
                 // Création d'une nouvelle actualité
                 _editingNews = new NewsModel
                 {
+                    Id = "0", // Utilisez une chaîne vide ou "0" au lieu de null
+                    Title = "", // Initialisez avec une chaîne vide au lieu de null
+                    Content = "", // Initialisez avec une chaîne vide au lieu de null
                     AdminId = AuthService.UserId,
                     AdminDisplayName = AuthService.DisplayName,
                     PublishDate = DateTime.UtcNow,
                     LastModified = DateTime.UtcNow,
-                    IsPinned = false
+                    IsPinned = false,
+                    ImagePath = "" // Initialisez avec une chaîne vide au lieu de null
                 };
             }
             else
@@ -117,7 +113,7 @@ namespace SpiritWeb.Client.Pages
             }
 
             _showNewsDialog = true;
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
