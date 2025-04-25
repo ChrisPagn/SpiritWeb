@@ -29,7 +29,7 @@ namespace SpiritWeb.Client.Pages
             CloseOnEscapeKey = true,
             MaxWidth = MaxWidth.Medium,
             FullWidth = true,
-            DisableBackdropClick = true
+            //CloseOnBackdropClick = false // Au lieu de DisableBackdropClick = true
         };
 
         /// <summary>

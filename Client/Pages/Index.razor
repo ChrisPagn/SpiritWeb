@@ -2,6 +2,8 @@
 @using MudBlazor
 @inherits MudComponentBase
 @using SpiritWeb.Client.Models
+@using SpiritWeb.Shared.Models
+@inject NavigationManager NavigationManager
 
 <PageTitle>Index</PageTitle>
 
@@ -53,10 +55,10 @@
             }
             else
             {
-                <MudList Clickable="true">
+                <MudList Items="@_newsList" Clickable="true" T="NewsModel">
                     @foreach (var news in _latestNews)
                     {
-                        <MudListItem @onclick="@(() => NavigationManager.NavigateTo("/news"))" Class="pa-2 news-item-home">
+                        <MudListItem T="NewsModel" @onclick="@(() => NavigationManager.NavigateTo("/news"))" Class="pa-2 news-item-home">
                             <div class="d-flex align-center" style="gap: 8px;">
                                 @if (news.IsPinned)
                                 {

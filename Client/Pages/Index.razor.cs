@@ -14,6 +14,7 @@ namespace SpiritWeb.Client.Pages
     public partial class Index
     {
         private List<NewsModel> _latestNews;
+        private List<NewsModel> _newsList;
         private bool _loadingNews = true;
 
         [Inject]
