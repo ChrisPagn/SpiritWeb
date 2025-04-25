@@ -152,6 +152,8 @@
     </DialogActions>
 </MudDialog>
 
+
+
 <!-- Dialog de confirmation de suppression -->
 <MudDialog @bind-IsVisible="_showDeleteDialog" Options="dialogOptions">
     <TitleContent>
@@ -182,5 +184,9 @@
     /* Styles pour la page d'administration des actualités */
     body {
         background-color: @ColorConstant.colorBackgroundMallow80;
+    }
+
+    .mud-dialog {
+        z-index: 9999 !important;
     }
 </style>

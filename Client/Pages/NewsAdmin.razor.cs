@@ -27,9 +27,10 @@ namespace SpiritWeb.Client.Pages
         private DialogOptions dialogOptions = new DialogOptions
         {
             CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.Medium,
+            MaxWidth = MaxWidth.Large,
             FullWidth = true,
-            //CloseOnBackdropClick = false // Au lieu de DisableBackdropClick = true
+            //BackdropClick = true,
+            CloseButton = true,
         };
 
         /// <summary>
@@ -69,8 +70,8 @@ namespace SpiritWeb.Client.Pages
             }
             catch (Exception ex)
             {
-                _errorMessage = $"Erreur lors du chargement des actualités: {ex.Message}";
-                Console.WriteLine(ex.ToString());
+                //Snackbar.Add($"Erreur lors du chargement des actualités: {ex.Message}", Severity.Error);
+                Snackbar.Add($"Attention erreur lors du chargement ou vous n'avez pas encore créé d'actualités ! ", Severity.Error);
             }
             finally
             {
@@ -85,6 +86,7 @@ namespace SpiritWeb.Client.Pages
         /// <param name="news">Actualité à modifier (null pour une création)</param>
         private void OpenNewsDialog(NewsModel news = null)
         {
+            Snackbar.Add("Vous pouvez créer une actualité", Severity.Info);
             if (news == null)
             {
                 // Création d'une nouvelle actualité
@@ -115,6 +117,7 @@ namespace SpiritWeb.Client.Pages
             }
 
             _showNewsDialog = true;
+            StateHasChanged();
         }
 
         /// <summary>
