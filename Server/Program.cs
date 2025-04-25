@@ -36,6 +36,8 @@ builder.Services.AddSingleton<FirebaseAuthService>();
 builder.Services.AddSingleton<FirebaseDatabaseService>();
 builder.Services.AddSingleton<FirestoreSurveyService>();
 builder.Services.AddSingleton<FirestoreVoteService>();
+// Enregistrement du service FirestoreNewsService
+builder.Services.AddSingleton<FirestoreNewsService>();
 
 
 var app = builder.Build();

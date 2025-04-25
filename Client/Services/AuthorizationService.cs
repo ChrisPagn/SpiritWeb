@@ -32,8 +32,10 @@ namespace SpiritWeb.Client.Services
                 "home" => true,
                 "userprofile" => true,
                 "userslist" => true,
+                "news" => true,
                 "suggestion" => _authService.UserRole is "contributor" or "admin",
                 "admin" => _authService.UserRole == "admin",
+                "settings" => _authService.UserRole == "admin", // Accès à la gestion des actualités uniquement pour les admins
                 _ => false
             };
         }

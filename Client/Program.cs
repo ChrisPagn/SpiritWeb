@@ -21,6 +21,8 @@ builder.Services.AddScoped<AuthorizationService>();
 // Ajout du service de gestion des enquêtes
 builder.Services.AddScoped<SurveyService>();
 builder.Services.AddScoped<VoteService>();
+//ajout du service de gestion des actualités
+builder.Services.AddScoped<NewsService>();
 
 
 await builder.Build().RunAsync();

@@ -1,0 +1,147 @@
+﻿@page "/news"
+@using MudBlazor
+@using SpiritWeb.Client.Models
+@using SpiritWeb.Client.Services
+@using SpiritWeb.Shared.Models
+@using System.Linq
+@inject NewsService NewsService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Actualités du jeu Spirit</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+    <MudGrid Justify="Justify.Center" Spacing="4">
+        <!-- Titre de la page -->
+        <MudItem xs="12">
+            <MudPaper Class="pa-4" Style="@($"background-color: {ColorConstant.colorBackgroundMallow90}; border: 2px solid {ColorConstant.colorBackgroundMallowBordure};")">
+                <MudText Typo="Typo.h3" Class="text-center" Style="font-family: 'Press Start 2P', cursive; color: #333;">
+                    Actualités de Spirit
+                </MudText>
+                <MudText Typo="Typo.body1" Class="mt-2 text-center" Style="color: #555;">
+                    Découvrez les nouveautés et les futures mises à jour du jeu Spirit
+                </MudText>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Animation pixel art (optionnel mais cohérent avec le reste du site) -->
+        <MudItem xs="12" Class="mb-4">
+            <MudPaper Class="pixel-art-banner" Style="border-radius: 8px; overflow: hidden; height: 120px; background-color: transparent; box-shadow: none;">
+                <div class="news-pixel-banner"></div>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Affichage des erreurs s'il y en a -->
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <MudItem xs="12">
+                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+            </MudItem>
+        }
+
+        <!-- Liste des actualités -->
+        @if (_loading)
+        {
+            <MudItem xs="12" Class="d-flex justify-center">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            </MudItem>
+        }
+        else if (_newsList == null || !_newsList.Any())
+        {
+            <MudItem xs="12">
+                <MudPaper Class="pa-4 text-center" Style="@($"background-color: {ColorConstant.colorBackgroundMallow80}; border: 1px solid {ColorConstant.colorBackgroundMallowBordure};")">
+                    <MudText Typo="Typo.h6">Aucune actualité disponible pour le moment</MudText>
+                </MudPaper>
+            </MudItem>
+        }
+        else
+        {
+            @foreach (var newsItem in _newsList)
+            {
+                <MudItem xs="12" sm="12" md="10" lg="8" Class="mx-auto">
+                    <MudPaper Elevation="3" Class="@($"pa-4 mb-4 news-item {(newsItem.IsPinned ? "pinned-news" : "")}")"
+                              Style="@($"border-radius: 8px; position: relative; overflow: hidden; background-color: {(newsItem.IsPinned ? "#e9e4ff" : ColorConstant.colorBackgroundMallow90)}; border: 2px solid {ColorConstant.colorBackgroundMallowBordure};")">
+
+                        @if (newsItem.IsPinned)
+                        {
+                            <div class="pin-indicator">
+                                <MudIcon Icon="@Icons.Material.Filled.PushPin" Color="Color.Secondary" Size="Size.Small" />
+                            </div>
+                        }
+
+                        <MudText Typo="Typo.h5" Style="font-family: 'Press Start 2P', cursive; font-size: 1.2rem; color: #333;">
+                            @newsItem.Title
+                        </MudText>
+
+                        <MudDivider Class="my-2" />
+
+                        <MudText Typo="Typo.body1" Class="mt-2 news-content">
+                            @((MarkupString)FormatContent(newsItem.Content))
+                        </MudText>
+
+                        <MudDivider Class="my-2" />
+
+                        <div class="d-flex justify-space-between align-center mt-2">
+                            <MudText Typo="Typo.caption" Style="color: #666;">
+                                Publié le @newsItem.PublishDate.ToLocalTime().ToString("dd/MM/yyyy à HH:mm")
+                            </MudText>
+                            <MudText Typo="Typo.caption" Style="color: #666;">
+                                Par @newsItem.AdminDisplayName
+                            </MudText>
+                        </div>
+
+                        @if (newsItem.PublishDate != newsItem.LastModified)
+                        {
+                            <MudText Typo="Typo.caption" Class="mt-1" Style="color: #777; font-style: italic;">
+                                Modifié le @newsItem.LastModified.ToLocalTime().ToString("dd/MM/yyyy à HH:mm")
+                            </MudText>
+                        }
+                    </MudPaper>
+                </MudItem>
+            }
+        }
+    </MudGrid>
+</MudContainer>
+
+<style>
+    /* Styles pour les actualités */
+    .news-item {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .news-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+    .pin-indicator {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
+
+    .pinned-news {
+        border-left: 4px solid #9c27b0 !important;
+    }
+
+    .news-content {
+        white-space: pre-line;
+    }
+
+    .news-pixel-banner {
+        width: 100%;
+        height: 100%;
+        background-image: url('/images/news_banner.png');
+        background-size: cover;
+        background-position: center;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+        -ms-interpolation-mode: nearest-neighbor;
+    }
+
+    body {
+        background-color: @ColorConstant.colorBackgroundMallow80;
+        font-family: 'Press Start 2P', cursive;
+    }
+</style>

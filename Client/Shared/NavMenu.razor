@@ -17,10 +17,15 @@
                 IconColor="Color.Inherit"
                 OnClick="@HandleNavClick"
                 Class="title-nav">Home</MudNavLink>
-                
-   
 
-           
+    <!-- Pour tous les utilisateurs -->
+    <MudNavLink Href="/news" 
+                Match="NavLinkMatch.All"   
+                Icon="@Icons.Material.Filled.Newspaper"
+                IconColor="Color.Inherit"
+                OnClick="@HandleNavClick"
+                Class="title-nav">Actualités</MudNavLink>
+              
     @* Verifier si user n'est pas authentifié *@
     @if (!AuthService.IsAuthenticated)
     {

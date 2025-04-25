@@ -1,0 +1,186 @@
+﻿@page "/settings"
+@using MudBlazor
+@using SpiritWeb.Client.Services
+@using SpiritWeb.Client.Models
+@using SpiritWeb.Shared.Models
+@inject AuthService AuthService
+@inject NewsService NewsService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+    <MudGrid Justify="Justify.Center" Spacing="4">
+        <!-- Titre de la page -->
+        <MudItem xs="12">
+            <MudPaper Class="pa-4" Style="@($"background-color: {ColorConstant.colorBackgroundMallow80}; border: 1px solid {ColorConstant.colorBackgroundMallowBordure};")" Bordure;">
+                <MudText Typo="Typo.h3" Class="text-center" Style="font-family: 'Press Start 2P', cursive; color: #333;">
+                    Gestion des Actualités
+                </MudText>
+                <MudText Typo="Typo.body1" Class="mt-2 text-center" Style="color: #555;">
+                    Créez, modifiez et gérez les actualités du jeu Spirit
+                </MudText>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Bouton pour créer une nouvelle actualité -->
+        <MudItem xs="12" Class="d-flex justify-end mb-4">
+            <MudButton Variant="Variant.Filled" 
+                      Color="Color.Primary" 
+                      StartIcon="@Icons.Material.Filled.Add" 
+                      OnClick="() => OpenNewsDialog()"
+                      Style="border-radius: 8px;">
+                Nouvelle actualité
+            </MudButton>
+        </MudItem>
+
+        <!-- Affichage des erreurs s'il y en a -->
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <MudItem xs="12">
+                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="() => _errorMessage = null">@_errorMessage</MudAlert>
+            </MudItem>
+        }
+
+        <!-- Liste des actualités -->
+        @if (_loading)
+        {
+            <MudItem xs="12" Class="d-flex justify-center">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            </MudItem>
+        }
+        else if (_newsList == null || !_newsList.Any())
+        {
+            <MudItem xs="12">
+                <MudPaper Class="pa-4 text-center" Style="@($"background-color: {ColorConstant.colorBackgroundMallow80}; border: 1px solid {ColorConstant.colorBackgroundMallowBordure};")">
+                    <MudText Typo="Typo.h6">Aucune actualité disponible</MudText>
+                    <MudText Typo="Typo.body1" Class="mt-2">Créez votre première actualité en cliquant sur le bouton "Nouvelle actualité"</MudText>
+                </MudPaper>
+            </MudItem>
+        }
+        else
+        {
+            <MudItem xs="12">
+                <MudPaper Class="pa-4" Style="background-color: @ColorConstant.colorBackgroundMallow90; border: 1px solid @ColorConstant.colorBackgroundMallowBordure;">
+                    <MudTable Items="@_newsList" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" 
+                             LoadingProgressColor="Color.Primary" Elevation="0">
+                        <HeaderContent>
+                            <MudTh>Titre</MudTh>
+                            <MudTh>Date de publication</MudTh>
+                            <MudTh>Épinglée</MudTh>
+                            <MudTh>Actions</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Titre">
+                                <MudText Typo="Typo.body1" Style="font-weight: @(context.IsPinned ? "bold" : "normal");">
+                                    @context.Title
+                                </MudText>
+                            </MudTd>
+                            <MudTd DataLabel="Date de publication">
+                                @context.PublishDate.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                            </MudTd>
+                            <MudTd DataLabel="Épinglée">
+                                <MudCheckBox T="bool" Checked="@context.IsPinned" 
+                                            CheckedChanged="@(async (value) => await TogglePin(context, value))" 
+                                            Color="Color.Secondary" />
+                            </MudTd>
+                            <MudTd DataLabel="Actions">
+                                <MudButton Variant="Variant.Filled" 
+                                          Color="Color.Primary" 
+                                          Size="Size.Small" 
+                                          OnClick="@(() => OpenNewsDialog(context))"
+                                          Class="mr-2">
+                                    <MudIcon Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+                                </MudButton>
+                                <MudButton Variant="Variant.Filled" 
+                                          Color="Color.Error" 
+                                          Size="Size.Small" 
+                                          OnClick="@(() => OpenDeleteDialog(context))">
+                                    <MudIcon Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+                                </MudButton>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+</MudContainer>
+
+<!-- Dialog d'édition/création -->
+<MudDialog @bind-IsVisible="_showNewsDialog" Options="dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @(_editingNews?.Id == null ? "Nouvelle actualité" : "Modifier l'actualité")
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="_form" Model="@_editingNews" @bind-IsValid="@_formIsValid">
+            <MudTextField @bind-Value="_editingNews.Title" 
+                         Label="Titre" 
+                         Required="true" 
+                         RequiredError="Le titre est obligatoire"
+                         Immediate="true" 
+                         Variant="Variant.Outlined" 
+                         Class="mb-3" />
+                         
+            <MudTextField @bind-Value="_editingNews.Content" 
+                         Label="Contenu" 
+                         Required="true" 
+                         RequiredError="Le contenu est obligatoire"
+                         Lines="10"
+                         Immediate="true" 
+                         Variant="Variant.Outlined" 
+                         Class="mb-3" />
+                         
+            <MudCheckBox @bind-Checked="_editingNews.IsPinned" 
+                        Label="Épingler cette actualité" 
+                        Color="Color.Primary" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseDialog" 
+                  Variant="Variant.Outlined" 
+                  Color="Color.Secondary">
+            Annuler
+        </MudButton>
+        <MudButton OnClick="SaveNewsAsync" 
+                  Variant="Variant.Filled" 
+                  Color="Color.Primary" 
+                  Disabled="@(!_formIsValid)">
+            @(_editingNews?.Id == null ? "Créer" : "Enregistrer")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<!-- Dialog de confirmation de suppression -->
+<MudDialog @bind-IsVisible="_showDeleteDialog" Options="dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            Confirmation de suppression
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText>Êtes-vous sûr de vouloir supprimer cette actualité ?</MudText>
+        <MudText Typo="Typo.subtitle1" Class="mt-2 font-weight-bold">@_deletingNews?.Title</MudText>
+        <MudText Typo="Typo.body2" Class="mt-1 text-muted">Cette action est irréversible.</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseDeleteDialog" 
+                  Variant="Variant.Outlined" 
+                  Color="Color.Secondary">
+            Annuler
+        </MudButton>
+        <MudButton OnClick="DeleteNewsAsync" 
+                  Variant="Variant.Filled" 
+                  Color="Color.Error">
+            Supprimer
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    /* Styles pour la page d'administration des actualités */
+    body {
+        background-color: @ColorConstant.colorBackgroundMallow80;
+    }
+</style>
