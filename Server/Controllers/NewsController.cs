@@ -29,26 +29,21 @@ namespace SpiritWeb.Server.Controllers
         /// Récupère toutes les actualités
         /// </summary>
         /// <returns>Liste des actualités triées par date de publication</returns>
-        //[HttpGet("all")]
-        //public async Task<IActionResult> GetAllNews()
-        //{
-        //    try
-        //    {
-        //        var newsList = await _newsService.GetAllNewsAsync();
-        //        return Ok(newsList);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Erreur détaillée : {ex.ToString()}");
-        //        return StatusCode(500, $"Erreur interne: {ex.Message}");
-        //    }
-        //}
         [HttpGet("all")]
-        public IActionResult GetAllNews()
+        public async Task<IActionResult> GetAllNews()
         {
-            var news = _newsService.GetAllNewsAsync(); // Retourne une liste (vide ou non)
-            return Ok(news); // Toujours 200, même si la liste est vide
+            try
+            {
+                var newsList = await _newsService.GetAllNewsAsync();
+                return Ok(newsList);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur détaillée : {ex.ToString()}");
+                return StatusCode(500, $"Erreur interne: {ex.Message}");
+            }
         }
+        
 
         /// <summary>
         /// Récupère une actualité par son identifiant

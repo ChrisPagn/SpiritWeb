@@ -14,7 +14,7 @@ namespace SpiritWeb.Client.Pages
     public partial class NewsAdmin
     {
         private List<NewsModel> _newsList;
-        private NewsModel _editingNews;
+        private NewsModel _editingNews = new();
         private NewsModel _deletingNews;
         private bool _loading = true;
         private bool _showNewsDialog;
@@ -79,38 +79,18 @@ namespace SpiritWeb.Client.Pages
         private async Task OpenNewsDialog(NewsModel news = null)
         {
             Snackbar.Add("Vous pouvez créer une actualité", Severity.Info);
-            if (news == null)
+            _editingNews = news ?? new NewsModel
             {
-                // Création d'une nouvelle actualité
-                _editingNews = new NewsModel
-                {
-                    Id = "0", // Utilisez une chaîne vide ou "0" au lieu de null
-                    Title = "", // Initialisez avec une chaîne vide au lieu de null
-                    Content = "", // Initialisez avec une chaîne vide au lieu de null
-                    AdminId = AuthService.UserId,
-                    AdminDisplayName = AuthService.DisplayName,
-                    PublishDate = DateTime.UtcNow,
-                    LastModified = DateTime.UtcNow,
-                    IsPinned = false,
-                    ImagePath = "" // Initialisez avec une chaîne vide au lieu de null
-                };
-            }
-            else
-            {
-                // Modification d'une actualité existante (clone pour éviter les modifications directes)
-                _editingNews = new NewsModel
-                {
-                    Id = news.Id,
-                    Title = news.Title,
-                    Content = news.Content,
-                    PublishDate = news.PublishDate,
-                    AdminId = AuthService.UserId,  // Mise à jour avec l'administrateur actuel
-                    AdminDisplayName = AuthService.DisplayName,
-                    LastModified = DateTime.UtcNow,
-                    IsPinned = news.IsPinned,
-                    ImagePath = news.ImagePath
-                };
-            }
+                Id = "0",
+                Title = "",
+                Content = "",
+                AdminId = AuthService.UserId,
+                AdminDisplayName = AuthService.DisplayName,
+                PublishDate = DateTime.UtcNow,
+                LastModified = DateTime.UtcNow,
+                IsPinned = false,
+                ImagePath = ""
+            };
 
             _showNewsDialog = true;
             await InvokeAsync(StateHasChanged);

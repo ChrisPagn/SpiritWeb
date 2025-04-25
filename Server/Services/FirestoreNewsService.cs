@@ -28,33 +28,40 @@ namespace SpiritWeb.Server.Services
         /// Récupère toutes les actualités triées par date de publication (descendant)
         /// </summary>
         /// <returns>Liste triée des actualités</returns>
+        //public async Task<List<NewsModel>> GetAllNewsAsync()
+        //{
+        //    try
+        //    {
+        //        CollectionReference newsCollection = _firestoreDb.Collection(COLLECTION_NAME);
+
+        //        // Récupérer et trier les actualités : les épinglées d'abord, puis par date de publication
+        //        QuerySnapshot snapshot = await newsCollection.OrderByDescending("IsPinned")
+        //                                                    .OrderByDescending("PublishDate")
+        //                                                    .GetSnapshotAsync();
+
+        //        var newsList = new List<NewsModel>();
+
+        //        foreach (DocumentSnapshot document in snapshot.Documents)
+        //        {
+        //            var news = document.ConvertTo<NewsModel>();
+        //            news.Id = document.Id; // Assigner l'ID du document
+        //            newsList.Add(news);
+        //        }
+
+        //        return newsList;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Erreur lors de la récupération des actualités: {ex.Message}");
+        //        throw;
+        //    }
+        //}
+
         public async Task<List<NewsModel>> GetAllNewsAsync()
         {
-            try
-            {
-                CollectionReference newsCollection = _firestoreDb.Collection(COLLECTION_NAME);
-
-                // Récupérer et trier les actualités : les épinglées d'abord, puis par date de publication
-                QuerySnapshot snapshot = await newsCollection.OrderByDescending("IsPinned")
-                                                            .OrderByDescending("PublishDate")
-                                                            .GetSnapshotAsync();
-
-                var newsList = new List<NewsModel>();
-
-                foreach (DocumentSnapshot document in snapshot.Documents)
-                {
-                    var news = document.ConvertTo<NewsModel>();
-                    news.Id = document.Id; // Assigner l'ID du document
-                    newsList.Add(news);
-                }
-
-                return newsList;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erreur lors de la récupération des actualités: {ex.Message}");
-                throw;
-            }
+            CollectionReference suggestionsCollection = _firestoreDb.Collection(COLLECTION_NAME);
+            QuerySnapshot snapshot = await suggestionsCollection.GetSnapshotAsync();
+            return snapshot.Documents.Select(doc => doc.ConvertTo<NewsModel>()).ToList();
         }
 
         /// <summary>

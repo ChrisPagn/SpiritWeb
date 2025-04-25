@@ -28,8 +28,7 @@
                        Color="Color.Primary"
                        StartIcon="@Icons.Material.Filled.Add"
                        OnClick="@(() => OpenNewsDialog())"
-                       Style="border-radius: 8px;">
-                Nouvelle actualité
+                       Style="border-radius: 8px;">Nouvelle actualité
             </MudButton>
         </MudItem>
 
@@ -107,81 +106,103 @@
 </MudContainer>
 
 <!-- Dialog d'édition/création -->
-<MudDialog @bind-IsVisible="_showNewsDialog" Options="dialogOptions">
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            @(_editingNews?.Id == null ? "Nouvelle actualité" : "Modifier l'actualité")
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        <MudForm @ref="_form" Model="@_editingNews" @bind-IsValid="@_formIsValid">
-            <MudTextField @bind-Value="_editingNews.Title"
-                          Label="Titre"
-                          Required="true"
-                          RequiredError="Le titre est obligatoire"
-                          Immediate="true"
-                          Variant="Variant.Outlined"
-                          Class="mb-3" />
+@if (_showNewsDialog)
+{
+    <div class="dialog-container">
+        <MudOverlay Class="dialog-overlay" @onclick="CloseDialog" />
 
-            <MudTextField @bind-Value="_editingNews.Content"
-                          Label="Contenu"
-                          Required="true"
-                          RequiredError="Le contenu est obligatoire"
-                          Lines="10"
-                          Immediate="true"
-                          Variant="Variant.Outlined"
-                          Class="mb-3" />
+        <MudCard Class="dialog-card" Elevation="25">
+            <MudCardHeader>
+                <MudText Typo="Typo.h6">
+                    @(_editingNews?.Id == "0" ? "Nouvelle actualité" : "Modifier l'actualité")
+                </MudText>
+                <MudIconButton Icon="@Icons.Material.Filled.Close"
+                               OnClick="CloseDialog"
+                               Color="Color.Error"
+                               Class="float-right" />
+            </MudCardHeader>
 
-            @if (_editingNews != null)
-            {
-                <MudCheckBox T="bool" @bind-Checked="_editingNews.IsPinned"
-                             Label="Épingler cette actualité"
-                             Color="Color.Primary" />
-            }
-        </MudForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="@CloseDialog"
-                   Variant="Variant.Outlined"
-                   Color="Color.Secondary">
-            Annuler
-        </MudButton>
-        <MudButton OnClick="@SaveNewsAsync"
-                   Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   Disabled="@(!_formIsValid)">
-            @(_editingNews?.Id == null ? "Créer" : "Enregistrer")
-        </MudButton>
-    </DialogActions>
-</MudDialog>
+            <MudCardContent>
+                <MudForm @ref="_form" Model="@(_editingNews ?? new NewsModel())" @bind-IsValid="@_formIsValid">
+                    <MudTextField @bind-Value="_editingNews.Title"
+                                  Label="Titre"
+                                  Required="true"
+                                  RequiredError="Le titre est obligatoire"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Class="mb-3" />
+
+                    <MudTextField @bind-Value="_editingNews.Content"
+                                  Label="Contenu"
+                                  Required="true"
+                                  RequiredError="Le contenu est obligatoire"
+                                  Lines="10"
+                                  Immediate="true"
+                                  Variant="Variant.Outlined"
+                                  Class="mb-3" />
+
+                    @if (_editingNews != null)
+                    {
+                        <MudCheckBox T="bool" @bind-Checked="_editingNews.IsPinned"
+                                     Label="Épingler cette actualité"
+                                     Color="Color.Primary" />
+                    }
+                </MudForm>
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudButton OnClick="CloseDialog"
+                           Variant="Variant.Outlined"
+                           Color="Color.Secondary">
+                    Annuler
+                </MudButton>
+                <MudButton OnClick="SaveNewsAsync"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Disabled="@(!_formIsValid)">
+                    @(_editingNews?.Id == "0" ? "Créer" : "Enregistrer")
+                </MudButton>
+            </MudCardActions>
+        </MudCard>
+    </div>
+}
 
 
 
 <!-- Dialog de confirmation de suppression -->
-<MudDialog @bind-IsVisible="_showDeleteDialog" Options="dialogOptions">
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-            Confirmation de suppression
-        </MudText>
-    </TitleContent>
-    <DialogContent>
-        <MudText>Êtes-vous sûr de vouloir supprimer cette actualité ?</MudText>
-        <MudText Typo="Typo.subtitle1" Class="mt-2 font-weight-bold">@_deletingNews?.Title</MudText>
-        <MudText Typo="Typo.body2" Class="mt-1 text-muted">Cette action est irréversible.</MudText>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="@CloseDeleteDialog"
-                   Variant="Variant.Outlined"
-                   Color="Color.Secondary">
-            Annuler
-        </MudButton>
-        <MudButton OnClick="@DeleteNewsAsync"
-                   Variant="Variant.Filled"
-                   Color="Color.Error">
-            Supprimer
-        </MudButton>
-    </DialogActions>
-</MudDialog>
+@if (_showDeleteDialog)
+{
+    <div class="dialog-container">
+        <MudOverlay Class="dialog-overlay" @onclick="CloseDeleteDialog" />
+
+        <MudCard Class="dialog-card" Elevation="25">
+            <MudCardHeader>
+                <MudText Typo="Typo.h6">
+                    Confirmation de suppression
+                </MudText>
+            </MudCardHeader>
+
+            <MudCardContent>
+                <MudText>Êtes-vous sûr de vouloir supprimer cette actualité ?</MudText>
+                <MudText Typo="Typo.subtitle1" Class="mt-2 font-weight-bold">@_deletingNews?.Title</MudText>
+                <MudText Typo="Typo.body2" Class="mt-1 text-muted">Cette action est irréversible.</MudText>
+            </MudCardContent>
+
+            <MudCardActions>
+                <MudButton OnClick="CloseDeleteDialog"
+                           Variant="Variant.Outlined"
+                           Color="Color.Secondary">
+                    Annuler
+                </MudButton>
+                <MudButton OnClick="DeleteNewsAsync"
+                           Variant="Variant.Filled"
+                           Color="Color.Error">
+                    Supprimer
+                </MudButton>
+            </MudCardActions>
+        </MudCard>
+    </div>
+}
 
 <style>
     /* Styles pour la page d'administration des actualités */
@@ -189,4 +210,34 @@
         background-color: @ColorConstant.colorBackgroundMallow80;
     }
 
+    .dialog-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .dialog-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1001;
+    }
+
+    .dialog-card {
+        width: 600px;
+        max-width: 90vw;
+        max-height: 90vh;
+        overflow-y: auto;
+        z-index: 1002;
+        position: relative;
+    }
 </style>

@@ -31,9 +31,6 @@ namespace SpiritWeb.Server.Services
         /// <returns></returns>
         public async Task<string> SaveSurveyAsync(SurveyModel model)
         {
-            //// Normalisation des données
-            //model.Votes = model.Votes ?? new List<string>(); // Garantit que Votes n'est jamais null
-
             // Si le DisplayName est null, essayez de le récupérer
             if (string.IsNullOrEmpty(model.UserDisplayName) && !string.IsNullOrEmpty(model.UserId))
             {
