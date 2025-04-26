@@ -9,11 +9,25 @@
 @inject NavigationManager NavigationManager
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
-    <MudCard>
-        <MudCardHeader Class="title">
-            <MudText Typo="Typo.h4" Class="title">Classement des Joueurs</MudText>
-        </MudCardHeader>
+   
+
+    <MudCard>       
         <MudCardContent Class="card-body">
+            <!-- Titre de la page -->
+            <MudItem xs="12" Class="mb-5">
+                <MudPaper Class="pa-6 fade-in"
+                          Style="@($"background: url('/images/NewsBanner.svg') center/cover no-repeat; border-radius: 16px; border: 2px solid {ColorConstant.colorBackgroundMallowBordure}; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 150px;")">
+                    <MudText Typo="Typo.h3"
+                             Class="mb-2"
+                             Style="font-family: 'Press Start 2P', cursive; color: white; text-shadow: 1px 1px 4px rgba(0,0,0,0.7); text-align: center;">
+                        Classement de Spirit
+                    </MudText>
+                    <MudText Typo="Typo.subtitle1"
+                             Style="color: white; opacity: 0.9; text-align: center; max-width: 600px;">
+
+                    </MudText>
+                </MudPaper>
+            </MudItem>
             @if (isLoading)
             {
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" />

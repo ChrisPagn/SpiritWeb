@@ -15,13 +15,25 @@
   Utilise le framework MudBlazor pour les composants UI
 -->
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6 mb-12" Style="height: calc(100vh - 64px); overflow-y: auto;">
-    <!-- En-tête de la page -->
-    <MudPaper Elevation="3" Class="pa-4 mb-4">
-        <MudText Typo="Typo.h4" Class="mb-2 title-suggestion" Align="Align.Center">Tableau de Bord Analytique</MudText>
-        <MudText Typo="Typo.body1" Class="mb-4 text-center" Align="Align.Center">
-            Analyse des suggestions et habitudes des joueurs
-        </MudText>
+    <!-- Titre du dashboard -->
+    <MudItem xs="12" Class="mb-5">
+    <MudPaper Class="pa-6 fade-in"
+              Style="@($"background: url('/images/AdminBanner.svg') center/cover no-repeat; border-radius: 16px; border: 2px solid {ColorConstant.colorBackgroundMallowBordure}; display: grid; place-items: center; min-height: 200px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);")">
+        <div style="text-align: center; width: 100%; padding: 20px;">
+            <MudText Typo="Typo.h3"
+                     Class="mb-2"
+                     Style="font-family: 'Press Start 2P', cursive; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); letter-spacing: 1px;">
+                Analyse des suggestions et habitudes des joueurs
+            </MudText>
+        </div>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Class="mt-4"
+                       OnClick="@(() => NavigationManager.NavigateTo("/dashboardadmin"))">
+                Retour Dashboard Admin
+            </MudButton>
     </MudPaper>
+    </MudItem>
 
     <!-- Affichage d'un message de chargement pendant le chargement des données -->
     @if (isLoading)
