@@ -6,6 +6,11 @@
 @inject NavigationManager NavigationManager
 
 <PageTitle>Index</PageTitle>
+<!--Prechargement des png afin d'éviter le clignotement au debut de l'animation-->
+<link rel="preload" as="image" href="/images/sprite-walk1.png">
+<link rel="preload" as="image" href="/images/sprite-walk2.png">
+<link rel="preload" as="image" href="/images/sprite-walk3.png">
+<link rel="preload" as="image" href="/images/sprite-walk4.png">
 
 <MudContainer Class="d-flex flex-column align-items-center"
               Style="height: 100vh; overflow-y: auto; padding-bottom: 80px;">
@@ -26,58 +31,7 @@
             <div class="ground-platform"></div>
             <div class="sprite-walk"></div>
         </div>
-    </MudPaper>
-
-     <!-- Section Actualités Récentes -->
-    <MudCard Class="pa-4 mt-8" Style="max-width: 1200px; width: 100%; background-color: #dcd9fa; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-        <MudCardHeader>
-            <CardHeaderContent>
-                <MudText Typo="Typo.h5" Style="font-family: 'Press Start 2P', cursive; font-size: 1.1rem; color: #333;">
-                    Actualités Récentes
-                </MudText>
-            </CardHeaderContent>
-            <CardHeaderActions>
-                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => NavigationManager.NavigateTo("/news"))">
-                    Voir tout
-                </MudButton>
-            </CardHeaderActions>
-        </MudCardHeader>
-        <MudCardContent>
-            @if (_loadingNews)
-            {
-                <div class="d-flex justify-center my-4">
-                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-                </div>
-            }
-            else if (_latestNews == null || !_latestNews.Any())
-            {
-                <MudText Class="text-center">Aucune actualité disponible</MudText>
-            }
-            else
-            {
-                <MudList Items="@_newsList" Clickable="true" T="NewsModel">
-                    @foreach (var news in _latestNews)
-                    {
-                        <MudListItem T="NewsModel" @onclick="@(() => NavigationManager.NavigateTo("/news"))" Class="pa-2 news-item-home">
-                            <div class="d-flex align-center" style="gap: 8px;">
-                                @if (news.IsPinned)
-                                {
-                                    <MudIcon Icon="@Icons.Material.Filled.PushPin" Color="Color.Secondary" Size="Size.Small" />
-                                }
-                                <div>
-                                    <MudText Typo="Typo.body1" Style="font-weight: 500;">@news.Title</MudText>
-                                    <MudText Typo="Typo.caption" Style="color: #666;">
-                                        @news.PublishDate.ToLocalTime().ToString("dd/MM/yyyy")
-                                    </MudText>
-                                </div>
-                            </div>
-                        </MudListItem>
-                        <MudDivider />
-                    }
-                </MudList>
-            }
-        </MudCardContent>
-    </MudCard>
+    </MudPaper>    
 </MudContainer>
 
 <style>

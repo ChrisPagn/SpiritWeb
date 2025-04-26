@@ -9,24 +9,21 @@
 
 <PageTitle>Actualités du jeu Spirit</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
-    <MudGrid Justify="Justify.Center" Spacing="4">
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6"Style="height: calc(100vh - 104px); overflow-y: auto;" >
+    <MudGrid Justify="Justify.Center" Spacing="4" >
         <!-- Titre de la page -->
         <MudItem xs="12">
-            <MudPaper Class="pa-4" Style="@($"background-color: {ColorConstant.colorBackgroundMallow90}; border: 2px solid {ColorConstant.colorBackgroundMallowBordure};")">
-                <MudText Typo="Typo.h3" Class="text-center" Style="font-family: 'Press Start 2P', cursive; color: #333;">
+            <MudPaper Class="pa-6 fade-in"
+                      Style="@($"background: url('/images/NewsBanner.svg') center/cover no-repeat; border-radius: 16px; border: 2px solid {ColorConstant.colorBackgroundMallowBordure}; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 250px;")">
+                <MudText Typo="Typo.h3"
+                         Class="mb-2"
+                         Style="font-family: 'Press Start 2P', cursive; color: white; text-shadow: 1px 1px 4px rgba(0,0,0,0.7); text-align: center;">
                     Actualités de Spirit
                 </MudText>
-                <MudText Typo="Typo.body1" Class="mt-2 text-center" Style="color: #555;">
-                    Découvrez les nouveautés et les futures mises à jour du jeu Spirit
+                <MudText Typo="Typo.subtitle1"
+                         Style="color: white; opacity: 0.9; text-align: center; max-width: 600px;">
+                    Découvrez les nouveautés et les futures mises à jour du jeu Spirit.
                 </MudText>
-            </MudPaper>
-        </MudItem>
-
-        <!-- Animation pixel art (optionnel mais cohérent avec le reste du site) -->
-        <MudItem xs="12" Class="mb-4">
-            <MudPaper Class="pixel-art-banner" Style="border-radius: 8px; overflow: hidden; height: 120px; background-color: transparent; box-shadow: none;">
-                <div class="news-pixel-banner"></div>
             </MudPaper>
         </MudItem>
 
@@ -103,6 +100,28 @@
 </MudContainer>
 
 <style>
+
+    .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @@keyframes fadeIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
     /* Styles pour les actualités */
     .news-item {
         transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -144,4 +163,6 @@
         background-color: @ColorConstant.colorBackgroundMallow80;
         font-family: 'Press Start 2P', cursive;
     }
+
+    
 </style>
