@@ -8,11 +8,11 @@
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
  
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6" >
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6" Style="overflow-y: auto; max-height: 800px">
     <MudCard>
         <MudCardContent Class="card-body">
             <!-- Titre du dashboard -->
-            <MudItem xs="12">
+            <MudItem xs="12" Class="mb-5">
                 <MudPaper Class="pa-6 fade-in"
                           Style="@($"background: url('/images/AdminBanner.svg')center/cover no-repeat; border-radius: 16px; border: 2px solid {ColorConstant.colorBackgroundMallowBordure}; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);")">
                     <MudText Typo="Typo.h3"
@@ -20,11 +20,11 @@
                              Style="font-family: 'Press Start 2P', cursive; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); letter-spacing: 1px;">
                         DASHBOARD ADMIN
                     </MudText>
-                    <MudText Typo="Typo.subtitle1"
+                    @* <MudText Typo="Typo.subtitle1"
                              Class="title"
                              Style="color: white; opacity: 0.9; text-align: center; max-width: 600px;">
                         Liste des Utilisateurs
-                    </MudText>
+                    </MudText> *@
                     <MudButton Variant="Variant.Filled"
                                Color="Color.Primary"
                                Class="mt-4"
@@ -43,8 +43,6 @@
             }
             else
             {
-                <MudTextField @bind-Value="searchString" Placeholder="Rechercher..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" />
-
                 <MudTable Items="@filteredUsers"
                           Class="fun-table"
                           Hover="true"
@@ -52,8 +50,19 @@
                           Bordered="true"
                           Dense="true"
                           RowClassFunc="@( (user, index) => GetRowClass(user, index) )"
-                          ServerData="@LoadServerData"
-                          @bind-SelectedItem="selectedUser">
+                         >
+
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6" Class="title-suggestion" Style="font-family: Cambria; font-weight: bold; ">Liste des Utilisateurs</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="searchString"
+                                      Placeholder="Rechercher"
+                                      Immediate="true"
+                                      Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Search"
+                                      IconSize="Size.Medium"
+                                      Class="mt-0"></MudTextField>
+                    </ToolBarContent>
 
                     <HeaderContent>
                         <MudTh>Nom d'affichage</MudTh>

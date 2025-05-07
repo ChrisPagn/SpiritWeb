@@ -1,4 +1,5 @@
-﻿using SpiritWeb.Shared.Models;
+﻿using MudBlazor;
+using SpiritWeb.Shared.Models;
 
 namespace SpiritWeb.Client.Pages
 {
@@ -7,6 +8,9 @@ namespace SpiritWeb.Client.Pages
         private List<SaveData> users = new();
         private bool isLoading = true;
         private int activeTabIndex = 0;
+        //private int currentPageLevel = 1;
+        //private int currentPageCoins = 1;
+        //private int currentPageItems = 1;
 
         protected override async Task OnInitializedAsync()
         {
@@ -28,6 +32,7 @@ namespace SpiritWeb.Client.Pages
             }
             isLoading = false;
         }
+
 
     }
 }

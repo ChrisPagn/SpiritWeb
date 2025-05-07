@@ -8,7 +8,7 @@
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6" Style="overflow-y: auto; max-height: 800px">
    
 
     <MudCard>       
@@ -61,6 +61,10 @@
                                 <MudTd>@context.LastLevelPlayed</MudTd>
                                 <MudTd>@context.LastModified.ToLocalTime().ToString("f", new CultureInfo("fr-FR"))</MudTd>
                             </RowTemplate>
+                            <!-- HeaderContent et RowTemplate existants -->
+                            <PagerContent>
+                                <MudTablePager PageSizeOptions="new int[] { 5, 10, 25 }"/>
+                            </PagerContent>
                         </MudTable>
                     </MudTabPanel>
                     @* Tri par pieces *@
@@ -87,6 +91,11 @@
                                 <MudTd>@context.LevelReached</MudTd>
                                 <MudTd>@context.LastModified.ToLocalTime().ToString("f", new CultureInfo("fr-FR"))</MudTd>
                             </RowTemplate>
+                            <!-- HeaderContent et RowTemplate existants -->
+                            <PagerContent>
+                                <MudTablePager PageSizeOptions="new int[] { 5, 10, 25 }"
+                                               RowsPerPageText="Lignes par page :" />
+                            </PagerContent>
                         </MudTable>
                     </MudTabPanel>
                     @* Tri par objets *@
@@ -113,6 +122,9 @@
                                 <MudTd>@context.LevelReached</MudTd>
                                 <MudTd>@context.LastModified.ToLocalTime().ToString("f", new CultureInfo("fr-FR"))</MudTd>
                             </RowTemplate>
+                            <PagerContent>
+                                <MudTablePager PageSizeOptions="new int[] { 5, 10, 25 }"/>
+                            </PagerContent>
                         </MudTable>
                     </MudTabPanel>
                 </MudTabs>

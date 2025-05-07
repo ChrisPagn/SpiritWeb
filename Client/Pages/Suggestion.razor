@@ -10,7 +10,7 @@
 @inject ISnackbar Snackbar
 @using SpiritWeb.Client.Models
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6 mb-12" Style="height: calc(100vh - 104px); overflow-y: auto;">
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6 mb-12" Style="overflow-y: auto; max-height: 800px">
     <MudPaper Elevation="3" Class="pa-8 mb-8">
         <MudText Typo="Typo.h4" Class="mb-4 title-suggestion" Align="Align.Center">Votre Avis sur l'Expérience de Jeu</MudText>
         <MudText Typo="Typo.body1" Class="mb-6 text-center" Align="Align.Center">
@@ -63,15 +63,23 @@
             <MudPaper Elevation="0" Class="pa-4 mb-6" Style="border: 1px solid var(--mud-palette-lines-default); border-radius: var(--mud-default-borderradius);">
                 <MudText Typo="Typo.h6" Class="mb-3">Suggestion d'optimisation</MudText>
                 <MudTextField @bind-Value="@surveyModel.OptimizationSuggestion"
-                            Label="Votre suggestion"
-                            Variant="Variant.Outlined"
-                            Lines="4"
-                            Counter="300"
-                            MaxLength="300"
-                            Required="true"
-                            RequiredError="Une suggestion est requise"
-                            HelperText="Partagez vos idées pour améliorer le jeu"
-                            Class="w-100"/>
+                              Label="Votre suggestion"
+                              Variant="Variant.Outlined"
+                              Lines="4"
+                              Counter="300"
+                              MaxLength="300"
+                              Required="true"
+                              RequiredError="Une suggestion est requise"
+                              Pattern="^[\w\s.,!?àâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ-]{10,300}$"
+                              PatternError="Caractères spéciaux non autorisés ou texte trop court (min 10 caractères)"
+                              HelperText="10-300 caractères. Pas de HTML/JS/code."
+                              Class="w-100"
+                              InputAttributes="@(new Dictionary<string, object> {
+                                    ["spellcheck"] = "true",
+                                    ["lang"] = "fr",
+                                    ["autocapitalize"] = "sentences"
+                                })" />
+                
             </MudPaper>
 
             

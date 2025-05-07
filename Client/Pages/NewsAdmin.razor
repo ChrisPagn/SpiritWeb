@@ -1,4 +1,4 @@
-﻿@page "/settings"
+﻿@page "/newsadmin"
 @using MudBlazor
 @using SpiritWeb.Client.Services
 @using SpiritWeb.Client.Models
@@ -8,7 +8,7 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6 " Style="overflow-y: auto; max-height: 800px">
     <MudGrid Justify="Justify.Center" Spacing="4">
         <!-- Titre de la page -->
         <MudItem xs="12">
@@ -68,7 +68,7 @@
         }
         else
         {
-            <MudItem xs="12">
+            <MudItem xs="12" Style="overflow-y: auto; max-height: 600px">
                 <MudPaper Class="pa-4" Style="@($"background-color: {ColorConstant.colorBackgroundMallow80}; border: 1px solid {ColorConstant.colorBackgroundMallowBordure};")">
                     <MudTable Items="@_newsList" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading"
                               LoadingProgressColor="Color.Primary" Elevation="0">
@@ -136,20 +136,36 @@
                 <MudForm @ref="_form" Model="@(_editingNews ?? new NewsModel())" @bind-IsValid="@_formIsValid">
                     <MudTextField @bind-Value="_editingNews.Title"
                                   Label="Titre"
+                                  For="@(() => _editingNews.Title)"
                                   Required="true"
                                   RequiredError="Le titre est obligatoire"
                                   Immediate="true"
                                   Variant="Variant.Outlined"
-                                  Class="mb-3" />
+                                  Class="mb-3"
+                                  InputAttributes="@(new Dictionary<string, object> {
+                                    ["spellcheck"] = "true",
+                                    ["lang"] = "fr",
+                                    ["autocapitalize"] = "sentences",
+                                    ["autocorrect"] = "on",  // Correction automatique (iOS)
+                                    ["enterkeyhint"] = "done" // Comportement du clavier
+                                    })" />
 
                     <MudTextField @bind-Value="_editingNews.Content"
                                   Label="Contenu"
+                                  For="@(() => _editingNews.Content)"
                                   Required="true"
                                   RequiredError="Le contenu est obligatoire"
                                   Lines="10"
                                   Immediate="true"
                                   Variant="Variant.Outlined"
-                                  Class="mb-3" />
+                                  Class="mb-3"
+                                  InputAttributes="@(new Dictionary<string, object> {
+                                    ["spellcheck"] = "true",
+                                    ["lang"] = "fr",
+                                    ["autocapitalize"] = "sentences",
+                                    ["autocorrect"] = "on",  // Correction automatique (iOS)
+                                    ["enterkeyhint"] = "done" // Comportement du clavier
+                                    })" />
 
                     @if (_editingNews != null)
                     {
@@ -218,6 +234,7 @@
     /* Styles pour la page d'administration des actualités */
     body {
         background-color: @ColorConstant.colorBackgroundMallow80;
+       
     }
 
     .dialog-container {

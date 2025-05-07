@@ -1,6 +1,7 @@
 ﻿using Google.Cloud.Firestore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SpiritWeb.Shared.Models
 {
@@ -19,12 +20,18 @@ namespace SpiritWeb.Shared.Models
         /// <summary>
         /// Titre de l'actualité
         /// </summary>
+        [Required(ErrorMessage = "Le titre est obligatoire")]
+        [RegularExpression(@"^[\p{L}\p{N}\s\-_',;:!?()]{5,100}$",
+            ErrorMessage = "5-100 caractères (lettres, chiffres, ponctuation de base)")]
         [FirestoreProperty]
         public string Title { get; set; }
 
         /// <summary>
         /// Contenu de l'actualité
         /// </summary>
+        [Required(ErrorMessage = "Le contenu est obligatoire")]
+        [RegularExpression(@"^[\p{L}\p{N}\s\-_',;:!?()\r\n]{20,5000}$",
+            ErrorMessage = "20-5000 caractères (lettres, chiffres, ponctuation)")]
         [FirestoreProperty]
         public string Content { get; set; }
 

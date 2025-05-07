@@ -1,6 +1,7 @@
 ﻿using Google.Cloud.Firestore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SpiritWeb.Shared.Models
 {
@@ -19,6 +20,9 @@ namespace SpiritWeb.Shared.Models
         /// <summary>
         /// Nom d'affichage de l'utilisateur.
         /// </summary>
+        ///     [Required(ErrorMessage = "Le nom est requis")]
+        [RegularExpression(@"^[\p{L}\p{N}\s\-_']{2,20}$",
+            ErrorMessage = "Caractères invalides (2-20 caractères, lettres, chiffres, -_')")]
         [FirestoreProperty]
         public string DisplayName { get; set; }
 
@@ -103,7 +107,7 @@ namespace SpiritWeb.Shared.Models
         /// </summary>
         public void CheckForPromotion()
         {
-            if (Role == "user" && CoinsCount >= 50)
+            if (Role == "user" && CoinsCount >= 100)
             {
                 Role = "contributor";
             }

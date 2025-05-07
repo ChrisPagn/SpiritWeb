@@ -30,7 +30,10 @@
                         <MudTextField @bind-Value="userData.DisplayName" 
                                         Label="Nom d'affichage" 
                                         Variant="Variant.Outlined"
-                                        FullWidth="true" ReadOnly="!isEditing" />
+                                        For="@(() => userData.DisplayName)"
+                                        FullWidth="true" 
+                                        ReadOnly="!isEditing"
+                                        Validation="@(new Func<string, IEnumerable<string>>(ValidateDisplayName))" />
                     </MudItem>
 
                     <MudItem xs="12" sm="6">

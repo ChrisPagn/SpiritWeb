@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using SpiritWeb.Shared.Models;
+using System.Text.RegularExpressions;
 
 
 namespace SpiritWeb.Client.Pages
@@ -78,6 +79,26 @@ namespace SpiritWeb.Client.Pages
             Snackbar.Add("Vous ne pouvez modifier que votre nom d'affichage!", Severity.Info);
 
             isEditing = true;
+        }
+
+        /// <summary>
+        /// Valide le nom d'affichage de l'utilisateur (Regle Regex).
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private IEnumerable<string> ValidateDisplayName(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                yield return "Le nom est requis";
+                yield break;
+            }
+
+            // Regex: Lettres, chiffres, espaces et certains caractères spéciaux
+            if (!Regex.IsMatch(value, @"^[\p{L}\p{N}\s\-_']{2,20}$"))
+            {
+                yield return "Caractères invalides (2-20 caractères, lettres, chiffres, -_')";
+            }
         }
 
         /// <summary>

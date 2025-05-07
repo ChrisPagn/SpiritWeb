@@ -12,8 +12,8 @@
 @inject DatabaseService DatabaseService
 @inject VoteService VoteService
 
-<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
-    <MudCard>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6" Style="overflow-y: auto; max-height: 800px">
+    <MudCard >
         <MudCardContent Class="card-body">
             <!-- Titre du dashboard -->
             <MudItem xs="12" Class="mb-5">
@@ -120,7 +120,8 @@
                         </MudTd>
                     </RowTemplate>
                     <PagerContent>
-                        <MudTablePager PageSizeOptions="new int[] { 5, 10, 25 }" />
+                        <MudTablePager PageSizeOptions="new int[] { 5, 10, 25 }"
+                                        RowsPerPageText="Lignes par page :" />
                     </PagerContent>
                 </MudTable>
             }

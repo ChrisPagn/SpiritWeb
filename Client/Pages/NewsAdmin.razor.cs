@@ -3,6 +3,7 @@ using MudBlazor;
 using SpiritWeb.Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -168,6 +169,29 @@ namespace SpiritWeb.Client.Pages
                 Snackbar.Add($"Erreur: {ex.Message}", Severity.Error);
                 Console.WriteLine(ex.ToString());
             }
+        }
+
+        /// <summary>
+        /// Valide le modèle d'actualité avant de l'enregistrer
+        /// </summary>
+        /// <param name="news"></param>
+        /// <returns></returns>
+        public async Task<bool> ValidateNewsAsync(NewsModel news)
+        {
+            // Vérifie que le modèle est valide avant sauvegarde
+            var validationResults = new List<ValidationResult>();
+            var isValid = Validator.TryValidateObject(news,
+                new ValidationContext(news),
+                validationResults,
+                true);
+
+            if (!isValid)
+            {
+                // Log ou gestion des erreurs
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>

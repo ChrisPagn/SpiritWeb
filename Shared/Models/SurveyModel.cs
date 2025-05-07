@@ -1,6 +1,7 @@
 ﻿using Google.Cloud.Firestore;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace SpiritWeb.Shared.Models
 {
@@ -55,8 +56,29 @@ namespace SpiritWeb.Shared.Models
         /// <summary>
         /// Suggestion d'optimisation proposée par l'utilisateur
         /// </summary>
+        private string _optimizationSuggestion = "";
         [FirestoreProperty]
-        public string OptimizationSuggestion { get; set; }
+        //public string OptimizationSuggestion { get; set; }
+        public string OptimizationSuggestion
+        {
+            get => _optimizationSuggestion;
+            set
+            {
+                if (IsValidSuggestion(value))
+                    _optimizationSuggestion = value;
+            }
+        }
+
+        /// <summary>
+        /// Vérifie si la suggestion d'optimisation est valide
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private static bool IsValidSuggestion(string input)
+        {
+            var regex = new Regex(@"^[\w\s.,!?àâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ-]{10,300}$");
+            return regex.IsMatch(input) && !input.Contains("<") && !input.Contains(">");
+        }
 
         [FirestoreProperty]
         public int VotesCount { get; set; }

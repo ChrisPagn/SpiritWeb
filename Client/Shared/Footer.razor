@@ -3,7 +3,7 @@
 @inherits MudComponentBase
 @using SpiritWeb.Client.Models
 
-<footer class="footer">
+<footer class="footer" style="margin-top: auto;">
     <MudContainer Class="footer-container">
         <div class="social-media">
             <p>Suivez-nous sur :</p>
@@ -47,6 +47,7 @@
 </footer>
 
 <style>
+
     .footer {
         width: 100%;
         background-color: @ColorConstant.colorBackgroundMallow00; /* Couleur de fond */
@@ -54,6 +55,8 @@
         text-align: center;
         font-size: 14px;
         padding: 20px;
+        margin-top: auto; /* Pousse le footer en bas */
+        flex-shrink: 0; /* Empêche le rétrécissement */
     }
 
     .footer-container {
@@ -66,19 +69,19 @@
         margin-bottom: 15px;
     }
 
-        .footer .social-media p {
-            margin: 0 0 10px 0;
-        }
+    .footer .social-media p {
+        margin: 0 0 10px 0;
+    }
 
-        .footer .social-media a {
-            color: #fff;
-            margin: 0 10px;
-            font-size: 20px;
-        }
+    .footer .social-media a {
+        color: #fff;
+        margin: 0 10px;
+        font-size: 20px;
+    }
 
-            .footer .social-media a:hover {
-                color: #ddd;
-            }
+    .footer .social-media a:hover {
+        color: #ddd;
+    }
 
     .footer .app-stores img {
         height: 40px;
@@ -91,9 +94,9 @@
         text-decoration: none;
     }
 
-        .footer .legal-links a:hover {
-            text-decoration: underline;
-        }
+    .footer .legal-links a:hover {
+        text-decoration: underline;
+    }
 
     .footer .company-info {
         margin-top: 15px;
