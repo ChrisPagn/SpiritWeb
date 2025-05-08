@@ -3,6 +3,7 @@
 @using SpiritWeb.Client.Services
 @using MudBlazor
 @using SpiritWeb.Client.Models
+@using System.Globalization
 @inject AuthService AuthService
 @inject DatabaseService DatabaseService
 @inject NavigationManager NavigationManager
@@ -109,7 +110,7 @@
                     </MudItem>
 
                     <MudItem xs="12">
-                        <MudText Typo="Typo.body2">Dernière modification: @userData.LastModified.ToLocalTime().ToString("g")</MudText>
+                        <MudText Typo="Typo.body2">Dernière modification: @userData.LastModified.ToLocalTime().ToString("f", new CultureInfo("fr-FR"))</MudText>
                     </MudItem>
                 </MudGrid>
             }

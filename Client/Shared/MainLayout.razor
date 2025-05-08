@@ -17,16 +17,18 @@
         <MudDrawerHeader>
             <MudText Typo="Typo.h6" Class="title-menu">Menu</MudText>
         </MudDrawerHeader>
-        <NavMenu OnLinkClick="DrawerClose" />
-    </MudDrawer>
+            <div @onmouseleave="async () => { await Task.Delay(500); DrawerClose();}">
+                <NavMenu OnLinkClick="DrawerClose" />
+            </div>
+        </MudDrawer>
 
-        <SpiritWeb.Client.Pages.PageTransitionLayout>
             <MudMainContent Class="flex-grow-1">
                 <MudContainer MaxWidth="MaxWidth.Large" Class="main-container">
-                    @Body
+                    <SpiritWeb.Client.Pages.PageTransitionLayout>
+                        @Body
+                    </SpiritWeb.Client.Pages.PageTransitionLayout>
                 </MudContainer>
             </MudMainContent>
-        </SpiritWeb.Client.Pages.PageTransitionLayout>
     <Footer Class="footer mt-auto" />
    
 </MudLayout>
